@@ -44,6 +44,9 @@ class TestSSLVerification(TestCase):
         with patch("aider.models.Model") as mock_model:
             # Configure the mock to avoid the TypeError
             mock_model.return_value.info = {}
+            mock_model.return_value.name = "gpt-4"  # Add a string name
+            mock_model.return_value.use_repo_map = False
+            mock_model.return_value.get_repo_map_tokens.return_value = 0
             mock_model.return_value.validate_environment.return_value = {
                 "missing_keys": [],
                 "keys_in_environment": [],

@@ -212,30 +212,38 @@ class Coder:
         main_model = self.main_model
         weak_model = main_model.weak_model
 
-        if weak_model is not main_model:
+        active_model = main_model
+
+        if self.edit_format == "ask" and main_model.ask_model:
+            active_model = main_model.ask_model
+            prefix = "Ask model"
+            if main_model.ask_model is not main_model:
+                lines.append(f"Main model: {main_model.name}")
+        elif weak_model is not main_model:
             prefix = "Main model"
         else:
             prefix = "Model"
 
-        output = f"{prefix}: {main_model.name} with {self.edit_format} edit format"
+        output = f"{prefix}: {active_model.name} with {self.edit_format} edit format"
 
         # Check for thinking token budget
-        thinking_tokens = main_model.get_thinking_tokens()
+        thinking_tokens = active_model.get_thinking_tokens()
         if thinking_tokens:
             output += f", {thinking_tokens} think tokens"
 
         # Check for reasoning effort
-        reasoning_effort = main_model.get_reasoning_effort()
+        reasoning_effort = active_model.get_reasoning_effort()
         if reasoning_effort:
             output += f", reasoning {reasoning_effort}"
 
-        if self.add_cache_headers or main_model.caches_by_default:
+        if self.add_cache_headers or active_model.caches_by_default:
             output += ", prompt cache"
-        if main_model.info.get("supports_assistant_prefill"):
+        if active_model.info.get("supports_assistant_prefill"):
             output += ", infinite output"
 
         lines.append(output)
 
+        # Editor model for Architect mode
         if self.edit_format == "architect":
             output = (
                 f"Editor model: {main_model.editor_model.name} with"
@@ -243,8 +251,14 @@ class Coder:
             )
             lines.append(output)
 
+        # Weak model
         if weak_model is not main_model:
             output = f"Weak model: {weak_model.name}"
+            lines.append(output)
+
+        # Ask model
+        if main_model.ask_model and main_model.ask_model is not main_model:
+            output = f"Ask model: {main_model.ask_model.name}"
             lines.append(output)
 
         # Repo
@@ -1437,7 +1451,12 @@ class Coder:
 
         self.multi_response_content = ""
         if self.show_pretty():
-            self.waiting_spinner = WaitingSpinner("Waiting for " + self.main_model.name)
+            msg_model = (
+                self.main_model.ask_model.name
+                if self.edit_format == "ask" and self.main_model.ask_model_name
+                else self.main_model.name
+            )
+            self.waiting_spinner = WaitingSpinner("Waiting for " + msg_model)
             self.waiting_spinner.start()
             if self.stream:
                 self.mdstream = self.io.get_assistant_mdstream()
@@ -1699,6 +1718,11 @@ class Coder:
         """Cleanup when the Coder object is destroyed."""
         self.ok_to_warm_cache = False
 
+    def send_model(self):
+        if self.edit_format == "ask":
+            return self.main_model.ask_model
+        return self.main_model
+
     def add_assistant_reply_to_cur_messages(self):
         if self.partial_response_content:
             self.cur_messages += [dict(role="assistant", content=self.partial_response_content)]
@@ -1785,7 +1809,7 @@ class Coder:
         self.ended_reasoning_content = False
 
         if not model:
-            model = self.main_model
+            model = self.send_model()
 
         self.partial_response_content = ""
         self.partial_response_function_call = dict()
