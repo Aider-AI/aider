@@ -101,3 +101,36 @@
 div.highlighter-rouge pre.highlight, div.highlighter-rouge code {
     line-height: 1.1;
 }
+
+/* Mermaid text clipping fixes */
+.mermaid {
+  text-align: center;
+  margin: 20px 0;
+}
+
+/* Fix for text clipping in nodes */
+.mermaid .node rect,
+.mermaid .node polygon,
+.mermaid .node circle,
+.mermaid .node ellipse {
+  stroke-width: 2px;
+}
+
+/* Increase padding for node labels to prevent clipping */
+.mermaid .nodeLabel {
+  padding: 8px 15px 8px 8px !important;
+  font-family: inherit !important;
+  font-size: 14px !important;
+}
+
+/* Fix for foreign object text containers */
+.mermaid foreignObject {
+  overflow: visible !important;
+}
+
+.mermaid .label div {
+  padding: 6px 12px 6px 6px !important;
+  margin: 0 !important;
+  white-space: nowrap;
+  overflow: visible !important;
+}
