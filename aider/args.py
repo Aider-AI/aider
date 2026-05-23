@@ -661,6 +661,12 @@ def get_parser(default_config_files, git_root):
         default=False,
     )
     group.add_argument(
+        "--acp",
+        action="store_true",
+        help="Run aider as an ACP agent server over stdio (default: False)",
+        default=False,
+    )
+    group.add_argument(
         "--copy-paste",
         action=argparse.BooleanOptionalAction,
         default=False,
