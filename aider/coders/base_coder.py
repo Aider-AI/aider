@@ -4,6 +4,7 @@ import base64
 import hashlib
 import json
 import locale
+import logging
 import math
 import mimetypes
 import os
@@ -51,6 +52,8 @@ from aider.waiting import WaitingSpinner
 
 from ..dump import dump  # noqa: F401
 from .chat_chunks import ChatChunks
+
+logger = logging.getLogger(__name__)
 
 
 class UnknownEditFormat(ValueError):
@@ -2316,6 +2319,7 @@ class Coder:
             return edited
 
         except ANY_GIT_ERROR as err:
+            logger.debug("Caught %s in apply_updates: %s", type(err).__name__, err, exc_info=True)
             self.io.tool_error(str(err))
             return edited
         except Exception as err:
@@ -2391,6 +2395,7 @@ class Coder:
 
             return self.gpt_prompts.files_content_gpt_no_edits
         except ANY_GIT_ERROR as err:
+            logger.debug("Caught %s in auto_commit: %s", type(err).__name__, err, exc_info=True)
             self.io.tool_error(f"Unable to commit: {str(err)}")
             return
 
