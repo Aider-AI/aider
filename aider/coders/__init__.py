@@ -12,7 +12,7 @@ from .patch_coder import PatchCoder
 from .udiff_coder import UnifiedDiffCoder
 from .udiff_simple import UnifiedDiffSimpleCoder
 from .wholefile_coder import WholeFileCoder
-
+from .batch_coder import BatchCoder
 # from .single_wholefile_func_coder import SingleWholeFileFunctionCoder
 
 __all__ = [
@@ -21,6 +21,7 @@ __all__ = [
     Coder,
     EditBlockCoder,
     EditBlockFencedCoder,
+    BatchCoder,
     WholeFileCoder,
     PatchCoder,
     UnifiedDiffCoder,
