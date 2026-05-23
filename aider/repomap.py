@@ -705,8 +705,6 @@ class RepoMap:
         spin.end()
         return best_tree
 
-    tree_cache = dict()
-
     def render_tree(self, abs_fname, rel_fname, lois):
         mtime = self.get_mtime(abs_fname)
         key = (rel_fname, tuple(sorted(lois)), mtime)
