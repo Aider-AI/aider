@@ -430,7 +430,14 @@ class InputOutput:
                 completion_menu_current_style
             )
 
-        return Style.from_dict(style_dict)
+        try:
+            return Style.from_dict(style_dict)
+        except ValueError as e:
+            self.console.print(
+                f"[bold red]Warning:[/bold red] Invalid color in style configuration: {e}."
+                " Falling back to default styling."
+            )
+            return Style.from_dict({})
 
     def read_image(self, filename):
         try:
