@@ -127,6 +127,25 @@ Hope you like it!
         edits = list(eb.find_original_update_blocks(edit))
         self.assertEqual(edits, [("foo.txt", "Two\n", "Tooooo\n")])
 
+    def test_find_original_update_blocks_with_rst_heading(self):
+        edit = """
+Here's the change:
+
+```text
+doc.rst
+<<<<<<< SEARCH
+Title
+=====
+Some content
+=======
+New content
+>>>>>>> REPLACE
+```
+"""
+
+        edits = list(eb.find_original_update_blocks(edit))
+        self.assertEqual(edits, [("doc.rst", "Title\n=====\nSome content\n", "New content\n")])
+
     def test_find_original_update_blocks_unclosed(self):
         edit = """
 Here's the change:
