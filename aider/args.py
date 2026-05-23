@@ -393,6 +393,12 @@ def get_parser(default_config_files, git_root):
         ),
     )
     group.add_argument(
+        "--code-theme-no-background",
+        action="store_true",
+        help="Disable background colors in code theme (default: False)",
+        default=False,
+    )
+    group.add_argument(
         "--show-diffs",
         action="store_true",
         help="Show diffs when committing changes (default: False)",
