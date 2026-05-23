@@ -202,6 +202,9 @@ cog.outl("```")
 ## Set the color for user input (default: #00cc00)
 #AIDER_USER_INPUT_COLOR=#00cc00
 
+## Set the color for user submitted input (default: #00cc00)
+#AIDER_USER_INPUT_SUBMITTED_COLOR=
+
 ## Set the color for tool output (default: None)
 #AIDER_TOOL_OUTPUT_COLOR=
 
