@@ -19,53 +19,40 @@ For each file that needs to be changed, write out the changes similar to a unifi
     example_messages = [
         dict(
             role="user",
-            content="Replace is_prime with a call to sympy.",
+            content="Replace foo_bar with a call to lib.aaa.",
         ),
         dict(
             role="assistant",
             content="""Ok, I will:
 
-1. Add an imports of sympy.
-2. Remove the is_prime() function.
-3. Replace the existing call to is_prime() with a call to sympy.isprime().
+1. Add an imports of lib.
+2. Remove the foo_bar() function.
+3. Replace the existing call to foo_bar() with a call to lib.aaa().
 
 Here are the diffs for those changes:
 
 ```diff
---- mathweb/flask/app.py
-+++ mathweb/flask/app.py
+--- src/app.py
++++ src/app.py
 @@ ... @@
--class MathWeb:
-+import sympy
+-class App:
++import lib
 +
-+class MathWeb:
++class App:
 @@ ... @@
--def is_prime(x):
--    if x < 2:
+-def foo_bar(x):
+-    if x < 0:
 -        return False
--    for i in range(2, int(math.sqrt(x)) + 1):
--        if x % i == 0:
--            return False
 -    return True
 @@ ... @@
--@app.route('/prime/<int:n>')
--def nth_prime(n):
--    count = 0
--    num = 1
--    while count < n:
--        num += 1
--        if is_prime(num):
--            count += 1
--    return str(num)
-+@app.route('/prime/<int:n>')
-+def nth_prime(n):
-+    count = 0
-+    num = 1
-+    while count < n:
-+        num += 1
-+        if sympy.isprime(num):
-+            count += 1
-+    return str(num)
+-@app.route('/check/<int:n>')
+-def do_check(n):
+-    if foo_bar(n):
+-        return str(n)
++@app.route('/check/<int:n>')
++def do_check(n):
++    if lib.aaa(n):
++        return str(n)
 ```
 """,
         ),

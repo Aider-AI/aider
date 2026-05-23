@@ -39,72 +39,69 @@ Consolidate **all** edits for a given file into a single `*** [ACTION] File:` bl
         # --- Example 1 ---------------------------------------------------- #
         dict(
             role="user",
-            content="Change get_factorial() to use math.factorial",
+            content="Change do_foo() to use lib.bar",
         ),
         dict(
             role="assistant",
-            content="""To make this change we need to modify `mathweb/flask/app.py`:
+            content="""To make this change we need to modify `src/app.py`:
 
-1. Import the `math` module.
-2. Replace the custom recursive `factorial()` helper with `math.factorial`.
-3. Update `get_factorial()` to call `math.factorial`.
+1. Import the `lib` module.
+2. Replace the custom `bar_val()` helper with `lib.bar`.
+3. Update `do_foo()` to call `lib.bar`.
 
 Here is the patch:
 
 *** Begin Patch
-*** Update File: mathweb/flask/app.py
+*** Update File: src/app.py
 @@
--from flask import Flask
+-from lib_xyz import XYZ
 -
--from flask import Flask
-+from flask import Flask
-+import math
+-from lib_xyz import XYZ
++from lib_xyz import XYZ
++import lib
 @@
--def factorial(n):
--    "compute factorial"
+-def bar_val(n):
+-    "compute value"
 -
--    if n == 0:
--        return 1
--    else:
--        return n * factorial(n-1)
-+def factorial(n):
-+    "compute factorial"
+-    return n + 1
++def bar_val(n):
++    "compute value"
 +
-+    return math.factorial(n)
-@@     def get_factorial(self, n):
--    return str(factorial(n))
-+    return str(math.factorial(n))
++    return lib.bar(n)
+@@     def do_foo(self, n):
+-    return str(bar_val(n))
++    return str(lib.bar(n))
 *** End Patch
 """,
         ),
         # --- Example 2 ---------------------------------------------------- #
         dict(
             role="user",
-            content="Refactor hello() into its own file.",
+            content="Refactor func_abc() into its own file.",
         ),
         dict(
             role="assistant",
-            content="""To make this change we need to modify `main.py` and create a new file `hello.py`:
+            content="""To make this change we need to modify `main.py` and create a new file `utils.py`:
 
-1. Create `hello.py` with the `hello()` function.
-2. Remove `hello()` from `main.py` and import it instead.
+1. Create `utils.py` with the `func_abc()` function.
+2. Remove `func_abc()` from `main.py` and import it instead.
 
 Here is the patch:
 
 *** Begin Patch
-*** Add File: hello.py
+*** Add File: utils.py
 +# A simple function
-+def hello():
-+    "print a greeting"
++def func_abc():
++    "perform a task"
 +
-+    print("hello")
++    print("done")
 *** Update File: main.py
 @@
--def hello():
--    "print a greeting"
+-def func_abc():
+-    "perform a task"
 -
--    print("hello")
-+from hello import hello
+-    print("done")
++from utils import func_abc
 *** End Patch
 """,
         ),

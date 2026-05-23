@@ -7,49 +7,46 @@ class EditBlockFencedPrompts(EditBlockPrompts):
     example_messages = [
         dict(
             role="user",
-            content="Change get_factorial() to use math.factorial",
+            content="Change do_foo() to use lib.bar",
         ),
         dict(
             role="assistant",
-            content="""To make this change we need to modify `mathweb/flask/app.py` to:
+            content="""To make this change we need to modify `src/app.py` to:
 
-1. Import the math package.
-2. Remove the existing factorial() function.
-3. Update get_factorial() to call math.factorial instead.
+1. Import the lib package.
+2. Remove the existing bar_val() function.
+3. Update do_foo() to call lib.bar instead.
 
 Here are the *SEARCH/REPLACE* blocks:
 
 {fence[0]}python
-mathweb/flask/app.py
+src/app.py
 <<<<<<< SEARCH
-from flask import Flask
+from lib_xyz import XYZ
 =======
-import math
-from flask import Flask
+import lib
+from lib_xyz import XYZ
 >>>>>>> REPLACE
 {fence[1]}
 
 {fence[0]}python
-mathweb/flask/app.py
+src/app.py
 <<<<<<< SEARCH
-def factorial(n):
-    "compute factorial"
+def bar_val(n):
+    "compute value"
 
-    if n == 0:
-        return 1
-    else:
-        return n * factorial(n-1)
+    return n + 1
 
 =======
 >>>>>>> REPLACE
 {fence[1]}
 
 {fence[0]}python
-mathweb/flask/app.py
+src/app.py
 <<<<<<< SEARCH
-    return str(factorial(n))
+    return str(bar_val(n))
 =======
-    return str(math.factorial(n))
+    return str(lib.bar(n))
 >>>>>>> REPLACE
 {fence[1]}
 <<<<<<< HEAD
@@ -57,37 +54,37 @@ mathweb/flask/app.py
         ),
         dict(
             role="user",
-            content="Refactor hello() into its own file.",
+            content="Refactor func_abc() into its own file.",
         ),
         dict(
             role="assistant",
-            content="""To make this change we need to modify `main.py` and make a new file `hello.py`:
+            content="""To make this change we need to modify `main.py` and make a new file `utils.py`:
 
-1. Make a new hello.py file with hello() in it.
-2. Remove hello() from main.py and replace it with an import.
+1. Make a new utils.py file with func_abc() in it.
+2. Remove func_abc() from main.py and replace it with an import.
 
 Here are the *SEARCH/REPLACE* blocks:
 
 {fence[0]}python
-hello.py
+utils.py
 <<<<<<< SEARCH
 =======
-def hello():
-    "print a greeting"
+def func_abc():
+    "perform a task"
 
-    print("hello")
+    print("done")
 >>>>>>> REPLACE
 {fence[1]}
 
 {fence[0]}python
 main.py
 <<<<<<< SEARCH
-def hello():
-    "print a greeting"
+def func_abc():
+    "perform a task"
 
-    print("hello")
+    print("done")
 =======
-from hello import hello
+from utils import func_abc
 >>>>>>> REPLACE
 {fence[1]}
 """,
@@ -97,7 +94,7 @@ from hello import hello
     system_reminder = """
 # *SEARCH/REPLACE block* Rules:
 
-Every *SEARCH/REPLACE block* must use this format:
+Every *SEARCH/REPLACE* block must use this format:
 1. The opening fence and code language, eg: {fence[0]}python
 2. The *FULL* file path alone on a line, verbatim. No bold asterisks, no quotes around it, no escaping of characters, etc.
 3. The start of search block: <<<<<<< SEARCH
