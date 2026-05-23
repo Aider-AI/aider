@@ -3126,3 +3126,9 @@
   use_repo_map: true
   use_temperature: false
   accepts_settings: ["reasoning_effort"]
+
+- name: mistral/mistral-small-2603
+  edit_format: diff
+  weak_model_name: mistral/mistral-small-latest
+  use_repo_map: true
+  reminder: sys
