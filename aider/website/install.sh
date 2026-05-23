@@ -6,52 +6,6 @@
 # option. This file may not be copied, modified, or distributed
 # except according to those terms.
 
-if [ "$KSH_VERSION" = 'Version JM 93t+ 2010-03-05' ]; then
-    # The version of ksh93 that ships with many illumos systems does not
-    # support the "local" extension.  Print a message rather than fail in
-    # subtle ways later on:
-    echo 'this installer does not work with this ksh93 version; please try bash!' >&2
-    exit 1
-fi
-
-set -u
-
-APP_NAME="uv"
-APP_VERSION="0.5.9"
-# Look for GitHub Enterprise-style base URL first
-if [ -n "${UV_INSTALLER_GHE_BASE_URL:-}" ]; then
-    INSTALLER_BASE_URL="$UV_INSTALLER_GHE_BASE_URL"
-else
-    INSTALLER_BASE_URL="${UV_INSTALLER_GITHUB_BASE_URL:-https://github.com}"
-fi
-if [ -n "${INSTALLER_DOWNLOAD_URL:-}" ]; then
-    ARTIFACT_DOWNLOAD_URL="$INSTALLER_DOWNLOAD_URL"
-else
-    ARTIFACT_DOWNLOAD_URL="${INSTALLER_BASE_URL}/astral-sh/uv/releases/download/0.5.9"
-fi
-PRINT_VERBOSE=${INSTALLER_PRINT_VERBOSE:-0}
-PRINT_QUIET=${INSTALLER_PRINT_QUIET:-0}
-if [ -n "${UV_NO_MODIFY_PATH:-}" ]; then
-    NO_MODIFY_PATH="$UV_NO_MODIFY_PATH"
-else
-    NO_MODIFY_PATH=${INSTALLER_NO_MODIFY_PATH:-0}
-fi
-if [ "${UV_DISABLE_UPDATE:-0}" = "1" ]; then
-    INSTALL_UPDATER=0
-else
-    INSTALL_UPDATER=1
-fi
-UNMANAGED_INSTALL="${UV_UNMANAGED_INSTALL:-}"
-if [ -n "${UNMANAGED_INSTALL}" ]; then
-    NO_MODIFY_PATH=1
-    INSTALL_UPDATER=0
-fi
-
-read -r RECEIPT <<EORECEIPT
-{"binaries":["CARGO_DIST_BINS"],"binary_aliases":{},"cdylibs":["CARGO_DIST_DYLIBS"],"cstaticlibs":["CARGO_DIST_STATICLIBS"],"install_layout":"unspecified","install_prefix":"AXO_INSTALL_PREFIX","modify_path":true,"provider":{"source":"cargo-dist","version":"0.25.2-prerelease.3"},"source":{"app_name":"uv","name":"uv","owner":"astral-sh","release_type":"github"},"version":"0.5.9"}
-EORECEIPT
-RECEIPT_HOME="${HOME}/.config/uv"
-
 usage() {
     # print help (this cat/EOF stuff is a "heredoc" string)
     cat <<EOF
@@ -1829,4 +1783,55 @@ verify_checksum() {
     fi
 }
 
-download_binary_and_run_installer "$@" || exit 1
+main() {
+    if [ "$KSH_VERSION" = 'Version JM 93t+ 2010-03-05' ]; then
+        # The version of ksh93 that ships with many illumos systems does not
+        # support the "local" extension.  Print a message rather than fail in
+        # subtle ways later on:
+        echo 'this installer does not work with this ksh93 version; please try bash!' >&2
+        exit 1
+    fi
+
+    set -u
+
+    APP_NAME="uv"
+    APP_VERSION="0.5.9"
+    # Look for GitHub Enterprise-style base URL first
+    if [ -n "${UV_INSTALLER_GHE_BASE_URL:-}" ]; then
+        INSTALLER_BASE_URL="$UV_INSTALLER_GHE_BASE_URL"
+    else
+        INSTALLER_BASE_URL="${UV_INSTALLER_GITHUB_BASE_URL:-https://github.com}"
+    fi
+    if [ -n "${INSTALLER_DOWNLOAD_URL:-}" ]; then
+        ARTIFACT_DOWNLOAD_URL="$INSTALLER_DOWNLOAD_URL"
+    else
+        ARTIFACT_DOWNLOAD_URL="${INSTALLER_BASE_URL}/astral-sh/uv/releases/download/0.5.9"
+    fi
+    PRINT_VERBOSE=${INSTALLER_PRINT_VERBOSE:-0}
+    PRINT_QUIET=${INSTALLER_PRINT_QUIET:-0}
+    if [ -n "${UV_NO_MODIFY_PATH:-}" ]; then
+        NO_MODIFY_PATH="$UV_NO_MODIFY_PATH"
+    else
+        NO_MODIFY_PATH=${INSTALLER_NO_MODIFY_PATH:-0}
+    fi
+    if [ "${UV_DISABLE_UPDATE:-0}" = "1" ]; then
+        INSTALL_UPDATER=0
+    else
+        INSTALL_UPDATER=1
+    fi
+    UNMANAGED_INSTALL="${UV_UNMANAGED_INSTALL:-}"
+    if [ -n "${UNMANAGED_INSTALL}" ]; then
+        NO_MODIFY_PATH=1
+        INSTALL_UPDATER=0
+    fi
+
+    read -r RECEIPT <<EORECEIPT
+{"binaries":["CARGO_DIST_BINS"],"binary_aliases":{},"cdylibs":["CARGO_DIST_DYLIBS"],"cstaticlibs":["CARGO_DIST_STATICLIBS"],"install_layout":"unspecified","install_prefix":"AXO_INSTALL_PREFIX","modify_path":true,"provider":{"source":"cargo-dist","version":"0.25.2-prerelease.3"},"source":{"app_name":"uv","name":"uv","owner":"astral-sh","release_type":"github"},"version":"0.5.9"}
+EORECEIPT
+RECEIPT_HOME="${HOME}/.config/uv"
+
+    download_binary_and_run_installer "$@" || exit 1
+}
+
+main "$@"
+
