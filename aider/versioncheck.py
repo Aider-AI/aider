@@ -12,6 +12,15 @@ from aider.dump import dump  # noqa: F401
 VERSION_CHECK_FNAME = Path.home() / ".aider" / "caches" / "versioncheck"
 
 
+def _touch_version_check_file(io=None, verbose=False):
+    try:
+        VERSION_CHECK_FNAME.parent.mkdir(parents=True, exist_ok=True)
+        VERSION_CHECK_FNAME.touch()
+    except OSError as err:
+        if verbose and io:
+            io.tool_warning(f"Unable to write version check cache: {err}")
+
+
 def install_from_main_branch(io):
     """
     Install the latest version of aider from the main branch of the GitHub repository.
@@ -84,15 +93,14 @@ def check_version(io, just_check=False, verbose=False):
             io.tool_output(f"Current version: {current_version}")
             io.tool_output(f"Latest version: {latest_version}")
 
-        is_update_available = packaging.version.parse(latest_version) > packaging.version.parse(
-            current_version
-        )
+        is_update_available = packaging.version.parse(
+            latest_version
+        ) > packaging.version.parse(current_version)
     except Exception as err:
         io.tool_error(f"Error checking pypi for new version: {err}")
         return False
     finally:
-        VERSION_CHECK_FNAME.parent.mkdir(parents=True, exist_ok=True)
-        VERSION_CHECK_FNAME.touch()
+        _touch_version_check_file(io, verbose)
 
     ###
     # is_update_available = True
