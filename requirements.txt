@@ -113,7 +113,7 @@ gitdb==4.0.12
     # via
     #   -c requirements/common-constraints.txt
     #   gitpython
-gitpython==3.1.46
+gitpython==3.1.49
     # via
     #   -c requirements/common-constraints.txt
     #   -r requirements/requirements.in
@@ -249,7 +249,7 @@ pexpect==4.9.0
     # via
     #   -c requirements/common-constraints.txt
     #   -r requirements/requirements.in
-pillow==12.1.1
+pillow==12.2.0
     # via
     #   -c requirements/common-constraints.txt
     #   -r requirements/requirements.in
@@ -451,7 +451,7 @@ typing-inspection==0.4.2
     #   -c requirements/common-constraints.txt
     #   fastapi
     #   pydantic
-urllib3==2.6.3
+urllib3==2.7.0
     # via
     #   -c requirements/common-constraints.txt
     #   requests

@@ -33,7 +33,7 @@ gitdb==4.0.12
     # via
     #   -c requirements/common-constraints.txt
     #   gitpython
-gitpython==3.1.46
+gitpython==3.1.49
     # via
     #   -c requirements/common-constraints.txt
     #   streamlit
@@ -77,7 +77,7 @@ pandas==2.3.3
     # via
     #   -c requirements/common-constraints.txt
     #   streamlit
-pillow==12.1.1
+pillow==12.2.0
     # via
     #   -c requirements/common-constraints.txt
     #   streamlit
@@ -149,7 +149,7 @@ tzdata==2025.3
     # via
     #   -c requirements/common-constraints.txt
     #   pandas
-urllib3==2.6.3
+urllib3==2.7.0
     # via
     #   -c requirements/common-constraints.txt
     #   requests
