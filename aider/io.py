@@ -29,6 +29,7 @@ from pygments.token import Token
 from rich.color import ColorParseError
 from rich.columns import Columns
 from rich.console import Console
+from rich.errors import MissingStyle
 from rich.markdown import Markdown
 from rich.style import Style as RichStyle
 from rich.text import Text
@@ -770,7 +771,14 @@ class InputOutput:
         else:
             style = dict()
 
-        self.console.print(Text(inp), **style)
+        try:
+            self.console.print(Text(inp), **style)
+        except (MissingStyle, ValueError):
+            self.tool_warning(
+                f"Invalid color: {self.user_input_color}, using default color."
+            )
+            self.user_input_color = None
+            self.console.print(Text(inp))
 
     def user_input(self, inp, log_only=True):
         if not log_only:
