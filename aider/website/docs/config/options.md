@@ -280,7 +280,7 @@ Default: .aider.input.history
 Environment variable: `AIDER_INPUT_HISTORY_FILE`  
 
 ### `--chat-history-file CHAT_HISTORY_FILE`
-Specify the chat history file (default: .aider.chat.history.md)  
+Specify the chat history file (default: .aider.chat.history.md). This setting is overridden if `chat-history-archive` is used.  
 Default: .aider.chat.history.md  
 Environment variable: `AIDER_CHAT_HISTORY_FILE`  
 
@@ -291,6 +291,15 @@ Environment variable: `AIDER_RESTORE_CHAT_HISTORY`
 Aliases:
   - `--restore-chat-history`
   - `--no-restore-chat-history`
+
+### `chat-history-archive CHAT_HISTORY_ARCHIVE_DIR`
+Specify a directory to archive dated chat history files (e.g., `.ai-chats`). If set, chat history files will be saved as `YYYY-MM-DD HH-MM.aider.md` (or `YYYY-MM-DD TASK_TITLE.aider.md` if `--task` is used) in this directory, overriding the `--chat-history-file` setting. This option is typically set in the `.aider.conf.yml` file or via the `AIDER_CHAT_HISTORY_ARCHIVE` environment variable.  
+Default: None  
+Environment variable: `AIDER_CHAT_HISTORY_ARCHIVE`  
+
+### `--task TASK_TITLE`
+Specify a title for the chat session. If `--chat-history-archive` is enabled, this title will be included in the archived chat history filename (e.g., `YYYY-MM-DD TASK_TITLE.aider.md`).  
+Environment variable: `AIDER_TASK`  
 
 ### `--llm-history-file LLM_HISTORY_FILE`
 Log the conversation with the LLM to this file (for example, .aider.llm.history)  

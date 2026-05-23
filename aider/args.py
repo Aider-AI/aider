@@ -293,6 +293,27 @@ def get_parser(default_config_files, git_root):
         help="Restore the previous chat history messages (default: False)",
     )
     group.add_argument(
+        "--chat-history-archive",
+        metavar="CHAT_HISTORY_ARCHIVE_DIR",
+        default=None,
+        help=(
+            "Specify a directory to archive dated chat history files (e.g., .ai-chats). If set,"
+            " chat history files will be saved as YYYY-MM-DD HH-MM.aider.md (or YYYY-MM-DD"
+            " TASK_TITLE.aider.md if --task is used) in this directory, overriding the"
+            " --chat-history-file setting."
+        ),
+    ).complete = shtab.DIR
+    group.add_argument(
+        "--task",
+        metavar="TASK_TITLE",
+        default=None,
+        help=(
+            "Specify a title for the chat session. If --chat-history-archive is enabled, this"
+            " title will be included in the archived chat history filename (e.g., YYYY-MM-DD"
+            " TASK_TITLE.aider.md)."
+        ),
+    )
+    group.add_argument(
         "--llm-history-file",
         metavar="LLM_HISTORY_FILE",
         default=None,
