@@ -11,6 +11,14 @@ description: Tips for AI pair programming with aider.
 Take a moment and think about which files will need to be changed.
 Aider can often figure out which files to edit all by itself, but the most efficient approach is for you to add the files to the chat.
 
+## Quickly adding all relevant files with Aider
+
+You can ask Aider to identify which files are involved in a particular feature. For example:
+
+“Tell me which files are relevant for the authentication logic.”
+
+Aider will list the matching files and present an easy one-click prompt to add them all to the chat at once.
+
 ## Don't add lots of files to the chat
 
 Just add the files you think need to be edited.
