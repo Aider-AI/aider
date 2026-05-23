@@ -91,8 +91,16 @@ def check_version(io, just_check=False, verbose=False):
         io.tool_error(f"Error checking pypi for new version: {err}")
         return False
     finally:
-        VERSION_CHECK_FNAME.parent.mkdir(parents=True, exist_ok=True)
-        VERSION_CHECK_FNAME.touch()
+        try:
+            VERSION_CHECK_FNAME.parent.mkdir(parents=True, exist_ok=True)
+            VERSION_CHECK_FNAME.touch()
+        except OSError:
+            # Some sandboxes set HOME=/ (or leave it unset and the resolver
+            # falls back to /), so VERSION_CHECK_FNAME ends up rooted in /
+            # and `mkdir` fails with PermissionError (#2865). The cache
+            # marker is purely an optimisation; skip it instead of crashing
+            # aider on startup.
+            pass
 
     ###
     # is_update_available = True
