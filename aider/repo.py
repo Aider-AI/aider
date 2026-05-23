@@ -336,7 +336,7 @@ class GitRepo:
         language_instruction = ""
         if user_language:
             language_instruction = f"\n- Is written in {user_language}."
-        system_content = system_content.format(language_instruction=language_instruction)
+        system_content = system_content.replace("{language_instruction}", language_instruction)
 
         commit_message = None
         for model in self.models:
