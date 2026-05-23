@@ -1,3 +1,4 @@
+import io as pyio
 import os
 import unittest
 from pathlib import Path
@@ -5,10 +6,16 @@ from unittest.mock import MagicMock, patch
 
 from prompt_toolkit.completion import CompleteEvent
 from prompt_toolkit.document import Document
+from rich.console import Console
 from rich.text import Text
 
 from aider.dump import dump  # noqa: F401
-from aider.io import AutoCompleter, ConfirmGroup, InputOutput
+from aider.io import (
+    AutoCompleter,
+    ConfirmGroup,
+    InputOutput,
+    make_console_output_resilient,
+)
 from aider.utils import ChdirTemporaryDirectory
 
 
@@ -382,6 +389,59 @@ class TestInputOutputMultilineMode(unittest.TestCase):
 
             # The invalid Unicode should be replaced with '?'
             self.assertEqual(converted_message, "Hello ?World")
+
+    def test_console_output_resilient_to_terminal_encoding(self):
+        """Output must not crash when the terminal can't encode a character.
+
+        Regression for issue #5128: on a non-UTF-8 console (e.g. Windows
+        cp1252) printing a character the codepage can't encode raised an
+        uncaught UnicodeEncodeError that killed the session. The console's
+        output stream should replace such characters instead of crashing.
+        """
+        # A strict cp1252 stream mirrors a legacy Windows console: it cannot
+        # encode characters like the right arrow (U+2192) and raises by default.
+        raw = pyio.BytesIO()
+        strict_stream = pyio.TextIOWrapper(raw, encoding="cp1252", errors="strict", newline="")
+
+        io = InputOutput(pretty=False, fancy_input=False)
+        io.console = Console(file=strict_stream, force_terminal=False)
+
+        # Sanity: without the fix the strict stream really does crash.
+        with self.assertRaises(UnicodeEncodeError):
+            Console(
+                file=pyio.TextIOWrapper(
+                    pyio.BytesIO(), encoding="cp1252", errors="strict", newline=""
+                ),
+                force_terminal=False,
+            ).print("arrow →")
+
+        make_console_output_resilient(io.console)
+
+        # All console-backed output paths must now survive unencodable chars.
+        io.tool_error("Build failed → retry")
+        io.tool_warning("Heads up ✓")
+        io.tool_output("Repo map:", "node ⋮ child")
+        strict_stream.flush()
+
+        written = raw.getvalue().decode("cp1252")
+        # Nothing crashed, the unencodable characters were replaced, and the
+        # surrounding text still made it through.
+        self.assertNotIn("→", written)
+        self.assertNotIn("✓", written)
+        self.assertNotIn("⋮", written)
+        self.assertIn("Build failed", written)
+        self.assertIn("retry", written)
+
+    def test_make_console_output_resilient_preserves_explicit_errors(self):
+        """An explicit non-strict error handler should be left untouched."""
+        stream = pyio.TextIOWrapper(
+            pyio.BytesIO(), encoding="cp1252", errors="backslashreplace", newline=""
+        )
+        console = Console(file=stream, force_terminal=False)
+
+        make_console_output_resilient(console)
+
+        self.assertEqual(stream.errors, "backslashreplace")
 
     def test_multiline_mode_restored_after_interrupt(self):
         """Test that multiline mode is restored after KeyboardInterrupt"""

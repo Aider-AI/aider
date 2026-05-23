@@ -54,6 +54,30 @@ def ensure_hash_prefix(color):
     return color
 
 
+def make_console_output_resilient(console):
+    """Replace characters the terminal can't encode instead of crashing.
+
+    On consoles whose codepage isn't UTF-8 (e.g. Windows cp1252), writing a
+    character the codec can't represent raises an uncaught UnicodeEncodeError
+    that takes down the whole session. Switching the output stream's error
+    handler to "replace" lets rich emit a placeholder for those characters and
+    keep going.
+    """
+    stream = getattr(console, "file", None)
+    reconfigure = getattr(stream, "reconfigure", None)
+    if reconfigure is None:
+        return
+    # Only relax a strict handler; leave any explicit preference untouched.
+    if getattr(stream, "errors", None) not in (None, "strict"):
+        return
+    try:
+        reconfigure(errors="replace")
+    except (ValueError, OSError):
+        # Some streams (already-detached, non-reconfigurable) refuse this; the
+        # existing per-message fallbacks still guard those cases.
+        pass
+
+
 def restore_multiline(func):
     """Decorator to restore multiline mode after function execution"""
 
@@ -364,6 +388,10 @@ class InputOutput:
             self.console = Console(force_terminal=False, no_color=True)  # non-pretty
             if self.is_dumb_terminal:
                 self.tool_output("Detected dumb terminal, disabling fancy input and pretty output.")
+
+        # Keep output from crashing on terminals that can't encode every
+        # character (e.g. Windows cp1252); unencodable chars are replaced.
+        make_console_output_resilient(self.console)
 
         self.file_watcher = file_watcher
         self.root = root
