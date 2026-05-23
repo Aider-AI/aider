@@ -449,6 +449,11 @@ class Commands:
 
         self.coder.choose_fence()
 
+        # Show progress indicator
+        total_files = len(self.coder.abs_fnames) + len(self.coder.abs_read_only_fnames)
+        if total_files > 20:
+            self.io.tool_output(f"Calculating tokens for {total_files} files...")
+
         # system messages
         main_sys = self.coder.fmt_system_prompt(self.coder.gpt_prompts.main_system)
         main_sys += "\n" + self.coder.fmt_system_prompt(self.coder.gpt_prompts.system_reminder)
@@ -480,27 +485,50 @@ class Commands:
         fence = "`" * 3
 
         file_res = []
-        # files
-        for fname in self.coder.abs_fnames:
-            relative_fname = self.coder.get_rel_fname(fname)
-            content = self.io.read_text(fname)
-            if is_image_file(relative_fname):
-                tokens = self.coder.main_model.token_count_for_image(fname)
-            else:
-                # approximate
-                content = f"{relative_fname}\n{fence}\n" + content + "{fence}\n"
-                tokens = self.coder.main_model.token_count(content)
-            file_res.append((tokens, f"{relative_fname}", "/drop to remove"))
+        # Process files with progress indication
+        total_editable_files = len(self.coder.abs_fnames)
+        total_readonly_files = len(self.coder.abs_read_only_fnames)
+        
+        # Display progress for editable files
+        if total_editable_files > 0:
+            if total_editable_files > 20:
+                self.io.tool_output(f"Calculating tokens for {total_editable_files} editable files...")
+            
+            # Calculate tokens for editable files
+            for i, fname in enumerate(self.coder.abs_fnames):
+                if i > 0 and i % 20 == 0 and total_editable_files > 20:
+                    self.io.tool_output(f"Processed {i}/{total_editable_files} editable files...")
+                
+                relative_fname = self.coder.get_rel_fname(fname)
+                content = self.io.read_text(fname)
+                if is_image_file(relative_fname):
+                    tokens = self.coder.main_model.token_count_for_image(fname)
+                else:
+                    # approximate
+                    content = f"{relative_fname}\n{fence}\n" + content + "{fence}\n"
+                    tokens = self.coder.main_model.token_count(content)
+                file_res.append((tokens, f"{relative_fname}", "/drop to remove"))
+        
+        # Display progress for read-only files
+        if total_readonly_files > 0:
+            if total_readonly_files > 20:
+                self.io.tool_output(f"Calculating tokens for {total_readonly_files} read-only files...")
+            
+            # Calculate tokens for read-only files
+            for i, fname in enumerate(self.coder.abs_read_only_fnames):
+                if i > 0 and i % 20 == 0 and total_readonly_files > 20:
+                    self.io.tool_output(f"Processed {i}/{total_readonly_files} read-only files...")
+                
+                relative_fname = self.coder.get_rel_fname(fname)
+                content = self.io.read_text(fname)
+                if content is not None and not is_image_file(relative_fname):
+                    # approximate
+                    content = f"{relative_fname}\n{fence}\n" + content + "{fence}\n"
+                    tokens = self.coder.main_model.token_count(content)
+                    file_res.append((tokens, f"{relative_fname} (read-only)", "/drop to remove"))
 
-        # read-only files
-        for fname in self.coder.abs_read_only_fnames:
-            relative_fname = self.coder.get_rel_fname(fname)
-            content = self.io.read_text(fname)
-            if content is not None and not is_image_file(relative_fname):
-                # approximate
-                content = f"{relative_fname}\n{fence}\n" + content + "{fence}\n"
-                tokens = self.coder.main_model.token_count(content)
-                file_res.append((tokens, f"{relative_fname} (read-only)", "/drop to remove"))
+        if total_files > 20:
+            self.io.tool_output("Token calculation complete. Generating report...")
 
         file_res.sort()
         res.extend(file_res)
@@ -516,7 +544,7 @@ class Commands:
         def fmt(v):
             return format(int(v), ",").rjust(width)
 
-        col_width = max(len(row[1]) for row in res)
+        col_width = max(len(row[1]) for row in res) if res else 0
 
         cost_pad = " " * cost_width
         total = 0
