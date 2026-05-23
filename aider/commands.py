@@ -203,8 +203,7 @@ class Commands:
         )
 
     def completions_model(self):
-        models = litellm.model_cost.keys()
-        return models
+        return models.get_known_models()
 
     def cmd_models(self, args):
         "Search the list of available models"
