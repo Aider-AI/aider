@@ -2230,3 +2230,87 @@
   versions: 0.69.2.dev
   seconds_per_case: 34.3
   total_cost: 17.6270
+
+- dirname: 2026-03-13-18-49-23--gemini-3.1-lite-run
+  test_cases: 225
+  model: vertex_ai/gemini-3.1-flash-lite-preview
+  edit_format: whole
+  commit_hash: 861a1e4-dirty
+  pass_rate_1: 28.9
+  pass_rate_2: 68.4
+  pass_num_1: 65
+  pass_num_2: 154
+  percent_cases_well_formed: 99.6
+  error_outputs: 1
+  num_malformed_responses: 1
+  num_with_malformed_responses: 1
+  user_asks: 182
+  lazy_comments: 0
+  syntax_errors: 0
+  indentation_errors: 0
+  exhausted_context_windows: 0
+  prompt_tokens: 2662478
+  completion_tokens: 526627
+  test_timeouts: 0
+  total_tests: 225
+  command: aider --model vertex_ai/gemini-3.1-flash-lite-preview
+  date: 2026-03-13
+  versions: 0.86.3.dev
+  seconds_per_case: 13.2
+  total_cost: 1.3450
+
+- dirname: 2026-03-14-01-55-58--gemini-3-flash-run
+  test_cases: 225
+  model: vertex_ai/gemini-3-flash-preview
+  edit_format: diff-fenced
+  commit_hash: 861a1e4-dirty
+  pass_rate_1: 62.2
+  pass_rate_2: 82.7
+  pass_num_1: 140
+  pass_num_2: 186
+  percent_cases_well_formed: 97.8
+  error_outputs: 5
+  num_malformed_responses: 5
+  num_with_malformed_responses: 5
+  user_asks: 128
+  lazy_comments: 0
+  syntax_errors: 0
+  indentation_errors: 0
+  exhausted_context_windows: 0
+  prompt_tokens: 2096742
+  completion_tokens: 219945
+  test_timeouts: 11
+  total_tests: 225
+  command: aider --model vertex_ai/gemini-3-flash-preview
+  date: 2026-03-14
+  versions: 0.86.3.dev
+  seconds_per_case: 9.9
+  total_cost: 1.5645
+
+- dirname: 2026-03-14-16-29-35--gemini-3-pro-run
+  test_cases: 225
+  model: vertex_ai/gemini-3.1-pro-preview
+  edit_format: diff-fenced
+  commit_hash: 861a1e4-dirty
+  pass_rate_1: 77.3
+  pass_rate_2: 94.2
+  pass_num_1: 174
+  pass_num_2: 212
+  percent_cases_well_formed: 99.6
+  error_outputs: 84
+  num_malformed_responses: 1
+  num_with_malformed_responses: 1
+  user_asks: 93
+  lazy_comments: 0
+  syntax_errors: 0
+  indentation_errors: 0
+  exhausted_context_windows: 9
+  prompt_tokens: 1365482
+  completion_tokens: 2522902
+  test_timeouts: 1
+  total_tests: 225
+  command: aider --model vertex_ai/gemini-3.1-pro-preview
+  date: 2026-03-14
+  versions: 0.86.3.dev
+  seconds_per_case: 197.4
+  total_cost: 32.8013
