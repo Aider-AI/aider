@@ -23,9 +23,9 @@ Reply only with the one-line commit message, without any additional text, explan
 
 # COMMANDS
 undo_command_reply = (
-    "I did `git reset --hard HEAD~1` to discard the last edits. Please wait for further"
-    " instructions before attempting that change again. Feel free to ask relevant questions about"
-    " why the changes were reverted."
+    "I did `git reset --soft HEAD~1` to undo the last commit. The changes from that commit are"
+    " now staged but uncommitted. Please wait for further instructions before attempting that"
+    " change again. Feel free to ask relevant questions about why the changes were reverted."
 )
 
 added_files = (
