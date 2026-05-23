@@ -110,6 +110,11 @@ def get_parser(default_config_files, git_root):
         ),
         default=[],
     )
+    group.add_argument(
+        "--warpgrep-api-key",
+        metavar="WARPGREP_API_KEY",
+        help="Specify the WarpGrep/Morph API key for /search command",
+    )
     group = parser.add_argument_group("Model settings")
     group.add_argument(
         "--list-models",
