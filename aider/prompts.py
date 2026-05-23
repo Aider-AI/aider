@@ -59,3 +59,17 @@ Start the summary with "I asked you...".
 """
 
 summary_prefix = "I spoke to you previously about a number of things.\n"
+
+# /summarize
+summarize_command_prompt = """
+Act as a senior software engineer. Create a detailed technical summary of our entire conversation and the work performed so far. {file_instruction}
+
+The summary must include:
+1. **Project Context**: The high-level goal of the current session.
+2. **Work Completed**: Specific changes made, including key functions or files modified.
+3. **Technical Discoveries**: Non-obvious insights gained about the codebase, logic constraints, or bugs identified during development.
+4. **Architectural Decisions**: Why specific approaches were taken over alternatives.
+5. **Pending Work**: A 'Next Steps' section with enough detail for a developer to resume immediately.
+
+Preserve all critical technical details and specific implementation patterns discussed. Write the output as a Markdown file.
+"""
