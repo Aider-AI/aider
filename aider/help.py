@@ -6,7 +6,7 @@ import shutil
 import warnings
 from pathlib import Path
 
-import importlib_resources
+import importlib.resources
 
 from aider import __version__, utils
 from aider.dump import dump  # noqa: F401
@@ -31,7 +31,7 @@ def install_help_extra(io):
 
 
 def get_package_files():
-    for path in importlib_resources.files("aider.website").iterdir():
+    for path in importlib.resources.files("aider.website").iterdir():
         if path.is_file():
             yield path
         elif path.is_dir():
@@ -112,7 +112,7 @@ def get_index():
                 continue
 
             doc = Document(
-                text=importlib_resources.files("aider.website")
+                text=importlib.resources.files("aider.website")
                 .joinpath(fname)
                 .read_text(encoding="utf-8"),
                 metadata=dict(

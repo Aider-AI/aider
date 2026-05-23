@@ -13,7 +13,7 @@ try:
 except ImportError:
     git = None
 
-import importlib_resources
+import importlib.resources
 import shtab
 from dotenv import load_dotenv
 from prompt_toolkit.enums import EditingMode
@@ -391,7 +391,7 @@ def register_litellm_models(git_root, model_metadata_fname, io, verbose=False):
     model_metadata_files = []
 
     # Add the resource file path
-    resource_metadata = importlib_resources.files("aider.resources").joinpath("model-metadata.json")
+    resource_metadata = importlib.resources.files("aider.resources").joinpath("model-metadata.json")
     model_metadata_files.append(str(resource_metadata))
 
     model_metadata_files += generate_search_path_list(
