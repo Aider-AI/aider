@@ -4,13 +4,14 @@ import re
 import time
 import unittest
 from pathlib import Path
+from unittest import mock
 
 import git
 
 from aider.dump import dump  # noqa: F401
 from aider.io import InputOutput
 from aider.models import Model
-from aider.repomap import RepoMap
+from aider.repomap import RepoMap, Tag
 from aider.utils import GitTemporaryDirectory, IgnorantTemporaryDirectory
 
 
@@ -269,6 +270,47 @@ print(my_function(3, 4))
             self.assertNotIn("test_file2.py", result)
             self.assertIn("test_file3.md", result)
             self.assertIn("test_file4.json", result)
+
+            # close the open cache files, so Windows won't error
+            del repo_map
+
+    def test_get_ranked_tags_falls_back_without_scipy(self):
+        with IgnorantTemporaryDirectory() as temp_dir:
+            file1 = os.path.join(temp_dir, "file1.py")
+            file2 = os.path.join(temp_dir, "file2.py")
+            Path(file1).write_text("def alpha():\n    return 1\n", encoding="utf-8")
+            Path(file2).write_text("def beta():\n    return alpha()\n", encoding="utf-8")
+
+            io = InputOutput()
+            repo_map = RepoMap(main_model=self.GPT35, root=temp_dir, io=io)
+
+            rel1 = repo_map.get_rel_fname(file1)
+            rel2 = repo_map.get_rel_fname(file2)
+
+            def fake_get_tags(fname, rel_fname):
+                if rel_fname == rel1:
+                    return [Tag(rel1, file1, 1, "alpha", "def")]
+                if rel_fname == rel2:
+                    return [
+                        Tag(rel2, file2, 1, "beta", "def"),
+                        Tag(rel2, file2, 2, "alpha", "ref"),
+                    ]
+                return []
+
+            fallback_ranks = {rel1: 0.4, rel2: 0.6}
+
+            with (
+                mock.patch.object(repo_map, "get_tags", side_effect=fake_get_tags),
+                mock.patch("networkx.pagerank", side_effect=ModuleNotFoundError("No module named 'scipy'")),
+                mock.patch(
+                    "networkx.algorithms.link_analysis.pagerank_alg._pagerank_python",
+                    return_value=fallback_ranks,
+                ) as mock_fallback,
+            ):
+                ranked_tags = repo_map.get_ranked_tags([], [file1, file2], set(), set())
+
+            self.assertTrue(ranked_tags)
+            mock_fallback.assert_called_once()
 
             # close the open cache files, so Windows won't error
             del repo_map
