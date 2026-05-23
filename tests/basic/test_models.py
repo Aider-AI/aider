@@ -6,6 +6,7 @@ from aider.models import (
     Model,
     ModelInfoManager,
     register_models,
+    sanitize_for_utf8,
     sanity_check_model,
     sanity_check_models,
 )
@@ -594,6 +595,38 @@ class TestModels(unittest.TestCase):
                 self.assertEqual(model.editor_model_name, editor_name)
                 self.assertEqual(model.editor_model.name, editor_name)
                 self.assertIn("reasoning_effort", model.accepts_settings)
+
+
+class TestSanitizeForUtf8(unittest.TestCase):
+    def test_replaces_surrogates_in_string(self):
+        text = "hello \udcb0 world"
+        result = sanitize_for_utf8(text)
+        self.assertNotIn("\udcb0", result)
+        self.assertIn("hello", result)
+        self.assertIn("world", result)
+
+    def test_handles_nested_messages(self):
+        messages = [
+            {"role": "user", "content": "test \udcb0 content"},
+            {"role": "assistant", "content": "clean content"},
+        ]
+        result = sanitize_for_utf8(messages)
+        # Should be JSON-encodable to UTF-8 without errors
+        import json
+
+        json.dumps(result).encode("utf-8")
+        self.assertNotIn("\udcb0", result[0]["content"])
+        self.assertEqual(result[1]["content"], "clean content")
+
+    def test_preserves_non_surrogate_unicode(self):
+        text = "hello \u4e16\u754c"  # Chinese characters
+        result = sanitize_for_utf8(text)
+        self.assertEqual(result, text)
+
+    def test_passes_through_non_string_types(self):
+        self.assertEqual(sanitize_for_utf8(42), 42)
+        self.assertIsNone(sanitize_for_utf8(None))
+        self.assertEqual(sanitize_for_utf8(True), True)
 
 
 if __name__ == "__main__":
