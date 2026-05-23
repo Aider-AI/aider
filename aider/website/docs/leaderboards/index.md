@@ -18,6 +18,9 @@ human intervention.
 
 <div id="controls-container" style="display: flex; align-items: center; width: 100%; max-width: 800px; margin: 10px auto; gap: 10px; box-sizing: border-box; padding: 0 5px; position: relative;">
   <input type="text" id="editSearchInput" placeholder="Search..." style="flex-grow: 1; padding: 8px; border: 1px solid #ddd; border-radius: 4px;">
+  <select id="editFormatFilter" style="padding: 8px; border: 1px solid #ccc; border-radius: 4px; font-size: 14px; height: 38px; box-sizing: border-box; cursor: pointer;">
+    <option value="">All formats</option>
+  </select>
   <div id="view-mode-toggle" style="display: inline-flex; border: 1px solid #ccc; border-radius: 4px;">
     <button id="mode-view-btn" class="mode-button active" data-mode="view" style="padding: 8px 8px; border: none; border-radius: 3px 0 0 3px; cursor: pointer; font-size: 14px; line-height: 1.5; min-width: 50px;">View</button>
     <button id="mode-select-btn" class="mode-button" data-mode="select" style="padding: 8px 8px; border: none; background-color: #f8f9fa; border-radius: 0; cursor: pointer; border-left: 1px solid #ccc; font-size: 14px; line-height: 1.5; min-width: 50px;">Select</button>
@@ -32,12 +35,12 @@ human intervention.
       <th style="padding: 8px; width: 40px; text-align: center; vertical-align: middle;">
         <input type="checkbox" id="select-all-checkbox" style="display: none; cursor: pointer; vertical-align: middle;">
       </th> <!-- Header checkbox added here -->
-      <th style="padding: 8px; text-align: left;">Model</th>
-      <th style="padding: 8px; text-align: center; width: 25%">Percent correct</th>
-      <th style="padding: 8px; text-align: center; width: 25%">Cost</th>
+      <th class="sortable" data-sort-type="text" style="padding: 8px; text-align: left;">Model</th>
+      <th class="sortable" data-sort-type="number" style="padding: 8px; text-align: center; width: 25%">Percent correct</th>
+      <th class="sortable" data-sort-type="number" style="padding: 8px; text-align: center; width: 25%">Cost</th>
       <th style="padding: 8px; text-align: left;" class="col-command">Command</th>
-      <th style="padding: 8px; text-align: center; width: 10%" class="col-conform">Correct edit format</th>
-      <th style="padding: 8px; text-align: left; width: 10%" class="col-edit-format">Edit Format</th>
+      <th class="sortable col-conform" data-sort-type="number" style="padding: 8px; text-align: center; width: 10%">Correct edit format</th>
+      <th class="sortable col-edit-format" data-sort-type="text" style="padding: 8px; text-align: left; width: 10%">Edit Format</th>
     </tr>
   </thead>
   <tbody>
@@ -243,6 +246,20 @@ human intervention.
   }
   .mode-button:not(.active):hover {
     background-color: #e2e6ea; /* Slightly darker grey on hover */
+  }
+
+  /* --- Sortable Column Styles --- */
+  th.sortable {
+    cursor: pointer;
+    user-select: none;
+  }
+  th.sortable:hover {
+    background-color: #e9ecef;
+  }
+  .sort-indicator {
+    font-size: 10px;
+    margin-left: 2px;
+    color: #666;
   }
 
   /* Style for highlighted rows in view mode */

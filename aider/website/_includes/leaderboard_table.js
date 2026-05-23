@@ -6,6 +6,7 @@ document.addEventListener('DOMContentLoaded', function() {
   const allMainRows = document.querySelectorAll('tr[id^="main-row-"]');
   const allDetailsRows = document.querySelectorAll('tr[id^="details-"]');
   const searchInput = document.getElementById('editSearchInput');
+  const editFormatFilter = document.getElementById('editFormatFilter');
   const modeViewButton = document.getElementById('mode-view-btn');
   const modeDetailButton = document.getElementById('mode-detail-btn');
   const modeSelectButton = document.getElementById('mode-select-btn');
@@ -15,14 +16,94 @@ document.addEventListener('DOMContentLoaded', function() {
   const defaultTitle = "Aider polyglot coding leaderboard";
   const filteredTitle = "Aider polyglot coding benchmark results (selected)";
 
-  function applySearchFilter() {
-    const searchTerm = searchInput.value.toLowerCase();
+  // Filter state separate from mode state
+  const filterState = { search: '', editFormat: '', sortColumn: 2, sortAsc: false };
+
+  // Populate edit format dropdown from table data
+  if (editFormatFilter) {
+    const formats = new Set();
+    allMainRows.forEach(row => {
+      const cell = row.querySelector('td.col-edit-format');
+      if (cell) {
+        const val = cell.textContent.trim();
+        if (val) formats.add(val);
+      }
+    });
+    Array.from(formats).sort().forEach(fmt => {
+      const opt = document.createElement('option');
+      opt.value = fmt;
+      opt.textContent = fmt;
+      editFormatFilter.appendChild(opt);
+    });
+  }
+
+  function getSortValue(row, colIndex) {
+    const cell = row.children[colIndex];
+    if (!cell) return '';
+    // Cost column: use data attribute for precision
+    if (cell.classList.contains('cost-bar-cell')) {
+      const costBar = cell.querySelector('.cost-bar');
+      return costBar ? parseFloat(costBar.dataset.cost || '0') : 0;
+    }
+    const text = (cell.querySelector('span') || cell).textContent.trim();
+    const num = parseFloat(text.replace(/[$%,]/g, ''));
+    if (!isNaN(num)) return num;
+    return text.toLowerCase();
+  }
+
+  function sortTable() {
+    const tbody = document.querySelector('table tbody');
+    const colIndex = filterState.sortColumn;
+    const asc = filterState.sortAsc;
+
+    const pairs = Array.from(allMainRows).map(mainRow => {
+      const idx = mainRow.id.replace('main-row-', '');
+      const detailRow = document.getElementById('details-' + idx);
+      return { mainRow, detailRow, val: getSortValue(mainRow, colIndex) };
+    });
+
+    pairs.sort((a, b) => {
+      if (a.val < b.val) return asc ? -1 : 1;
+      if (a.val > b.val) return asc ? 1 : -1;
+      return 0;
+    });
+
+    pairs.forEach(({ mainRow, detailRow }) => {
+      tbody.appendChild(mainRow);
+      if (detailRow) tbody.appendChild(detailRow);
+    });
+
+    updateSortIndicators();
+  }
+
+  function updateSortIndicators() {
+    document.querySelectorAll('th.sortable .sort-indicator').forEach(el => el.remove());
+    const headers = document.querySelectorAll('table thead th');
+    const th = headers[filterState.sortColumn];
+    if (th && th.classList.contains('sortable')) {
+      const indicator = document.createElement('span');
+      indicator.className = 'sort-indicator';
+      indicator.textContent = filterState.sortAsc ? ' ▲' : ' ▼';
+      th.appendChild(indicator);
+    }
+  }
+
+  function applyFilters() {
     allMainRows.forEach(row => {
       const textContent = row.textContent.toLowerCase();
       const detailsRow = document.getElementById(row.id.replace('main-row-', 'details-'));
-      const matchesSearch = textContent.includes(searchTerm);
 
-      if (matchesSearch) {
+      // Text search match
+      const matchesSearch = !filterState.search || textContent.includes(filterState.search);
+
+      // Edit format match
+      let matchesFormat = true;
+      if (filterState.editFormat) {
+        const formatCell = row.querySelector('td.col-edit-format');
+        matchesFormat = formatCell && formatCell.textContent.trim() === filterState.editFormat;
+      }
+
+      if (matchesSearch && matchesFormat) {
         row.classList.remove('hidden-by-search');
         if (detailsRow) detailsRow.classList.remove('hidden-by-search');
       } else {
@@ -30,12 +111,14 @@ document.addEventListener('DOMContentLoaded', function() {
         if (detailsRow) detailsRow.classList.add('hidden-by-search');
       }
     });
-    // After applying search filter, re-apply view mode filter and update select-all state
+    // After applying filters, re-apply view mode filter and update select-all state
     updateTableView(currentMode);
     if (currentMode === 'select') {
         updateSelectAllCheckboxState();
     }
-    
+
+    sortTable();
+
     // Update cost bars and ticks since visible rows may have changed
     updateCostBars();
     updateCostTicks();
@@ -379,7 +462,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
         // Update table view and apply filters
         updateTableView(newMode);
-        applySearchFilter(); // Re-apply search filter when mode changes
+        applyFilters(); // Re-apply filters when mode changes
       }
     });
   });
@@ -443,7 +526,35 @@ document.addEventListener('DOMContentLoaded', function() {
   });
 
   // Listener for search input
-  searchInput.addEventListener('input', applySearchFilter);
+  searchInput.addEventListener('input', function() {
+    filterState.search = this.value.toLowerCase();
+    applyFilters();
+  });
+
+  // Listener for edit format filter
+  if (editFormatFilter) {
+    editFormatFilter.addEventListener('change', function() {
+      filterState.editFormat = this.value;
+      applyFilters();
+    });
+  }
+
+  // Listener for sortable column headers
+  document.querySelectorAll('th.sortable').forEach(th => {
+    th.addEventListener('click', function() {
+      const colIndex = Array.from(this.parentNode.children).indexOf(this);
+      if (filterState.sortColumn === colIndex) {
+        filterState.sortAsc = !filterState.sortAsc;
+      } else {
+        filterState.sortColumn = colIndex;
+        // Default: descending for numbers, ascending for text
+        filterState.sortAsc = this.dataset.sortType === 'text';
+      }
+      sortTable();
+      updateCostBars();
+      updateCostTicks();
+    });
+  });
 
   // Add toggle functionality for details (Modified to respect modes)
   const toggleButtons = document.querySelectorAll('.toggle-details');
@@ -504,7 +615,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
   // --- Initial Setup ---
   updateTableView('view'); // Initialize view to 'view' mode
-  applySearchFilter(); // Apply initial search filter (if any text is pre-filled or just to set initial state)
+  applyFilters(); // Apply initial filters (if any text is pre-filled or just to set initial state)
 
 // Close button functionality
 const closeControlsBtn = document.getElementById('close-controls-btn');
