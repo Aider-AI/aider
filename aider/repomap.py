@@ -296,7 +296,10 @@ class RepoMap:
         code = self.io.read_text(fname)
         if not code:
             return
-        tree = parser.parse(bytes(code, "utf-8"))
+        try:
+            tree = parser.parse(bytes(code, "utf-8"))
+        except TypeError:
+            tree = parser.parse(code)
 
         # Run the tags queries
         captures = self._run_captures(Query(language, query_scm), tree.root_node)

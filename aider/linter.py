@@ -217,7 +217,10 @@ def basic_lint(fname, code):
         print(f"Unable to load parser: {err}")
         return
 
-    tree = parser.parse(bytes(code, "utf-8"))
+    try:
+        tree = parser.parse(bytes(code, "utf-8"))
+    except TypeError:
+        tree = parser.parse(code)
 
     try:
         errors = traverse_tree(tree.root_node)
