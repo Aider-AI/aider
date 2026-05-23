@@ -680,17 +680,29 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
     fnames = [str(Path(fn).resolve()) for fn in all_files]
     read_only_fnames = []
     for fn in args.read or []:
-        path = Path(fn).expanduser().resolve()
-        if path.is_dir():
-            read_only_fnames.extend(str(f) for f in path.rglob("*") if f.is_file())
-        else:
-            read_only_fnames.append(str(path))
+        try:
+            path = Path(fn).expanduser().resolve()
+        except OSError:
+            io.tool_warning(f"Unable to resolve read-only file: {fn}")
+            continue
+        try:
+            if path.is_dir():
+                read_only_fnames.extend(str(f) for f in path.rglob("*") if f.is_file())
+            else:
+                read_only_fnames.append(str(path))
+        except OSError:
+            io.tool_warning(f"Unable to access: {path}, skipping.")
+            continue
 
     if len(all_files) > 1:
         good = True
         for fname in all_files:
-            if Path(fname).is_dir():
-                io.tool_error(f"{fname} is a directory, not provided alone.")
+            try:
+                if Path(fname).is_dir():
+                    io.tool_error(f"{fname} is a directory, not provided alone.")
+                    good = False
+            except OSError:
+                io.tool_error(f"Unable to access: {fname}")
                 good = False
         if not good:
             io.tool_output(
@@ -701,9 +713,18 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
 
     git_dname = None
     if len(all_files) == 1:
-        if Path(all_files[0]).is_dir():
+        try:
+            is_single_dir = Path(all_files[0]).is_dir()
+        except OSError:
+            is_single_dir = False
+        if is_single_dir:
             if args.git:
-                git_dname = str(Path(all_files[0]).resolve())
+                try:
+                    git_dname = str(Path(all_files[0]).resolve())
+                except OSError:
+                    io.tool_error(f"Unable to resolve directory: {all_files[0]}")
+                    analytics.event("exit", reason="Unable to resolve directory")
+                    return 1
                 fnames = []
             else:
                 io.tool_error(f"{all_files[0]} is a directory, but --no-git selected.")
