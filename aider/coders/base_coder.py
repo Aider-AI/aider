@@ -888,6 +888,13 @@ class Coder:
                     self.show_undo_hint()
                 except KeyboardInterrupt:
                     self.keyboard_interrupt()
+                except EOFError:
+                    raise
+                except Exception:
+                    traceback.print_exc()
+                    self.io.tool_error(
+                        "Unhandled error: Please copy the traceback above and report it."
+                    )
         except EOFError:
             return
 
