@@ -519,7 +519,7 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
     if not args.verify_ssl:
         import httpx
 
-        os.environ["SSL_VERIFY"] = ""
+        os.environ["SSL_VERIFY"] = "False"
         litellm._load_litellm()
         litellm._lazy_module.client_session = httpx.Client(verify=False)
         litellm._lazy_module.aclient_session = httpx.AsyncClient(verify=False)
