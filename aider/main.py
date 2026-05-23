@@ -282,7 +282,7 @@ def parse_lint_cmds(lint_cmds, io):
         if re.match(r"^[a-z]+:.*", lint_cmd):
             pieces = lint_cmd.split(":")
             lang = pieces[0]
-            cmd = lint_cmd[len(lang) + 1 :]
+            cmd = lint_cmd[len(lang) + 1:]
             lang = lang.strip()
         else:
             lang = None
@@ -554,6 +554,8 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
             args.yes_always,
             args.input_history_file,
             args.chat_history_file,
+            args.chat_history_max_size,
+            args.chat_history_max_files,
             input=input,
             output=output,
             user_input_color=args.user_input_color,

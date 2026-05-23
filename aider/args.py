@@ -287,6 +287,20 @@ def get_parser(default_config_files, git_root):
         help=f"Specify the chat history file (default: {default_chat_history_file})",
     ).complete = shtab.FILE
     group.add_argument(
+        "--chat-history-max-size",
+        type=int,
+        default=1024 * 1024,  # 1MB
+        metavar="SIZE",
+        help="Maximum size of a single chat history file in bytes (default: 1MB)",
+    )
+    group.add_argument(
+        "--chat-history-max-files",
+        type=int,
+        default=10,
+        metavar="NUM",
+        help="Maximum number of chat history files to keep (default: 10)",
+    )
+    group.add_argument(
         "--restore-chat-history",
         action=argparse.BooleanOptionalAction,
         default=False,
