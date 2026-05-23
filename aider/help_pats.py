@@ -13,7 +13,7 @@ exclude_website_pats = [
     ".jekyll-metadata",
     "Gemfile.lock",
     "Gemfile",
-    "_config.yml",
+    "_.aider\config.yml",
     "**/OLD/**",
     "OLD/**",
 ]
