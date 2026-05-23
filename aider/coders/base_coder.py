@@ -339,6 +339,7 @@ class Coder:
         auto_copy_context=False,
         auto_accept_architect=True,
     ):
+        print("DEBUG: base_coder.py is loaded and running")
         # Fill in a dummy Analytics if needed, but it is never .enable()'d
         self.analytics = analytics if analytics is not None else Analytics()
 
@@ -1568,6 +1569,12 @@ class Coder:
 
             try:
                 if self.reply_completed():
+                    shared_output = self.run_shell_commands()
+                    if shared_output:
+                        self.cur_messages += [
+                            dict(role="user", content=shared_output),
+                            dict(role="assistant", content="Ok"),
+                        ]
                     return
             except KeyboardInterrupt:
                 interrupted = True
