@@ -57,7 +57,7 @@ JetBrains IDE.
 
 ## Discover available models
 
-Copilot hosts many models (OpenAI, Anthropic, Google, etc).  
+Copilot hosts many models (OpenAI, Anthropic, Google, etc).
 List the models your subscription allows with:
 
 ```bash
@@ -67,12 +67,12 @@ curl -s https://api.githubcopilot.com/models \
   -H "Copilot-Integration-Id: vscode-chat" | jq -r '.data[].id'
 ```
 
-Each returned ID can be used with aider by **prefixing it with `openai/`**:
+Each returned ID can be used with aider by **prefixing it with `github_copilot/`**:
 
 ```bash
-aider --model openai/gpt-4o
+aider --model github_copilot/gpt-5.2
 # or
-aider --model openai/claude-3.7-sonnet-thought
+aider --model github_copilot/claude-sonnet-4.5
 ```
 
 ---
@@ -84,18 +84,39 @@ aider --model openai/claude-3.7-sonnet-thought
 cd /to/your/project
 
 # talk to Copilot
-aider --model openai/gpt-4o
+aider --model github_copilot/gpt-5-mini
 ```
 
 ---
 
-## Optional config file (`~/.aider.conf.yml`)
+## Config files
 
+### `~/.aider.model.settings.yml` [**required**]
 ```yaml
-openai-api-base: https://api.githubcopilot.com
-openai-api-key:  "<oauth_token>"
-model:           openai/gpt-4o
-weak-model:      openai/gpt-4o-mini
+- name: github_copilot/claude-sonnet-4.5
+  extra_params:
+    max_tokens: 80000
+    extra_headers:
+      User-Agent: GithubCopilot/1.388.0
+      Editor-Plugin-Version: copilot/1.388.0
+      Editor-Version: vscode/1.105.0
+      Copilot-Integration-Id: copilot-chat
+
+- name: github_copilot/gpt-5-mini
+  extra_params:
+    max_tokens: 80000
+    extra_headers:
+      User-Agent: GithubCopilot/1.388.0
+      Editor-Plugin-Version: copilot/1.388.0
+      Editor-Version: vscode/1.105.0
+      Copilot-Integration-Id: copilot-chat
+
+```
+
+### `~/.aider.conf.yml` [optional]
+```yaml
+model:           github_copilot/claude-sonnet-4.5
+weak-model:      github_copilot/gpt-5-mini
 show-model-warnings: false
 ```
 
@@ -103,7 +124,7 @@ show-model-warnings: false
 
 ## FAQ
 
-* Calls made through aider are billed through your Copilot subscription  
+* Calls made through aider are billed through your Copilot subscription
   (aider will still print *estimated* costs).
 * The Copilot docs explicitly allow third-party “agents” that hit this API – aider is playing by
   the rules.
