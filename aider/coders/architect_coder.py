@@ -9,12 +9,26 @@ class ArchitectCoder(AskCoder):
     auto_accept_architect = False
 
     def reply_completed(self):
-        content = self.partial_response_content
+        # Collect all architect assistant responses from this turn.
+        # When check_for_file_mentions triggers a reflection loop, the original
+        # response with code changes is in cur_messages but only the reflection
+        # response ends up in partial_response_content.
+        content_parts = []
+        for msg in getattr(self, "cur_messages", []):
+            if msg["role"] == "assistant" and msg.get("content"):
+                content_parts.append(msg["content"])
+
+        if content_parts:
+            content = "\n\n".join(content_parts)
+        else:
+            content = self.partial_response_content
 
         if not content or not content.strip():
             return
 
-        if not self.auto_accept_architect and not self.io.confirm_ask("Edit the files?"):
+        if not self.auto_accept_architect and not self.io.confirm_ask(
+            "Edit the files?"
+        ):
             return
 
         kwargs = dict()
