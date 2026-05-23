@@ -122,6 +122,39 @@ class ChatSummary:
 
         raise ValueError("summarizer unexpectedly failed for all models")
 
+    def summarize_chat_history_markdown(self, text):
+        messages = []
+        assistant = []
+
+        for line in text.splitlines(keepends=True):
+            if line.startswith("# "):
+                continue
+            if line.startswith(">"):
+                continue
+            if line.startswith("#### /"):
+                continue
+
+            if line.startswith("#### "):
+                if assistant:
+                    content = "".join(assistant)
+                    if content.strip():
+                        messages.append(dict(role="assistant", content=content))
+                    assistant = []
+
+                content = line[5:]
+                if content.strip() and content.strip() != "<blank>":
+                    messages.append(dict(role="user", content=content))
+                continue
+
+            assistant.append(line)
+
+        if assistant:
+            content = "".join(assistant)
+            if content.strip():
+                messages.append(dict(role="assistant", content=content))
+
+        return self.summarize(messages[-40:])
+
 
 def main():
     parser = argparse.ArgumentParser()
