@@ -265,6 +265,13 @@ def get_parser(default_config_files, git_root):
         default=2,
         help="Multiplier for map tokens when no files are specified (default: 2)",
     )
+    group.add_argument(
+        "--max-reflections",
+        metavar="MAX_REFLECTIONS",
+        default=3,
+        type=int,
+        help="Maximum number of reflection iterations allowed when the LLM response needs fixing (default: 3)",
+    )
 
     ##########
     group = parser.add_argument_group("History Files")

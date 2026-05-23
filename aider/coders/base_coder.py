@@ -98,7 +98,6 @@ class Coder:
     num_malformed_responses = 0
     last_keyboard_interrupt = None
     num_reflections = 0
-    max_reflections = 3
     edit_format = None
     yield_stream = False
     temperature = None
@@ -338,6 +337,7 @@ class Coder:
         file_watcher=None,
         auto_copy_context=False,
         auto_accept_architect=True,
+        max_reflections=3,
     ):
         # Fill in a dummy Analytics if needed, but it is never .enable()'d
         self.analytics = analytics if analytics is not None else Analytics()
@@ -352,6 +352,7 @@ class Coder:
 
         self.auto_copy_context = auto_copy_context
         self.auto_accept_architect = auto_accept_architect
+        self.max_reflections = max_reflections
 
         self.ignore_mentions = ignore_mentions
         if not self.ignore_mentions:
