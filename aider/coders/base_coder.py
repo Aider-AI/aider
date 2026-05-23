@@ -1802,6 +1802,16 @@ class Coder:
             )
             self.chat_completion_call_hashes.append(hash_object.hexdigest())
 
+            # Surface API-level errors from the provider response (e.g., rate
+            # limits or insufficient credits from OpenRouter) that LiteLLM may
+            # wrap in a response object rather than raising as an exception.
+            if hasattr(completion, "error") and completion.error:
+                err_msg = completion.error.get(
+                    "message", str(completion.error)
+                )
+                self.io.tool_error(f"Provider error: {err_msg}")
+                return
+
             if self.stream:
                 yield from self.show_send_output_stream(completion)
             else:
@@ -1972,7 +1982,12 @@ class Coder:
                 yield text
 
         if not received_content:
-            self.io.tool_warning("Empty response received from LLM. Check your provider account?")
+            self.io.tool_warning(
+                "No content received from LLM. "
+                "This may be due to rate limits, insufficient credits, "
+                "or the provider API being temporarily unavailable. "
+                "Use --verbose to see more details."
+            )
 
     def live_incremental_response(self, final):
         show_resp = self.render_incremental_response(final)
