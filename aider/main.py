@@ -503,6 +503,16 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
     # Parse again to include any arguments that might have been defined in .env
     args = parser.parse_args(argv)
 
+    if args.one_shot:
+        args.git = False
+        args.yes_always = True
+        args.map_tokens = 0
+    if args.edit_format is None:
+        args.edit_format = args.one_shot_mode
+    if args.one_shot_mode == "ask":
+        args.read = (args.read or []) + args.files
+        args.files = []
+
     if args.shell_completions:
         # Ensure parser.prog is set for shtab, though it should be by default
         parser.prog = "aider"
@@ -1132,6 +1142,20 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
             pass
         analytics.event("exit", reason="Completed --message")
         return
+
+    if args.one_shot:
+        io.add_to_input_history(args.one_shot)
+        io.tool_output()
+        try:
+            coder.run(with_message=args.one_shot)
+        except SwitchCoder:
+            pass
+        except Exception as err:
+            io.tool_error(str(err))
+            analytics.event("exit", reason="one-shot error")
+            return 1
+        analytics.event("exit", reason="Completed --one-shot")
+        return 0
 
     if args.message_file:
         try:

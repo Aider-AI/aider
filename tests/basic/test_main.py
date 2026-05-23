@@ -45,6 +45,71 @@ class TestMain(TestCase):
         self.input_patcher.stop()
         self.webbrowser_patcher.stop()
 
+    def test_one_shot_no_git(self):
+        """--one-shot should disable git"""
+        with patch("aider.main.Coder.create") as mock_coder_create:
+            mock_coder = MagicMock()
+            mock_coder.show_announcements = MagicMock()
+            mock_coder_create.return_value = mock_coder
+            main(
+                ["--one-shot", "say hello", "--no-pretty"], input=DummyInput(), output=DummyOutput()
+            )
+            kwargs = mock_coder_create.call_args.kwargs
+            self.assertFalse(kwargs.get("use_git"))
+
+    def test_one_shot_runs_prompt(self):
+        """--one-shot should pass the prompt to coder.run"""
+        with patch("aider.main.Coder.create") as mock_coder_create:
+            mock_coder = MagicMock()
+            mock_coder.show_announcements = MagicMock()
+            mock_coder_create.return_value = mock_coder
+            main(
+                ["--one-shot", "say hello", "--no-pretty"], input=DummyInput(), output=DummyOutput()
+            )
+            mock_coder.run.assert_called_once_with(with_message="say hello")
+
+    def test_one_shot_exits_after_response(self):
+        """--one-shot should not enter the interactive loop"""
+        with patch("aider.main.Coder.create") as mock_coder_create:
+            mock_coder = MagicMock()
+            mock_coder.show_announcements = MagicMock()
+            mock_coder_create.return_value = mock_coder
+            main(
+                ["--one-shot", "say hello", "--no-pretty"], input=DummyInput(), output=DummyOutput()
+            )
+            self.assertEqual(mock_coder.run.call_count, 1)
+
+    def test_one_shot_ask_mode_files_readonly(self):
+        """--one-shot ask mode should add files as read-only"""
+        Path("hello.py").write_text("def add(a, b): return a + b")
+        with patch("aider.main.Coder.create") as mock_coder_create:
+            mock_coder = MagicMock()
+            mock_coder.show_announcements = MagicMock()
+            mock_coder_create.return_value = mock_coder
+            main(
+                ["--one-shot", "explain this", "hello.py", "--no-pretty"],
+                input=DummyInput(),
+                output=DummyOutput(),
+            )
+            kwargs = mock_coder_create.call_args.kwargs
+            self.assertEqual(kwargs.get("fnames"), [])
+            self.assertIn(str(Path("hello.py").resolve()), kwargs.get("read_only_fnames"))
+
+    def test_one_shot_code_mode_files_editable(self):
+        """--one-shot code mode should keep files editable"""
+        Path("hello.py").write_text("def add(a, b): return a + b")
+        with patch("aider.main.Coder.create") as mock_coder_create:
+            mock_coder = MagicMock()
+            mock_coder.show_announcements = MagicMock()
+            mock_coder_create.return_value = mock_coder
+            main(
+                ["--one-shot", "add logs", "hello.py", "--one-shot-mode", "code", "--no-pretty"],
+                input=DummyInput(),
+                output=DummyOutput(),
+            )
+            kwargs = mock_coder_create.call_args.kwargs
+            self.assertIn(str(Path("hello.py").resolve()), kwargs.get("fnames"))
+
     def test_main_with_empty_dir_no_files_on_command(self):
         main(["--no-git", "--exit", "--yes"], input=DummyInput(), output=DummyOutput())
 
