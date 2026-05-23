@@ -71,6 +71,31 @@ def restore_multiline(func):
     return wrapper
 
 
+def without_input_history(func):
+    """Decorator to temporarily disable history saving for the prompt session buffer."""
+
+    @functools.wraps(func)
+    def wrapper(self, *args, **kwargs):
+        orig_buf_append = None
+        try:
+            orig_buf_append = self.prompt_session.default_buffer.append_to_history
+            self.prompt_session.default_buffer.append_to_history = (
+                lambda: None
+            )  # Replace with no-op
+        except AttributeError:
+            pass
+
+        try:
+            return func(self, *args, **kwargs)
+        except Exception:
+            raise
+        finally:
+            if orig_buf_append:
+                self.prompt_session.default_buffer.append_to_history = orig_buf_append
+
+    return wrapper
+
+
 class CommandCompletionException(Exception):
     """Raised when a command should use the normal autocompleter instead of
     command-specific completion."""
@@ -804,6 +829,7 @@ class InputOutput:
         return False
 
     @restore_multiline
+    @without_input_history
     def confirm_ask(
         self,
         question,
