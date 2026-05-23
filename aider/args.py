@@ -149,6 +149,14 @@ def get_parser(default_config_files, git_root):
         ),
     )
     group.add_argument(
+        "--enable-thinking",
+        type=str,
+        help=(
+            "Switches between thinking and non-thinking modes for models that support it."
+            " (default: not set)"
+        ),
+    )
+    group.add_argument(
         "--verify-ssl",
         action=argparse.BooleanOptionalAction,
         default=True,
