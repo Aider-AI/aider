@@ -170,6 +170,22 @@ class TestScrape(unittest.TestCase):
         # Assert that html_to_markdown was called with the HTML content
         scraper.html_to_markdown.assert_called_once_with(html_content)
 
+    def test_scrape_falls_back_when_playwright_missing(self):
+        mock_print_error = MagicMock()
+        scraper = Scraper(print_error=mock_print_error, playwright_available=True)
+        scraper.scrape_with_playwright = MagicMock(
+            side_effect=ModuleNotFoundError("No module named 'playwright'")
+        )
+        scraper.scrape_with_httpx = MagicMock(return_value=("fallback content", "text/plain"))
+
+        result = scraper.scrape("https://example.com")
+
+        self.assertEqual(result, "fallback content")
+        self.assertFalse(scraper.playwright_available)
+        scraper.scrape_with_httpx.assert_called_once_with("https://example.com")
+        mock_print_error.assert_called_once()
+        self.assertIn("Playwright unavailable, falling back to httpx", mock_print_error.call_args.args[0])
+
 
 if __name__ == "__main__":
     unittest.main()
