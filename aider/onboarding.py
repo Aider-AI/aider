@@ -49,6 +49,11 @@ def try_to_select_default_model():
     Returns:
         The name of the selected model, or None if no suitable default is found.
     """
+    # EUrouter
+    eurouter_key = os.environ.get("EUROUTER_API_KEY")
+    if eurouter_key:
+        return "eurouter/claude-sonnet-4-5"
+
     # Special handling for OpenRouter
     openrouter_key = os.environ.get("OPENROUTER_API_KEY")
     if openrouter_key:
