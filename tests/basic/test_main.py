@@ -276,8 +276,8 @@ class TestMain(TestCase):
         with patch("aider.coders.Coder.create") as MockCoder:
             main([], input=DummyInput())
             _, kwargs = MockCoder.call_args
-            assert kwargs["dirty_commits"] is True
-            assert kwargs["auto_commits"] is True
+            assert kwargs["dirty_commits"] is False
+            assert kwargs["auto_commits"] is False
 
         with patch("aider.coders.Coder.create") as MockCoder:
             main(["--no-dirty-commits"], input=DummyInput())
@@ -740,7 +740,7 @@ class TestMain(TestCase):
                 output=DummyOutput(),
                 return_coder=True,
             )
-            self.assertTrue(coder.suggest_shell_commands)
+            self.assertFalse(coder.suggest_shell_commands)
 
     def test_suggest_shell_commands_disabled(self):
         with GitTemporaryDirectory():

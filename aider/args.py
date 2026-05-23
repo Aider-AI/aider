@@ -178,8 +178,8 @@ def get_parser(default_config_files, git_root):
     group.add_argument(
         "--auto-accept-architect",
         action=argparse.BooleanOptionalAction,
-        default=True,
-        help="Enable/disable automatic acceptance of architect changes (default: True)",
+        default=False,
+        help="Enable/disable automatic acceptance of architect changes (default: False)",
     )
     group.add_argument(
         "--weak-model",
@@ -439,14 +439,14 @@ def get_parser(default_config_files, git_root):
     group.add_argument(
         "--auto-commits",
         action=argparse.BooleanOptionalAction,
-        default=True,
-        help="Enable/disable auto commit of LLM changes (default: True)",
+        default=False,
+        help="Enable/disable auto commit of LLM changes (default: False)",
     )
     group.add_argument(
         "--dirty-commits",
         action=argparse.BooleanOptionalAction,
-        default=True,
-        help="Enable/disable commits when repo is found dirty (default: True)",
+        default=False,
+        help="Enable/disable commits when repo is found dirty (default: False)",
     )
     group.add_argument(
         "--attribute-author",
@@ -542,8 +542,8 @@ def get_parser(default_config_files, git_root):
     group.add_argument(
         "--auto-lint",
         action=argparse.BooleanOptionalAction,
-        default=True,
-        help="Enable/disable automatic linting after changes (default: True)",
+        default=False,
+        help="Enable/disable automatic linting after changes (default: False)",
     )
     group.add_argument(
         "--test-cmd",
@@ -806,8 +806,8 @@ def get_parser(default_config_files, git_root):
     group.add_argument(
         "--suggest-shell-commands",
         action=argparse.BooleanOptionalAction,
-        default=True,
-        help="Enable/disable suggesting shell commands (default: True)",
+        default=False,
+        help="Enable/disable suggesting shell commands (default: False)",
     )
     group.add_argument(
         "--fancy-input",

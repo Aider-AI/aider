@@ -114,7 +114,7 @@ class Coder:
     add_cache_headers = False
     cache_warming_thread = None
     num_cache_warming_pings = 0
-    suggest_shell_commands = True
+    suggest_shell_commands = False
     detect_urls = True
     ignore_mentions = None
     chat_language = None
@@ -2204,7 +2204,7 @@ class Coder:
             return
 
         if not Path(full_path).exists():
-            if not self.io.confirm_ask("Create new file?", subject=path):
+            if not self.io.confirm_ask("Create new file?", subject=path, explicit_yes_required=True):
                 self.io.tool_output(f"Skipping edits to {path}")
                 return
 
@@ -2226,6 +2226,7 @@ class Coder:
         if not self.io.confirm_ask(
             "Allow edits to file that has not been added to the chat?",
             subject=path,
+            explicit_yes_required=True,
         ):
             self.io.tool_output(f"Skipping edits to {path}")
             return

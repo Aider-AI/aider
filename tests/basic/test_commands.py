@@ -1115,8 +1115,8 @@ class TestCommands(TestCase):
             coder = Coder.create(self.GPT35, None, io)
             commands = Commands(io, coder)
 
-            # Mock the io.prompt_ask method to simulate user input
-            io.prompt_ask = lambda *args, **kwargs: "y"
+            # Mock confirm_ask to approve the shell command
+            io.confirm_ask = lambda *args, **kwargs: True
 
             # Test the cmd_run method with a command that should not raise an error
             commands.cmd_run("exit 1", add_on_nonzero_exit=True)
@@ -1131,6 +1131,9 @@ class TestCommands(TestCase):
 
             coder = Coder.create(self.GPT35, None, io)
             commands = Commands(io, coder)
+
+            # Mock confirm_ask to approve the shell command
+            io.confirm_ask = lambda *args, **kwargs: True
 
             # Define a command that prints to stderr and exits with non-zero status
             test_cmd = "echo 'error output' >&2 && exit 1"
