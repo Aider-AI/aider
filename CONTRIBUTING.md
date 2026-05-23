@@ -39,6 +39,30 @@ All contributors will be asked to complete the agreement as part of the PR proce
 
 ## Setting up a Development Environment
 
+### Install system dependencies
+
+There are some system-level dependencies that you need to install before setting up the development environment. Be sure to reload your shell or source your shell config (e.g., `source ~/.bash_profile`) after installing these dependencies.
+
+#### OpenBLAS
+
+Use [homebrew](https://brew.sh/) to install openblas:
+
+```
+brew install openblas
+```
+
+And add these flags to your `~/.bash_profile` or `~/.zshrc` (if you use zsh):
+
+```
+export LDFLAGS="-L/opt/homebrew/opt/openblas/lib"
+export CPPFLAGS="-I/opt/homebrew/opt/openblas/include"
+export PKG_CONFIG_PATH="/opt/homebrew/opt/openblas/lib/pkgconfig"
+```
+
+#### Cargo
+
+Install Cargo, Rust package manager: https://rustup.rs/
+
 ### Clone the Repository
 
 ```
@@ -50,7 +74,11 @@ cd aider
 
 It is recommended to create a virtual environment outside of the repository to keep your development environment isolated.
 
-#### Using `venv` (Python 3.9 and later)
+#### Manage your python version (Python 3.13+)
+
+Unfortunately, Python 3.13 is not compatible with tree-sitter 0.21.3, so you have to make sure to use Python 3.12. Check your current python version with `python3 --version`. Python 3.12 may be available on your system as `python3.12` — use it in the section below instead of `python` to install virtual environment. You can also manage python versions with `pyenv`.
+
+#### Using `venv` (Python 3.9-3.12)
 
 ```
 python -m venv /path/to/venv
