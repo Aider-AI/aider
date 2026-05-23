@@ -116,7 +116,8 @@ class Voice:
     def raw_record_and_transcribe(self, history, language):
         self.q = queue.Queue()
 
-        temp_wav = tempfile.mktemp(suffix=".wav")
+        fd, temp_wav = tempfile.mkstemp(suffix=".wav")
+        os.close(fd)
 
         try:
             sample_rate = int(self.sd.query_devices(self.device_id, "input")["default_samplerate"])
@@ -146,13 +147,14 @@ class Voice:
         # Check file size and offer to convert to mp3 if too large
         file_size = os.path.getsize(temp_wav)
         if file_size > 24.9 * 1024 * 1024 and self.audio_format == "wav":
-            print("\nWarning: {temp_wav} is too large, switching to mp3 format.")
+            print(f"\nWarning: {temp_wav} is too large, switching to mp3 format.")
             use_audio_format = "mp3"
 
         filename = temp_wav
         if use_audio_format != "wav":
             try:
-                new_filename = tempfile.mktemp(suffix=f".{use_audio_format}")
+                fd, new_filename = tempfile.mkstemp(suffix=f".{use_audio_format}")
+                os.close(fd)
                 audio = AudioSegment.from_wav(temp_wav)
                 audio.export(new_filename, format=use_audio_format)
                 os.remove(temp_wav)
@@ -164,17 +166,23 @@ class Voice:
             except Exception as e:
                 print(f"Unexpected error during audio conversion: {e}")
 
-        with open(filename, "rb") as fh:
-            try:
-                transcript = litellm.transcription(
-                    model="whisper-1", file=fh, prompt=history, language=language
-                )
-            except Exception as err:
-                print(f"Unable to transcribe {filename}: {err}")
-                return
-
-        if filename != temp_wav:
-            os.remove(filename)
+        try:
+            with open(filename, "rb") as fh:
+                try:
+                    transcript = litellm.transcription(
+                        model="whisper-1", file=fh, prompt=history, language=language
+                    )
+                except Exception as err:
+                    print(f"Unable to transcribe {filename}: {err}")
+                    return
+        finally:
+            # Clean up all temp files
+            for path in (temp_wav, filename):
+                if path and os.path.exists(path):
+                    try:
+                        os.remove(path)
+                    except OSError:
+                        pass
 
         text = transcript.text
         return text
