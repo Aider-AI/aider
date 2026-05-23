@@ -14,7 +14,7 @@ from prompt_toolkit.output import DummyOutput
 from aider.coders import Coder
 from aider.dump import dump  # noqa: F401
 from aider.io import InputOutput
-from aider.main import check_gitignore, load_dotenv_files, main, setup_git
+from aider.main import check_gitignore, get_git_root, load_dotenv_files, main, setup_git
 from aider.utils import GitTemporaryDirectory, IgnorantTemporaryDirectory, make_repo
 
 
@@ -125,6 +125,12 @@ class TestMain(TestCase):
         gitignore = Path.cwd() / ".gitignore"
         self.assertTrue(gitignore.exists())
         self.assertEqual(".aider*", gitignore.read_text().splitlines()[0])
+
+    @patch("aider.main.git.Repo")
+    def test_get_git_root_handles_missing_current_directory(self, mock_repo):
+        mock_repo.side_effect = git.exc.NoSuchPathError("missing cwd")
+
+        self.assertIsNone(get_git_root())
 
     def test_check_gitignore(self):
         with GitTemporaryDirectory():
