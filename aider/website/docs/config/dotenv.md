@@ -388,11 +388,17 @@ cog.outl("```")
 ## Specify the input device name for voice recording
 #AIDER_VOICE_INPUT_DEVICE=
 
-#################
-# Other settings:
+######################
+# Playwright settings:
 
 ## Never prompt for or attempt to install Playwright for web scraping (default: False).
 #AIDER_DISABLE_PLAYWRIGHT=false
+
+## Specify the WebSocket endpoint for a Playwright browser server to connect to (default: None, use the locally installed Playwright).
+#AIDER_PLAYWRIGHT_WS_ENDPOINT=
+
+#################
+# Other settings:
 
 ## specify a file to edit (can be used multiple times)
 #AIDER_FILE=
