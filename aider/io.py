@@ -1009,7 +1009,20 @@ class InputOutput:
             style["reverse"] = bold
 
         style = RichStyle(**style)
-        self.console.print(*messages, style=style)
+        try:
+            self.console.print(*messages, style=style)
+        except UnicodeEncodeError:
+            # Legacy Windows terminals on non-UTF-8 code pages (cp1251 etc.)
+            # can't encode characters like U+22EE that Rich uses for tree/box
+            # drawing. Fall back to ASCII-safe output to keep the tool usable.
+            # Matches the fallback already present in _tool_message below.
+            ascii_messages = [
+                str(m.plain if isinstance(m, Text) else m)
+                .encode("ascii", errors="replace")
+                .decode("ascii")
+                for m in messages
+            ]
+            self.console.print(*ascii_messages, style=style)
 
     def get_assistant_mdstream(self):
         mdargs = dict(
