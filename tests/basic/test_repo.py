@@ -620,6 +620,80 @@ class TestRepo(unittest.TestCase):
             self.assertNotIn(str(root_file), tracked_files)
             self.assertNotIn(str(another_subdir_file), tracked_files)
 
+    @unittest.skipIf(platform.system() == "Windows", "Symlinks may require special permissions on Windows")
+    def test_get_tracked_files_excludes_symlinks_to_directories(self):
+        with GitTemporaryDirectory():
+            raw_repo = git.Repo()
+            raw_repo.config_writer().set_value("user", "name", "Test User").release()
+            raw_repo.config_writer().set_value("user", "email", "test@example.com").release()
+
+            # Create a regular directory with a file
+            Path("some-dir").mkdir()
+            Path("some-dir/some-file.txt").write_text("content")
+
+            # Create a regular file
+            Path("regular-file.txt").write_text("hello")
+
+            # Create a symlink to a file
+            Path("symlink-to-file.txt").symlink_to("regular-file.txt")
+
+            # Create a symlink to a directory
+            Path("symlink-to-dir").symlink_to("some-dir")
+
+            raw_repo.git.add("-A")
+            raw_repo.git.commit("-m", "initial commit")
+
+            git_repo = GitRepo(InputOutput(), None, ".")
+            tracked_files = git_repo.get_tracked_files()
+
+            # Regular files should be included
+            self.assertIn("regular-file.txt", tracked_files)
+            self.assertIn(str(Path("some-dir/some-file.txt")), tracked_files)
+
+            # Symlink to a file should be included
+            self.assertIn("symlink-to-file.txt", tracked_files)
+
+            # Symlink to a directory should be excluded
+            for f in tracked_files:
+                self.assertFalse(
+                    f == "symlink-to-dir" or f.startswith("symlink-to-dir"),
+                    f"Symlink-to-directory path '{f}' should not appear in tracked files",
+                )
+
+    @unittest.skipIf(platform.system() == "Windows", "Symlinks may require special permissions on Windows")
+    def test_get_tracked_files_excludes_symlinks_to_directories_staged(self):
+        with GitTemporaryDirectory():
+            raw_repo = git.Repo()
+            raw_repo.config_writer().set_value("user", "name", "Test User").release()
+            raw_repo.config_writer().set_value("user", "email", "test@example.com").release()
+
+            # Create a directory and a symlink to it, but don't commit — only stage
+            Path("real-dir").mkdir()
+            Path("real-dir/file.txt").write_text("content")
+            Path("link-to-dir").symlink_to("real-dir")
+            Path("normal.txt").write_text("normal")
+
+            # Create a symlink to a file
+            Path("link-to-file.txt").symlink_to("normal.txt")
+
+            raw_repo.git.add("-A")
+            # Don't commit — test the staged-files path
+
+            git_repo = GitRepo(InputOutput(), None, ".")
+            tracked_files = git_repo.get_tracked_files()
+
+            self.assertIn("normal.txt", tracked_files)
+            self.assertIn(str(Path("real-dir/file.txt")), tracked_files)
+
+            # Symlink to a file should be included
+            self.assertIn("link-to-file.txt", tracked_files)
+
+            for f in tracked_files:
+                self.assertFalse(
+                    f == "link-to-dir" or f.startswith("link-to-dir"),
+                    f"Symlink-to-directory path '{f}' should not appear in tracked files",
+                )
+
     @patch("aider.models.Model.simple_send_with_retries")
     def test_noop_commit(self, mock_send):
         mock_send.return_value = '"a good commit message"'
