@@ -34,7 +34,20 @@ class LazyLiteLLM:
         if VERBOSE:
             print("Loading litellm...")
 
-        self._lazy_module = importlib.import_module("litellm")
+        try:
+            self._lazy_module = importlib.import_module("litellm")
+        except (ImportError, ModuleNotFoundError) as e:
+            # Handle missing dependencies for litellm (e.g., tiktoken)
+            if "tiktoken" in str(e):
+                raise ModuleNotFoundError(
+                    "Missing required dependency 'tiktoken' for litellm. "
+                    "Please reinstall aider with: pip install --upgrade --force-reinstall aider-chat"
+                ) from e
+            else:
+                raise ModuleNotFoundError(
+                    f"Failed to import litellm due to missing dependency: {e}. "
+                    "Please reinstall aider with: pip install --upgrade --force-reinstall aider-chat"
+                ) from e
 
         self._lazy_module.suppress_debug_info = True
         self._lazy_module.set_verbose = False
