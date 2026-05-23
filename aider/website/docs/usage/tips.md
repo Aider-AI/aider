@@ -68,7 +68,7 @@ You can provide up-to-date documentation in a few ways:
 - Paste doc snippets into the chat.
 - Include a URL to docs in your chat message
 and aider will scrape and read it. For example: `Add a submit button like this https://ui.shadcn.com/docs/components/button`. 
-- Use the [`/read` command](commands.html) to read doc files into the chat from anywhere on your filesystem.
+- Use the [`/read-only` command](commands.html) to read doc files into the chat from anywhere on your filesystem.
 - If you have coding conventions or standing instructions you want aider to follow, consider using a [conventions file](conventions.html).
 
 ## Interrupting & inputting

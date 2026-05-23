@@ -91,23 +91,23 @@ There are some things you can try if you need to work with
 multiple interrelated repos:
 
 - You can run aider in repo-A where you need to make a change
-and use `/read` to add some files read-only from another repo-B.
+and use `/read-only` to add some files read-only from another repo-B.
 This can let aider see key functions or docs from the other repo.
 - You can run `aider --show-repo-map > map.md` within each
 repo to create repo maps.
 You could then run aider in repo-A and 
-use `/read ../path/to/repo-B/map.md` to share
+use `/read-only ../path/to/repo-B/map.md` to share
 a high level map of the other repo.
 - You can use aider to write documentation about a repo.
 Inside each repo, you could run `aider docs.md`
 and work with aider to write some markdown docs.
 Then while using aider to edit repo-A
-you can `/read ../path/to/repo-B/docs.md` to
+you can `/read-only ../path/to/repo-B/docs.md` to
 read in those docs from the other repo.
 - In repo A, ask aider to write a small script that demonstrates
 the functionality you want to use in repo B.
 Then when you're using aider in repo B, you can 
-`/read` in that script.
+`/read-only` in that script.
 
 ## How do I turn on the repository map?
 
