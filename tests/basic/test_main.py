@@ -126,6 +126,36 @@ class TestMain(TestCase):
         self.assertTrue(gitignore.exists())
         self.assertEqual(".aider*", gitignore.read_text().splitlines()[0])
 
+    def test_setup_git_permission_error(self):
+        io = InputOutput(pretty=False, yes=True)
+
+        from unittest.mock import patch
+
+        with patch("aider.main.git.Repo") as MockRepo:
+            mock_repo = MockRepo.return_value
+            mock_repo.git.config.side_effect = git.exc.GitCommandError("git config", 1)
+            mock_repo.config_writer.side_effect = PermissionError(
+                "Permission denied: '.git/config.lock'"
+            )
+            mock_repo.working_tree_dir = self.tempdir
+
+            git_root = setup_git(self.tempdir, io)
+            self.assertEqual(git_root, self.tempdir)
+
+    def test_setup_git_oserror(self):
+        io = InputOutput(pretty=False, yes=True)
+
+        from unittest.mock import patch
+
+        with patch("aider.main.git.Repo") as MockRepo:
+            mock_repo = MockRepo.return_value
+            mock_repo.git.config.side_effect = git.exc.GitCommandError("git config", 1)
+            mock_repo.config_writer.side_effect = OSError("Read-only file system")
+            mock_repo.working_tree_dir = self.tempdir
+
+            git_root = setup_git(self.tempdir, io)
+            self.assertEqual(git_root, self.tempdir)
+
     def test_check_gitignore(self):
         with GitTemporaryDirectory():
             os.environ["GIT_CONFIG_GLOBAL"] = "globalgitconfig"
