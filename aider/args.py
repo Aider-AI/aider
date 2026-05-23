@@ -19,6 +19,19 @@ from aider.deprecated import add_deprecated_model_args
 from .dump import dump  # noqa: F401
 
 
+class YAMLConfigFileParserIgnoreProfiles(configargparse.YAMLConfigFileParser):
+    """
+    A custom YAMLConfigFileParser that removes the top-level 'profiles' key from its result. We use
+    this to avoid having to set ignore_unknown_config_file_keys=True on our
+    configargparse.ArgumentParser, which would fail to flag invalid config keys to the user.
+    """
+
+    def parse(self, stream):
+        result = super().parse(stream)
+        result.pop("profiles", None)
+        return result
+
+
 def resolve_aiderignore_path(path_str, git_root=None):
     path = Path(path_str)
     if path.is_absolute():
@@ -37,7 +50,7 @@ def get_parser(default_config_files, git_root):
         description="aider is AI pair programming in your terminal",
         add_config_file_help=True,
         default_config_files=default_config_files,
-        config_file_parser_class=configargparse.YAMLConfigFileParser,
+        config_file_parser_class=YAMLConfigFileParserIgnoreProfiles,
         auto_env_var_prefix="AIDER_",
     )
     # List of valid edit formats for argparse validation & shtab completion.
@@ -129,6 +142,11 @@ def get_parser(default_config_files, git_root):
         default=".aider.model.metadata.json",
         help="Specify a file with context window and costs for unknown models",
     ).complete = shtab.FILE
+    group.add_argument(
+        "--profile",
+        metavar="PROFILE",
+        help="Include settings from a named profile in the 'profiles' section of the config",
+    )
     group.add_argument(
         "--alias",
         action="append",
