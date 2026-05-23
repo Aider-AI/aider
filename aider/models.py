@@ -254,6 +254,8 @@ class ModelInfoManager:
             try:
                 litellm_info = litellm.get_model_info(model)
             except Exception as ex:
+                if str(ex).startswith("OllamaError:"):
+                    raise
                 if "model_prices_and_context_window.json" not in str(ex):
                     print(str(ex))
 
@@ -339,6 +341,7 @@ class Model(ModelSettings):
         self.max_chat_history_tokens = 1024
         self.weak_model = None
         self.editor_model = None
+        self.ollama_error = None
 
         # Find the extra settings
         self.extra_model_settings = next(
@@ -369,7 +372,13 @@ class Model(ModelSettings):
             self.get_editor_model(editor_model, editor_edit_format)
 
     def get_model_info(self, model):
-        return model_info_manager.get_model_info(model)
+        try:
+            return model_info_manager.get_model_info(model)
+        except Exception as ex:
+            if str(ex).startswith("OllamaError:"):
+                self.ollama_error = ex
+                return {}
+            raise
 
     def _copy_fields(self, source):
         """Helper to copy fields from a ModelSettings instance to self"""
