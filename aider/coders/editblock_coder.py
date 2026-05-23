@@ -584,6 +584,16 @@ def find_filename(lines, fence, valid_fnames):
             if fname == Path(vfn).name:
                 return vfn
 
+    # Check for doubled-prefix hallucinations like ".claude/.claude/foo.json"
+    # when valid_fnames contains ".claude/foo.json". Try progressively shorter
+    # suffixes against valid_fnames.
+    for fname in filenames:
+        parts = Path(fname).parts
+        for i in range(1, len(parts)):
+            candidate = str(Path(*parts[i:]))
+            if candidate in valid_fnames:
+                return candidate
+
     # Perform fuzzy matching with valid_fnames
     for fname in filenames:
         close_matches = difflib.get_close_matches(fname, valid_fnames, n=1, cutoff=0.8)

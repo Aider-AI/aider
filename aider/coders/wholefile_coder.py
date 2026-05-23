@@ -68,8 +68,20 @@ class WholeFileCoder(Coder):
                     # Did gpt prepend a bogus dir? It especially likes to
                     # include the path/to prefix from the one-shot example in
                     # the prompt.
-                    if fname and fname not in chat_files and Path(fname).name in chat_files:
-                        fname = Path(fname).name
+                    if fname and fname not in chat_files:
+                        if Path(fname).name in chat_files:
+                            fname = Path(fname).name
+                        else:
+                            # Catch doubled-prefix hallucinations like
+                            # ".claude/.claude/foo.json" when chat_files contains
+                            # ".claude/foo.json". Try progressively shorter
+                            # suffixes against chat_files.
+                            parts = Path(fname).parts
+                            for i in range(1, len(parts)):
+                                candidate = str(Path(*parts[i:]))
+                                if candidate in chat_files:
+                                    fname = candidate
+                                    break
                 if not fname:  # blank line? or ``` was on first line i==0
                     if saw_fname:
                         fname = saw_fname

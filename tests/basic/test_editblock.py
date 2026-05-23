@@ -49,6 +49,15 @@ class TestUtils(unittest.TestCase):
         lines = [r"\windows__init__.py", "```"]
         self.assertEqual(eb.find_filename(lines, fence, valid_fnames), r"\windows\__init__.py")
 
+        # Test doubled-prefix hallucination where fuzzy match falls below cutoff.
+        # LLM emits "sub/dir/sub/dir/foo.py"; valid contains "sub/dir/foo.py".
+        # SequenceMatcher ratio is 0.778 (< 0.8 cutoff) so fuzzy match misses;
+        # basename "foo.py" doesn't equal the full LLM-emitted path. Suffix-strip
+        # is the only mechanism that recovers the canonical path here.
+        valid_fnames_doubled = ["sub/dir/foo.py", "other.py"]
+        lines = ["sub/dir/sub/dir/foo.py", "```"]
+        self.assertEqual(eb.find_filename(lines, fence, valid_fnames_doubled), "sub/dir/foo.py")
+
     # fuzzy logic disabled v0.11.2-dev
     def __test_replace_most_similar_chunk(self):
         whole = "This is a sample text.\nAnother line of text.\nYet another line.\n"
