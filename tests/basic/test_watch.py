@@ -72,6 +72,28 @@ def test_gitignore_patterns():
     tmp_gitignore.unlink()
 
 
+def test_gitignore_patterns_read_utf8(tmp_path, monkeypatch):
+    from aider.watch import load_gitignores
+
+    gitignore = tmp_path / ".gitignore"
+    gitignore.write_text(
+        "ignored.txt\n# Не включать временные файлы MS\n",
+        encoding="utf-8",
+    )
+    original_open = open
+
+    def cp1252_default_open(file, mode="r", *args, **kwargs):
+        if Path(file) == gitignore and "b" not in mode and kwargs.get("encoding") is None:
+            kwargs["encoding"] = "cp1252"
+        return original_open(file, mode, *args, **kwargs)
+
+    monkeypatch.setattr("builtins.open", cp1252_default_open)
+
+    spec = load_gitignores([gitignore])
+
+    assert spec.match_file("ignored.txt")
+
+
 def test_get_roots_to_watch(tmp_path):
     # Create a test directory structure
     (tmp_path / "included").mkdir()
