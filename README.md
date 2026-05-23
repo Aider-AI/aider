@@ -119,6 +119,23 @@ aider --model sonnet --api-key anthropic=<key>
 aider --model o3-mini --api-key openai=<key>
 ```
 
+### Configuration
+
+Create a `.aider.conf.yml` file to configure model aliases and other settings:
+
+```yaml
+# Use a list to define multiple aliases
+alias:
+  - "fast:gpt-4o-mini"
+  - "smart:o3-mini"
+  - "hacker:claude-3-sonnet-20240229"
+
+# Default model
+model: "gpt-4o-mini"
+```
+
+> **Note:** YAML does not support repeated keys. Always use a list format for multiple aliases.
+
 See the [installation instructions](https://aider.chat/docs/install.html) and [usage documentation](https://aider.chat/docs/usage.html) for more details.
 
 ## More Information
