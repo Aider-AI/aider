@@ -18,6 +18,31 @@
   versions: 0.31.2-dev
   seconds_per_case: 55.7
   total_cost: 0.0000
+- dirname: 2024-10-22-05-21-41--gemini-1.5-flash-refactoring-whole
+  test_cases: 89
+  model: gemini/gemini-1.5-flash-002
+  edit_format: whole
+  commit_hash: feb1c38
+  pass_rate_1: 41.6
+  pass_rate_2: 42.7
+  pass_rate_3: 43.8
+  pass_rate_4: 44.9
+  percent_cases_well_formed: 100.0
+  error_outputs: 0
+  num_malformed_responses: 0
+  num_with_malformed_responses: 0
+  user_asks: 558
+  lazy_comments: 28
+  syntax_errors: 106
+  indentation_errors: 20
+  exhausted_context_windows: 0
+  test_timeouts: 0
+  command: aider --model gemini/gemini-1.5-flash-002
+  date: 2024-10-22
+  versions: 0.59.2.dev
+  seconds_per_case: 231.1
+  total_cost: 2.3894
+
 - dirname: 2024-05-04-17-45-53--refac-opus
   test_cases: 83
   model: claude-3-opus-20240229
