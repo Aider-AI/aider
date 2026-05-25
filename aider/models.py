@@ -116,6 +116,8 @@ MODEL_ALIASES = {
     "r1": "deepseek/deepseek-reasoner",
     "gemini-2.5-pro": "gemini/gemini-2.5-pro",
     "gemini-3-pro-preview": "gemini/gemini-3-pro-preview",
+    "gemini-3.1-pro-preview": "gemini/gemini-3.1-pro-preview",
+    "flash-lite-3.1": "gemini/gemini-3.1-flash-lite",
     "gemini": "gemini/gemini-3-pro-preview",
     "gemini-exp": "gemini/gemini-2.5-pro-exp-03-25",
     "grok3": "xai/grok-3-beta",
