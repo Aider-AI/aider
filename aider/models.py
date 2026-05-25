@@ -20,6 +20,7 @@ from aider import __version__
 from aider.dump import dump  # noqa: F401
 from aider.llm import litellm
 from aider.openrouter import OpenRouterModelManager
+from aider.retry_utils import MAX_RETRIES, compute_retry_sleep, parse_retry_after
 from aider.sendchat import ensure_alternating_roles, sanity_check_messages
 from aider.utils import check_pip_install_extra
 
@@ -1042,7 +1043,7 @@ class Model(ModelSettings):
         litellm_ex = LiteLLMExceptions()
         if "deepseek-reasoner" in self.name:
             messages = ensure_alternating_roles(messages)
-        retry_delay = 0.125
+        attempt = 0
 
         if self.verbose:
             dump(messages)
@@ -1069,14 +1070,18 @@ class Model(ModelSettings):
                 if ex_info.description:
                     print(ex_info.description)
                 should_retry = ex_info.retry
-                if should_retry:
-                    retry_delay *= 2
-                    if retry_delay > RETRY_TIMEOUT:
-                        should_retry = False
+                attempt += 1
+                if should_retry and attempt >= MAX_RETRIES:
+                    should_retry = False
                 if not should_retry:
                     return None
-                print(f"Retrying in {retry_delay:.1f} seconds...")
-                time.sleep(retry_delay)
+                retry_after = parse_retry_after(err)
+                sleep_for = compute_retry_sleep(attempt, 0.125, RETRY_TIMEOUT, retry_after)
+                print(
+                    f"Retrying in {sleep_for:.1f}s "
+                    f"(attempt {attempt}/{MAX_RETRIES}, {type(err).__name__})..."
+                )
+                time.sleep(sleep_for)
                 continue
             except AttributeError:
                 return None

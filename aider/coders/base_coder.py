@@ -37,6 +37,7 @@ from aider.io import ConfirmGroup, InputOutput
 from aider.linter import Linter
 from aider.llm import litellm
 from aider.models import RETRY_TIMEOUT
+from aider.retry_utils import MAX_RETRIES, compute_retry_sleep, parse_retry_after
 from aider.reasoning_tags import (
     REASONING_TAG,
     format_reasoning_content,
@@ -1446,7 +1447,7 @@ class Coder:
         else:
             self.mdstream = None
 
-        retry_delay = 0.125
+        attempt = 0
 
         litellm_ex = LiteLLMExceptions()
 
@@ -1466,10 +1467,9 @@ class Coder:
                         break
 
                     should_retry = ex_info.retry
-                    if should_retry:
-                        retry_delay *= 2
-                        if retry_delay > RETRY_TIMEOUT:
-                            should_retry = False
+                    attempt += 1
+                    if should_retry and attempt >= MAX_RETRIES:
+                        should_retry = False
 
                     if not should_retry:
                         self.mdstream = None
@@ -1483,8 +1483,15 @@ class Coder:
                     else:
                         self.io.tool_error(err_msg)
 
-                    self.io.tool_output(f"Retrying in {retry_delay:.1f} seconds...")
-                    time.sleep(retry_delay)
+                    retry_after = parse_retry_after(err)
+                    sleep_for = compute_retry_sleep(
+                        attempt, 0.125, RETRY_TIMEOUT, retry_after
+                    )
+                    self.io.tool_output(
+                        f"Retrying in {sleep_for:.1f}s "
+                        f"(attempt {attempt}/{MAX_RETRIES}, {type(err).__name__})..."
+                    )
+                    time.sleep(sleep_for)
                     continue
                 except KeyboardInterrupt:
                     interrupted = True
