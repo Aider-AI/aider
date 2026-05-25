@@ -600,6 +600,45 @@
     max_tokens: 8192
   caches_by_default: true
 
+- name: azure_ai/deepseek-r1
+  edit_format: diff
+  weak_model_name: azure_ai/deepseek-v3
+  use_repo_map: true
+  examples_as_sys_msg: true
+  extra_params:
+    max_tokens: 64000
+  caches_by_default: true
+  use_temperature: false
+  editor_model_name: azure_ai/deepseek-v3
+  editor_edit_format: editor-diff
+
+- name: azure_ai/deepseek-v3
+  edit_format: diff
+  use_repo_map: true
+  reminder: sys
+  examples_as_sys_msg: true
+  extra_params:
+    max_tokens: 8192
+  caches_by_default: true
+
+- name: azure_ai/deepseek-v3-0324
+  edit_format: diff
+  use_repo_map: true
+  reminder: sys
+  examples_as_sys_msg: true
+  extra_params:
+    max_tokens: 8192
+  caches_by_default: true
+
+- name: azure_ai/deepseek-v3.2
+  edit_format: diff
+  use_repo_map: true
+  reminder: sys
+  examples_as_sys_msg: true
+  extra_params:
+    max_tokens: 8192
+  caches_by_default: true
+
 - name: openrouter/deepseek/deepseek-chat:free
   edit_format: diff
   weak_model_name: openrouter/deepseek/deepseek-chat:free
