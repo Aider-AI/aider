@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from dataclasses import dataclass
 
 from aider.dump import dump  # noqa: F401
@@ -7,7 +9,7 @@ from aider.dump import dump  # noqa: F401
 class ExInfo:
     name: str
     retry: bool
-    description: str
+    description: str | None
 
 
 EXCEPTIONS = [

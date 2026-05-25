@@ -2,11 +2,15 @@
 
 import sys
 from pathlib import Path
+from typing import TYPE_CHECKING
 
-try:
+if TYPE_CHECKING:
     import git
-except ImportError:
-    git = None
+else:
+    try:
+        import git
+    except ImportError:
+        git = None
 
 from diff_match_patch import diff_match_patch
 from tqdm import tqdm
