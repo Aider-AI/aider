@@ -514,7 +514,8 @@ class GitRepo:
         if mtime != self.aider_ignore_ts:
             self.aider_ignore_ts = mtime
             self.ignore_file_cache = {}
-            lines = self.aider_ignore_file.read_text().splitlines()
+            encoding = getattr(self.io, "encoding", None) or "utf-8"
+            lines = self.aider_ignore_file.read_text(encoding=encoding).splitlines()
             self.aider_ignore_spec = pathspec.PathSpec.from_lines(
                 pathspec.patterns.GitWildMatchPattern,
                 lines,

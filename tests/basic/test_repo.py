@@ -560,6 +560,35 @@ class TestRepo(unittest.TestCase):
             # self.assertIn(str(fname), fnames)
             # self.assertNotIn(str(fname2), fnames)
 
+    def test_aiderignore_uses_configured_encoding(self):
+        with GitTemporaryDirectory():
+            raw_repo = git.Repo()
+
+            fname = Path("ignored.txt")
+            fname.touch()
+            raw_repo.git.add(str(fname))
+
+            aiderignore = Path(".aiderignore")
+            aiderignore.write_bytes("ignored.txt\n# \U0001f600\n".encode("utf-8"))
+            git_repo = GitRepo(InputOutput(encoding="utf-8"), None, None, str(aiderignore))
+
+            original_read_text = Path.read_text
+
+            def read_text_with_cp1251_default(path, *args, **kwargs):
+                if Path(path) != aiderignore:
+                    return original_read_text(path, *args, **kwargs)
+
+                encoding = kwargs.get("encoding")
+                if encoding is None and args:
+                    encoding = args[0]
+                if encoding is None:
+                    encoding = "cp1251"
+
+                return path.read_bytes().decode(encoding)
+
+            with patch.object(Path, "read_text", read_text_with_cp1251_default):
+                self.assertTrue(git_repo.ignored_file(str(fname)))
+
     def test_get_tracked_files_from_subdir(self):
         with GitTemporaryDirectory():
             # new repo
