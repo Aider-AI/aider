@@ -40,6 +40,30 @@ from aider.watch import FileWatcher
 from .dump import dump  # noqa: F401
 
 
+def _ensure_utf8_stdio() -> None:
+    """On Windows, switch sys.stdout / sys.stderr to UTF-8.
+
+    Windows defaults the standard streams to the legacy ANSI codepage
+    (cp1252 in en-US, gbk in zh-CN, etc.) when the stream is not a
+    terminal — e.g. when the user pipes aider output to a file or pager.
+    rich's legacy Windows renderer then crashes on characters aider
+    routinely emits (``charmap codec can't encode character '\\u22ee'``
+    in ``--show-repo-map``).
+
+    Safe no-op outside Windows, or when reconfigure() is unavailable
+    (e.g. a test harness has replaced sys.stdout with a non-TextIOWrapper).
+
+    See https://github.com/Aider-AI/aider/issues/4294.
+    """
+    if sys.platform != "win32":
+        return
+    for stream in (sys.stdout, sys.stderr):
+        try:
+            stream.reconfigure(encoding="utf-8")
+        except (AttributeError, ValueError):
+            pass
+
+
 def check_config_files_for_yes(config_files):
     found = False
     for config_file in config_files:
@@ -449,6 +473,7 @@ def sanity_check_repo(repo, io):
 
 
 def main(argv=None, input=None, output=None, force_git_root=None, return_coder=False):
+    _ensure_utf8_stdio()
     report_uncaught_exceptions()
 
     if argv is None:

@@ -1481,3 +1481,50 @@ class TestMain(TestCase):
             )
         for call in mock_io_instance.tool_warning.call_args_list:
             self.assertNotIn("Cost estimates may be inaccurate", call[0][0])
+
+
+class TestEnsureUtf8Stdio(TestCase):
+    """Verify _ensure_utf8_stdio() switches Windows stdio to UTF-8 (fixes #4294)
+    without breaking non-Windows or test-harness streams."""
+
+    def test_noop_on_non_windows(self):
+        """On Linux/macOS, _ensure_utf8_stdio must not touch the streams."""
+        from aider.main import _ensure_utf8_stdio
+
+        fake_stdout = MagicMock()
+        fake_stderr = MagicMock()
+        with patch("sys.platform", "linux"), \
+                patch("sys.stdout", fake_stdout), \
+                patch("sys.stderr", fake_stderr):
+            _ensure_utf8_stdio()
+
+        fake_stdout.reconfigure.assert_not_called()
+        fake_stderr.reconfigure.assert_not_called()
+
+    def test_reconfigures_both_streams_on_windows(self):
+        """On Windows, both stdout and stderr get reconfigured to utf-8."""
+        from aider.main import _ensure_utf8_stdio
+
+        fake_stdout = MagicMock()
+        fake_stderr = MagicMock()
+        with patch("sys.platform", "win32"), \
+                patch("sys.stdout", fake_stdout), \
+                patch("sys.stderr", fake_stderr):
+            _ensure_utf8_stdio()
+
+        fake_stdout.reconfigure.assert_called_once_with(encoding="utf-8")
+        fake_stderr.reconfigure.assert_called_once_with(encoding="utf-8")
+
+    def test_safe_when_reconfigure_unavailable(self):
+        """If a test harness replaced sys.stdout with a non-TextIOWrapper
+        (e.g. StringIO) reconfigure() will raise AttributeError / ValueError;
+        _ensure_utf8_stdio must swallow it and continue."""
+        from aider.main import _ensure_utf8_stdio
+
+        broken_stream = MagicMock()
+        broken_stream.reconfigure.side_effect = AttributeError("no such method")
+        with patch("sys.platform", "win32"), \
+                patch("sys.stdout", broken_stream), \
+                patch("sys.stderr", broken_stream):
+            # Should not raise
+            _ensure_utf8_stdio()
