@@ -15,6 +15,21 @@ class MinimalCoder:
         return fname
 
 
+def test_load_gitignores_utf8_fallback(tmp_path):
+    """load_gitignores does not crash on .gitignore files with non-UTF-8 bytes."""
+    from aider.watch import load_gitignores
+
+    # Write a .gitignore that contains a Latin-1 byte (0xe9 = 'e with acute')
+    # invalid in strict UTF-8 streams.
+    bad = tmp_path / ".gitignore"
+    bad.write_bytes(b"*.log\n# caf\xe9\n*.tmp\n")
+
+    spec = load_gitignores([bad])
+    assert spec is not None
+    assert spec.match_file("foo.log")
+    assert spec.match_file("bar.tmp")
+
+
 def test_gitignore_patterns():
     """Test that gitignore patterns are properly loaded and matched"""
     from pathlib import Path
