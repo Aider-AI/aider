@@ -1146,6 +1146,8 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
             io.tool_error(f"Error reading message file: {e}")
             analytics.event("exit", reason="Message file IO error")
             return 1
+        except SwitchCoder:
+            pass
 
         analytics.event("exit", reason="Completed --message-file")
         return

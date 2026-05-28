@@ -12,6 +12,7 @@ from prompt_toolkit.input import DummyInput
 from prompt_toolkit.output import DummyOutput
 
 from aider.coders import Coder
+from aider.commands import SwitchCoder
 from aider.dump import dump  # noqa: F401
 from aider.io import InputOutput
 from aider.main import check_gitignore, load_dotenv_files, main, setup_git
@@ -334,6 +335,26 @@ class TestMain(TestCase):
                 input=DummyInput(),
                 output=DummyOutput(),
             )
+            MockCoder.return_value.run.assert_called_once_with(with_message=message_file_content)
+
+        os.remove(message_file_path)
+
+    def test_message_file_flag_with_chat_mode_command(self):
+        # A chat-mode command (e.g. /ask) raises SwitchCoder once it has run.
+        # The --message-file path must swallow it instead of crashing (issue #5189).
+        message_file_content = "/ask what does this code do?"
+        message_file_path = tempfile.mktemp()
+        with open(message_file_path, "w", encoding="utf-8") as message_file:
+            message_file.write(message_file_content)
+
+        with patch("aider.coders.Coder.create") as MockCoder:
+            MockCoder.return_value.run = MagicMock(side_effect=SwitchCoder())
+            result = main(
+                ["--yes", "--message-file", message_file_path],
+                input=DummyInput(),
+                output=DummyOutput(),
+            )
+            self.assertIsNone(result)
             MockCoder.return_value.run.assert_called_once_with(with_message=message_file_content)
 
         os.remove(message_file_path)
