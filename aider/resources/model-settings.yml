@@ -612,6 +612,24 @@
   editor_model_name: openrouter/deepseek/deepseek-chat:free
   editor_edit_format: editor-diff
 
+- name: deepseek/deepseek-v4-flash
+  edit_format: diff
+  use_repo_map: true
+  reminder: sys
+  examples_as_sys_msg: true
+  extra_params:
+    max_tokens: 64000
+  caches_by_default: true
+
+- name: deepseek/deepseek-v4-pro
+  edit_format: diff
+  use_repo_map: true
+  reminder: sys
+  examples_as_sys_msg: true
+  extra_params:
+    max_tokens: 64000
+  caches_by_default: true
+
 - name: deepseek/deepseek-coder
   edit_format: diff
   use_repo_map: true

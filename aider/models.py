@@ -110,6 +110,8 @@ MODEL_ALIASES = {
     "3": "gpt-3.5-turbo",
     # Other models
     "deepseek": "deepseek/deepseek-chat",
+    "deepseek-v4-flash": "deepseek/deepseek-v4-flash",
+    "deepseek-v4-pro": "deepseek/deepseek-v4-pro",
     "flash": "gemini/gemini-flash-latest",
     "flash-lite": "gemini/gemini-2.5-flash-lite",
     "quasar": "openrouter/openrouter/quasar-alpha",
@@ -490,7 +492,7 @@ class Model(ModelSettings):
                 self.accepts_settings.append("reasoning_effort")
             return  # <--
 
-        if "deepseek" in model and "v3" in model:
+        if "deepseek" in model and ("v3" in model or "v4" in model):
             self.edit_format = "diff"
             self.use_repo_map = True
             self.reminder = "sys"
