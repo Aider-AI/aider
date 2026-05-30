@@ -64,8 +64,8 @@ class TestSSLVerification(TestCase):
                 mock_client.assert_called_once_with(verify=False)
                 mock_async_client.assert_called_once_with(verify=False)
 
-                # Verify SSL_VERIFY environment variable was set to empty string
-                self.assertEqual(os.environ.get("SSL_VERIFY"), "")
+                # Verify SSL_VERIFY environment variable was set for LiteLLM
+                self.assertEqual(os.environ.get("SSL_VERIFY"), "false")
 
     @patch("aider.io.InputOutput.offer_url")
     @patch("aider.models.model_info_manager.set_verify_ssl")

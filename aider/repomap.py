@@ -42,6 +42,14 @@ UPDATING_REPO_MAP_MESSAGE = "Updating repo map"
 class RepoMap:
     TAGS_CACHE_DIR = f".aider.tags.cache.v{CACHE_VERSION}"
 
+    @classmethod
+    def get_tags_cache_dir(cls, root):
+        """Return the tags cache directory, respecting AIDER_TAGS_CACHE_DIR."""
+        custom = os.environ.get("AIDER_TAGS_CACHE_DIR")
+        if custom:
+            return Path(custom)
+        return Path(root) / cls.TAGS_CACHE_DIR
+
     warned_files = set()
 
     def __init__(
@@ -183,7 +191,7 @@ class RepoMap:
         if isinstance(getattr(self, "TAGS_CACHE", None), dict):
             return
 
-        path = Path(self.root) / self.TAGS_CACHE_DIR
+        path = self.get_tags_cache_dir(self.root)
 
         # Try to recreate the cache
         try:
@@ -215,7 +223,7 @@ class RepoMap:
         self.TAGS_CACHE = dict()
 
     def load_tags_cache(self):
-        path = Path(self.root) / self.TAGS_CACHE_DIR
+        path = self.get_tags_cache_dir(self.root)
         try:
             self.TAGS_CACHE = Cache(path)
         except SQLITE_ERRORS as e:

@@ -519,7 +519,7 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
     if not args.verify_ssl:
         import httpx
 
-        os.environ["SSL_VERIFY"] = ""
+        os.environ["SSL_VERIFY"] = "false"
         litellm._load_litellm()
         litellm._lazy_module.client_session = httpx.Client(verify=False)
         litellm._lazy_module.aclient_session = httpx.AsyncClient(verify=False)
@@ -720,7 +720,9 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
             return main(argv, input, output, right_repo_root, return_coder=return_coder)
 
     if args.just_check_update:
-        update_available = check_version(io, just_check=True, verbose=args.verbose)
+        update_available = check_version(
+            io, just_check=True, verbose=args.verbose, verify_ssl=args.verify_ssl
+        )
         analytics.event("exit", reason="Just checking update")
         return 0 if not update_available else 1
 
@@ -735,7 +737,7 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
         return 0 if success else 1
 
     if args.check_update:
-        check_version(io, verbose=args.verbose)
+        check_version(io, verbose=args.verbose, verify_ssl=args.verify_ssl)
 
     if args.git:
         git_root = setup_git(git_root, io)
