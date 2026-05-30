@@ -91,8 +91,19 @@ def check_version(io, just_check=False, verbose=False):
         io.tool_error(f"Error checking pypi for new version: {err}")
         return False
     finally:
-        VERSION_CHECK_FNAME.parent.mkdir(parents=True, exist_ok=True)
-        VERSION_CHECK_FNAME.touch()
+        # The version-check cooldown marker is best effort. If something in
+        # the path is not a directory, the home dir is read-only, or the
+        # filesystem otherwise rejects the write, log it and move on instead
+        # of crashing aider at startup. See issue #5180 for the original
+        # NotADirectoryError repro.
+        try:
+            VERSION_CHECK_FNAME.parent.mkdir(parents=True, exist_ok=True)
+            VERSION_CHECK_FNAME.touch()
+        except OSError as err:
+            if verbose:
+                io.tool_warning(
+                    f"Could not update version-check marker {VERSION_CHECK_FNAME}: {err}"
+                )
 
     ###
     # is_update_available = True
