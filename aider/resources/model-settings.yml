@@ -618,7 +618,7 @@
   reminder: sys
   examples_as_sys_msg: true
   extra_params:
-    max_tokens: 8192
+    max_tokens: 64000
   caches_by_default: true
 
 - name: deepseek/deepseek-v4-pro
@@ -627,7 +627,7 @@
   reminder: sys
   examples_as_sys_msg: true
   extra_params:
-    max_tokens: 8192
+    max_tokens: 64000
   caches_by_default: true
 
 - name: deepseek/deepseek-coder
