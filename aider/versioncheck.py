@@ -61,7 +61,7 @@ def install_upgrade(io, latest_version=None):
     return
 
 
-def check_version(io, just_check=False, verbose=False):
+def check_version(io, just_check=False, verbose=False, verify_ssl=True):
     if not just_check and VERSION_CHECK_FNAME.exists():
         day = 60 * 60 * 24
         since = time.time() - os.path.getmtime(VERSION_CHECK_FNAME)
@@ -75,7 +75,10 @@ def check_version(io, just_check=False, verbose=False):
     import requests
 
     try:
-        response = requests.get("https://pypi.org/pypi/aider-chat/json")
+        response = requests.get(
+            "https://pypi.org/pypi/aider-chat/json",
+            verify=verify_ssl,
+        )
         data = response.json()
         latest_version = data["info"]["version"]
         current_version = aider.__version__

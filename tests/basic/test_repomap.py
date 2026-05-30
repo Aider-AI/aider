@@ -4,6 +4,7 @@ import re
 import time
 import unittest
 from pathlib import Path
+from unittest.mock import patch
 
 import git
 
@@ -17,6 +18,13 @@ from aider.utils import GitTemporaryDirectory, IgnorantTemporaryDirectory
 class TestRepoMap(unittest.TestCase):
     def setUp(self):
         self.GPT35 = Model("gpt-3.5-turbo")
+
+    def test_get_tags_cache_dir_respects_env(self):
+        with IgnorantTemporaryDirectory() as root, IgnorantTemporaryDirectory() as custom:
+            with patch.dict(os.environ, {"AIDER_TAGS_CACHE_DIR": custom}):
+                self.assertEqual(RepoMap.get_tags_cache_dir(root), Path(custom))
+
+            self.assertEqual(RepoMap.get_tags_cache_dir(root), Path(root) / RepoMap.TAGS_CACHE_DIR)
 
     def test_get_repo_map(self):
         # Create a temporary directory with sample files for testing
