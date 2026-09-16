@@ -14,7 +14,13 @@ from prompt_toolkit.output import DummyOutput
 from aider.coders import Coder
 from aider.dump import dump  # noqa: F401
 from aider.io import InputOutput
-from aider.main import check_gitignore, load_dotenv_files, main, setup_git
+from aider.main import (
+    check_file_args,
+    check_gitignore,
+    load_dotenv_files,
+    main,
+    setup_git,
+)
 from aider.utils import GitTemporaryDirectory, IgnorantTemporaryDirectory, make_repo
 
 
@@ -71,6 +77,24 @@ class TestMain(TestCase):
         make_repo(str(subdir))
         res = main(["subdir", "foo.txt"], input=DummyInput(), output=DummyOutput())
         self.assertNotEqual(res, None)
+
+    def test_check_file_args(self):
+        io = InputOutput(pretty=False, yes=True)
+        # A name past the filesystem limit can't be stat()ed at all.
+        self.assertFalse(check_file_args(io, ["aider-" + "x" * 400]))
+        # Missing files are fine, aider creates them.
+        self.assertTrue(check_file_args(io, ["brand-new.txt"]))
+
+    def test_main_with_too_long_filename(self):
+        # Used to escape as an unhandled OSError(ENAMETOOLONG) raised by
+        # Path.is_dir()/Path.exists() on Python < 3.13.
+        too_long = "aider-" + "x" * 400
+        res = main(
+            [too_long, "--yes", "--no-git", "--exit"],
+            input=DummyInput(),
+            output=DummyOutput(),
+        )
+        self.assertEqual(res, 1)
 
     @patch("aider.repo.GitRepo.get_commit_message", return_value="mock commit message")
     def test_main_with_subdir_repo_fnames(self, _):

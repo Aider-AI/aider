@@ -1,3 +1,4 @@
+import errno
 import json
 import os
 import re
@@ -448,6 +449,26 @@ def sanity_check_repo(repo, io):
     return False
 
 
+def check_file_args(io, all_files):
+    """Reject file arguments the filesystem refuses to stat.
+
+    A name longer than the filesystem allows -- an accidentally unquoted long value,
+    for example -- makes ``stat()`` raise ``OSError(ENAMETOOLONG)`` on Python < 3.13.
+    Left unchecked it escaped as an unhandled exception during startup, both here and
+    later in ``Coder.create``.
+    """
+    ok = True
+    for fname in all_files:
+        try:
+            os.stat(fname)
+        except OSError as err:
+            if err.errno in (errno.ENOENT, errno.ENOTDIR):
+                continue  # new files, and missing parents, are handled downstream
+            io.tool_error(f"Unable to use file argument: {err}")
+            ok = False
+    return ok
+
+
 def main(argv=None, input=None, output=None, force_git_root=None, return_coder=False):
     report_uncaught_exceptions()
 
@@ -677,6 +698,10 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
             io.tool_output(f"Loaded {fname}")
 
     all_files = args.files + (args.file or [])
+    if not check_file_args(io, all_files + list(args.read or [])):
+        analytics.event("exit", reason="Unusable file argument")
+        return 1
+
     fnames = [str(Path(fn).resolve()) for fn in all_files]
     read_only_fnames = []
     for fn in args.read or []:
