@@ -1,3 +1,4 @@
+import errno
 import json
 import os
 import subprocess
@@ -14,8 +15,29 @@ from prompt_toolkit.output import DummyOutput
 from aider.coders import Coder
 from aider.dump import dump  # noqa: F401
 from aider.io import InputOutput
-from aider.main import check_gitignore, load_dotenv_files, main, setup_git
+from aider.main import (
+    check_file_args,
+    check_gitignore,
+    load_dotenv_files,
+    main,
+    setup_git,
+)
 from aider.utils import GitTemporaryDirectory, IgnorantTemporaryDirectory, make_repo
+
+# Longer than any filesystem allows. Linux and macOS report this as ENAMETOOLONG;
+# Windows reports the same condition as ENOENT (CPython maps
+# ERROR_FILENAME_EXCED_RANGE to ENOENT), where the existing code already settles
+# for a warning instead of crashing.
+TOO_LONG_NAME = "aider-" + "x" * 400
+
+
+def stat_errno(path):
+    """Return the errno os.stat() raises for path, or None when it succeeds."""
+    try:
+        os.stat(path)
+    except OSError as err:
+        return err.errno
+    return None
 
 
 class TestMain(TestCase):
@@ -71,6 +93,28 @@ class TestMain(TestCase):
         make_repo(str(subdir))
         res = main(["subdir", "foo.txt"], input=DummyInput(), output=DummyOutput())
         self.assertNotEqual(res, None)
+
+    def test_check_file_args(self):
+        io = InputOutput(pretty=False, yes=True)
+        # Missing files are fine, aider creates them.
+        self.assertTrue(check_file_args(io, ["brand-new.txt"]))
+        if stat_errno(TOO_LONG_NAME) not in (None, errno.ENOENT, errno.ENOTDIR):
+            self.assertFalse(check_file_args(io, [TOO_LONG_NAME]))
+        # os.stat() reports an embedded NUL as ValueError, not OSError, and
+        # Path.is_dir()/Path.exists() used to swallow it.
+        self.assertFalse(check_file_args(io, ["a\0b"]))
+
+    def test_main_with_too_long_filename(self):
+        # On POSIX, Python < 3.13 propagated OSError(ENAMETOOLONG) out of
+        # Path.is_dir()/Path.exists() instead of exiting with a clear error.
+        if stat_errno(TOO_LONG_NAME) in (None, errno.ENOENT, errno.ENOTDIR):
+            self.skipTest("this platform reports an over-long name as a missing file")
+        res = main(
+            [TOO_LONG_NAME, "--yes", "--no-git", "--exit"],
+            input=DummyInput(),
+            output=DummyOutput(),
+        )
+        self.assertEqual(res, 1)
 
     @patch("aider.repo.GitRepo.get_commit_message", return_value="mock commit message")
     def test_main_with_subdir_repo_fnames(self, _):
