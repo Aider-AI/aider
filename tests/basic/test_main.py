@@ -1,3 +1,4 @@
+import errno
 import json
 import os
 import subprocess
@@ -22,6 +23,21 @@ from aider.main import (
     setup_git,
 )
 from aider.utils import GitTemporaryDirectory, IgnorantTemporaryDirectory, make_repo
+
+# Longer than any filesystem allows. Linux and macOS report this as ENAMETOOLONG;
+# Windows reports the same condition as ENOENT (CPython maps
+# ERROR_FILENAME_EXCED_RANGE to ENOENT), where the existing code already settles
+# for a warning instead of crashing.
+TOO_LONG_NAME = "aider-" + "x" * 400
+
+
+def stat_errno(path):
+    """Return the errno os.stat() raises for path, or None when it succeeds."""
+    try:
+        os.stat(path)
+    except OSError as err:
+        return err.errno
+    return None
 
 
 class TestMain(TestCase):
@@ -80,17 +96,18 @@ class TestMain(TestCase):
 
     def test_check_file_args(self):
         io = InputOutput(pretty=False, yes=True)
-        # A name past the filesystem limit can't be stat()ed at all.
-        self.assertFalse(check_file_args(io, ["aider-" + "x" * 400]))
         # Missing files are fine, aider creates them.
         self.assertTrue(check_file_args(io, ["brand-new.txt"]))
+        if stat_errno(TOO_LONG_NAME) not in (None, errno.ENOENT, errno.ENOTDIR):
+            self.assertFalse(check_file_args(io, [TOO_LONG_NAME]))
 
     def test_main_with_too_long_filename(self):
-        # Used to escape as an unhandled OSError(ENAMETOOLONG) raised by
-        # Path.is_dir()/Path.exists() on Python < 3.13.
-        too_long = "aider-" + "x" * 400
+        # On POSIX, Python < 3.13 propagated OSError(ENAMETOOLONG) out of
+        # Path.is_dir()/Path.exists() instead of exiting with a clear error.
+        if stat_errno(TOO_LONG_NAME) in (None, errno.ENOENT, errno.ENOTDIR):
+            self.skipTest("this platform reports an over-long name as a missing file")
         res = main(
-            [too_long, "--yes", "--no-git", "--exit"],
+            [TOO_LONG_NAME, "--yes", "--no-git", "--exit"],
             input=DummyInput(),
             output=DummyOutput(),
         )
