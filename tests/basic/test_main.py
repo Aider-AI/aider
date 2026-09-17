@@ -100,6 +100,9 @@ class TestMain(TestCase):
         self.assertTrue(check_file_args(io, ["brand-new.txt"]))
         if stat_errno(TOO_LONG_NAME) not in (None, errno.ENOENT, errno.ENOTDIR):
             self.assertFalse(check_file_args(io, [TOO_LONG_NAME]))
+        # os.stat() reports an embedded NUL as ValueError, not OSError, and
+        # Path.is_dir()/Path.exists() used to swallow it.
+        self.assertFalse(check_file_args(io, ["a\0b"]))
 
     def test_main_with_too_long_filename(self):
         # On POSIX, Python < 3.13 propagated OSError(ENAMETOOLONG) out of

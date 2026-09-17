@@ -454,15 +454,15 @@ def check_file_args(io, all_files):
 
     A name longer than the filesystem allows -- an accidentally unquoted long value,
     for example -- makes ``stat()`` raise ``OSError(ENAMETOOLONG)`` on Python < 3.13.
-    Left unchecked it escaped as an unhandled exception during startup, both here and
-    later in ``Coder.create``.
+    An embedded NUL raises ``ValueError`` instead. Left unchecked both escaped as
+    unhandled exceptions during startup, here and later in ``Coder.create``.
     """
     ok = True
     for fname in all_files:
         try:
             os.stat(fname)
-        except OSError as err:
-            if err.errno in (errno.ENOENT, errno.ENOTDIR):
+        except (OSError, ValueError) as err:
+            if getattr(err, "errno", None) in (errno.ENOENT, errno.ENOTDIR):
                 continue  # new files, and missing parents, are handled downstream
             io.tool_error(f"Unable to use file argument: {err}")
             ok = False
