@@ -36,7 +36,7 @@ from aider.history import ChatSummary
 from aider.io import ConfirmGroup, InputOutput
 from aider.linter import Linter
 from aider.llm import litellm
-from aider.models import RETRY_TIMEOUT
+from aider.models import RETRY_TIMEOUT, rate_limit_headers
 from aider.reasoning_tags import (
     REASONING_TAG,
     format_reasoning_content,
@@ -383,6 +383,9 @@ class Coder:
 
         self.total_cost = total_cost
         self.total_tokens_sent = total_tokens_sent
+        # Where the account stood on the last response the provider answered.
+        # Not cleared per message: it describes the account, not the message.
+        self.rate_limit_headers = {}
         self.total_tokens_received = total_tokens_received
         self.message_tokens_sent = 0
         self.message_tokens_received = 0
@@ -1801,6 +1804,13 @@ class Coder:
                 self.temperature,
             )
             self.chat_completion_call_hashes.append(hash_object.hexdigest())
+
+            # Read before the stream is consumed: litellm attaches the response
+            # headers to the wrapper itself, and the last chunk carries them too,
+            # but an interrupted stream never reaches that chunk.
+            headers = rate_limit_headers(completion)
+            if headers:
+                self.rate_limit_headers = headers
 
             if self.stream:
                 yield from self.show_send_output_stream(completion)
