@@ -5,6 +5,7 @@ from aider.models import (
     ANTHROPIC_BETA_HEADER,
     Model,
     ModelInfoManager,
+    rate_limit_headers,
     register_models,
     sanity_check_model,
     sanity_check_models,
@@ -594,6 +595,87 @@ class TestModels(unittest.TestCase):
                 self.assertEqual(model.editor_model_name, editor_name)
                 self.assertEqual(model.editor_model.name, editor_name)
                 self.assertIn("reasoning_effort", model.accepts_settings)
+
+
+class TestRateLimitHeaders(unittest.TestCase):
+    """The provider reports where the account stands on every response and aider
+    was dropping it. These cover what it keeps and what it refuses to invent."""
+
+    def _response(self, additional=None, raw=None):
+        response = MagicMock()
+        response._hidden_params = {"additional_headers": additional} if additional else {}
+        response._response_headers = raw
+        return response
+
+    def test_keeps_rate_limit_headers_whatever_the_provider_calls_them(self):
+        # OpenAI and Anthropic do not agree on a single name, and a gateway in
+        # between invents its own, so the filter is on the meaning not the list.
+        found = rate_limit_headers(
+            self._response(
+                raw={
+                    "x-ratelimit-remaining-requests": "499",
+                    "anthropic-ratelimit-unified-5h-utilization": "0.42",
+                    "some-gateway-rate-limit-left": "80%",
+                    "retry-after": "17",
+                    "content-type": "text/event-stream",
+                    "date": "Thu, 17 Sep 2026 06:11:23 GMT",
+                }
+            )
+        )
+        self.assertEqual(
+            found,
+            {
+                "x-ratelimit-remaining-requests": "499",
+                "anthropic-ratelimit-unified-5h-utilization": "0.42",
+                "some-gateway-rate-limit-left": "80%",
+                "retry-after": "17",
+            },
+        )
+
+    def test_skips_litellms_duplicate_copies(self):
+        # litellm repeats every header under an llm_provider- prefix. Keeping
+        # both reports one limit twice.
+        found = rate_limit_headers(
+            self._response(
+                raw={
+                    "x-ratelimit-remaining-requests": "499",
+                    "llm_provider-x-ratelimit-remaining-requests": "499",
+                }
+            )
+        )
+        self.assertEqual(found, {"x-ratelimit-remaining-requests": "499"})
+
+    def test_keeps_what_only_the_raw_headers_carry(self):
+        # litellm's additional_headers is a curated subset: measured against a
+        # mock provider it kept x-ratelimit-* and dropped the Anthropic unified
+        # family and retry-after. Reading only that loses the subscription
+        # numbers, so both carriers are merged.
+        found = rate_limit_headers(
+            self._response(
+                additional={"x-ratelimit-remaining-requests": "499"},
+                raw={
+                    "x-ratelimit-remaining-requests": "499",
+                    "anthropic-ratelimit-unified-5h-utilization": "0.42",
+                    "retry-after": "17",
+                },
+            )
+        )
+        self.assertEqual(
+            found,
+            {
+                "x-ratelimit-remaining-requests": "499",
+                "anthropic-ratelimit-unified-5h-utilization": "0.42",
+                "retry-after": "17",
+            },
+        )
+
+    def test_reports_nothing_when_the_provider_said_nothing(self):
+        # An empty report is the honest answer. A zero here would read as an
+        # exhausted account.
+        self.assertEqual(rate_limit_headers(self._response()), {})
+        bare = MagicMock(_hidden_params=None, _response_headers=None)
+        self.assertEqual(rate_limit_headers(bare), {})
+        self.assertEqual(rate_limit_headers(None), {})
 
 
 if __name__ == "__main__":

@@ -47,6 +47,37 @@ class TestCommands(TestCase):
         self.assertTrue(os.path.exists("foo.txt"))
         self.assertTrue(os.path.exists("bar.txt"))
 
+    def test_cmd_limits_before_any_response(self):
+        # Nothing has been sent, so nothing is known. Saying so beats printing an
+        # empty table that reads like a exhausted account.
+        io = InputOutput(pretty=False, fancy_input=False, yes=True)
+        coder = Coder.create(self.GPT35, None, io)
+        commands = Commands(io, coder)
+
+        with mock.patch.object(io, "tool_output") as mock_output:
+            commands.cmd_limits("")
+
+        printed = " ".join(str(call.args[0]) for call in mock_output.call_args_list)
+        self.assertIn("No rate limit reported yet", printed)
+
+    def test_cmd_limits_reports_what_the_provider_sent(self):
+        io = InputOutput(pretty=False, fancy_input=False, yes=True)
+        coder = Coder.create(self.GPT35, None, io)
+        coder.rate_limit_headers = {
+            "x-ratelimit-remaining-requests": "499",
+            "anthropic-ratelimit-unified-5h-utilization": "0.42",
+        }
+        commands = Commands(io, coder)
+
+        with mock.patch.object(io, "tool_output") as mock_output:
+            commands.cmd_limits("")
+
+        printed = " ".join(str(call.args[0]) for call in mock_output.call_args_list)
+        self.assertIn("x-ratelimit-remaining-requests", printed)
+        self.assertIn("499", printed)
+        self.assertIn("anthropic-ratelimit-unified-5h-utilization", printed)
+        self.assertIn("0.42", printed)
+
     def test_cmd_copy(self):
         # Initialize InputOutput and Coder instances
         io = InputOutput(pretty=False, fancy_input=False, yes=True)

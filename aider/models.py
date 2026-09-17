@@ -1082,6 +1082,44 @@ class Model(ModelSettings):
                 return None
 
 
+def rate_limit_headers(response):
+    """Pull the provider's rate-limit headers off a completion response.
+
+    Providers report where an account stands on every response, and aider has
+    been discarding it: with a subscription the per-token dollar figure is
+    notional, and the number that decides whether the next request goes through
+    is how much of the window is left.
+
+    Header names are not standardised -- OpenAI sends `x-ratelimit-remaining-*`,
+    Anthropic sends `anthropic-ratelimit-unified-5h-utilization` and friends,
+    and a gateway in between may send its own. So this keeps any header whose
+    name mentions a rate limit, plus `retry-after`, rather than naming the ones
+    that exist today and silently dropping the rest.
+
+    litellm also repeats every header under an `llm_provider-` prefix; those are
+    the same values and are skipped so the report is not doubled.
+
+    Both of litellm's carriers are read. `additional_headers` is a curated
+    subset -- measured against a mock provider it kept the `x-ratelimit-*`
+    family and dropped `anthropic-ratelimit-unified-*` and `retry-after`
+    entirely -- while `_response_headers` is what the provider actually sent.
+    Taking only the first would lose exactly the numbers a subscription user
+    needs.
+    """
+    hidden = getattr(response, "_hidden_params", None) or {}
+    headers = dict(getattr(response, "_response_headers", None) or {})
+    headers.update(hidden.get("additional_headers") or {})
+
+    found = {}
+    for name, value in headers.items():
+        lowered = str(name).lower()
+        if lowered.startswith("llm_provider-"):
+            continue
+        if "ratelimit" in lowered or "rate-limit" in lowered or lowered == "retry-after":
+            found[lowered] = value
+    return found
+
+
 def register_models(model_settings_fnames):
     files_loaded = []
     for model_settings_fname in model_settings_fnames:

@@ -550,6 +550,26 @@ class Commands:
             )
         self.io.tool_output(f"{cost_pad}{fmt(limit)} tokens max context window size")
 
+    def cmd_limits(self, args):
+        "Report where the account stands with the provider, as of the last response"
+
+        headers = getattr(self.coder, "rate_limit_headers", None)
+        if not headers:
+            self.io.tool_output(
+                "No rate limit reported yet. Providers send this with a response, so send a"
+                " message first."
+            )
+            self.io.tool_output(
+                "If it stays empty, this provider does not report rate limits to aider."
+            )
+            return
+
+        # Sorted so the same account reads the same way every time; the names
+        # differ per provider and there is no order worth inventing.
+        width = max(len(name) for name in headers)
+        for name in sorted(headers):
+            self.io.tool_output(f"{name.ljust(width)}  {headers[name]}")
+
     def cmd_undo(self, args):
         "Undo the last git commit if it was done by aider"
         try:
