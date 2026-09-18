@@ -143,6 +143,9 @@ class TestModels(unittest.TestCase):
         model = Model("opus")
         self.assertEqual(model.name, "claude-opus-4-7")
 
+        model = Model("melious")
+        self.assertEqual(model.name, "melious/glm-5.2")
+
         # Test non-alias passes through unchanged
         model = Model("gpt-4")
         self.assertEqual(model.name, "gpt-4")
@@ -594,6 +597,18 @@ class TestModels(unittest.TestCase):
                 self.assertEqual(model.editor_model_name, editor_name)
                 self.assertEqual(model.editor_model.name, editor_name)
                 self.assertIn("reasoning_effort", model.accepts_settings)
+
+    def test_melious_model_settings(self):
+        model = Model("melious/glm-5.2")
+        self.assertEqual(model.edit_format, "diff")
+        self.assertTrue(model.use_repo_map)
+        self.assertTrue(model.caches_by_default)
+
+    @patch.dict("os.environ", {"MELIOUS_API_KEY": "sk-mel-test"})
+    def test_melious_fast_validate_environment(self):
+        model = Model("melious/glm-5.2")
+        self.assertEqual(model.keys_in_environment, ["MELIOUS_API_KEY"])
+        self.assertEqual(model.missing_keys, [])
 
 
 if __name__ == "__main__":
