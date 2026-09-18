@@ -56,6 +56,7 @@ cog.out(get_help_md())
 | **/reset** | Drop all files and clear the chat history |
 | **/run** | Run a shell command and optionally add the output to the chat (alias: !) |
 | **/save** | Save commands to a file that can reconstruct the current chat session's files |
+| **/search** | Search the web with Context.dev and add the results to the chat |
 | **/settings** | Print out the current settings |
 | **/test** | Run a shell command and add the output to the chat on non-zero exit code |
 | **/think-tokens** | Set the thinking token budget, eg: 8096, 8k, 10.5k, 0.5M, or 0 to disable. |
