@@ -47,7 +47,7 @@ RUN curl -fsSL https://deb.nodesource.com/setup_20.x | bash - && \
     cd /npm-install && \
     npm init -y && \
     npm install \
-    jest \
+    jest@29.7.0 \
     @babel/core@7.25.2 \
     @exercism/babel-preset-javascript@0.2.1 \
     @exercism/eslint-config-javascript@0.6.0 \
