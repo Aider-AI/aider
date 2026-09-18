@@ -120,6 +120,7 @@ MODEL_ALIASES = {
     "gemini-exp": "gemini/gemini-2.5-pro-exp-03-25",
     "grok3": "xai/grok-3-beta",
     "optimus": "openrouter/openrouter/optimus-alpha",
+    "melious": "melious/glm-5.2",
 }
 # Model metadata loaded from resources and user's files.
 
@@ -728,6 +729,7 @@ class Model(ModelSettings):
             anthropic="ANTHROPIC_API_KEY",
             groq="GROQ_API_KEY",
             fireworks_ai="FIREWORKS_API_KEY",
+            melious="MELIOUS_API_KEY",
         )
         var = None
         if model in OPENAI_MODELS:
