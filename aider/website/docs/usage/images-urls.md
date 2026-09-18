@@ -40,6 +40,17 @@ To add URLs to the chat:
 - Use `/web <url>`
 - Just paste the URL into the chat and aider will ask if you want to add it.
 
+## Web search
+
+Set a [Context.dev](https://context.dev) API key and use `/search <query>` to add current
+web results and their source URLs to the chat:
+
+```shell
+aider --api-key context_dev=<key>
+```
+
+The command uses Context.dev's web search endpoint. Exact pages can still be added with `/web`.
+
 You can also scrape web pages from the command line to see the markdown version that aider produces:
 
 
