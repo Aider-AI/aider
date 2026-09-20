@@ -34,6 +34,18 @@ cd /to/your/project
 aider --model openai/<model-name>
 ```
 
+## Bourse
+
+[Bourse](https://bourse.run) provides an OpenAI-compatible endpoint.
+Configure aider with your Bourse API key and base URL:
+
+```bash
+export OPENAI_API_BASE=https://api.bourse.run/v1
+export OPENAI_API_KEY=<bourse-key>
+
+aider --model openai/claude-opus-5
+```
+
 See the [model warnings](warnings.html)
 section for information on warnings which will occur
 when working with models that aider is not familiar with.
