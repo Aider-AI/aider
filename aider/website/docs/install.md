@@ -108,8 +108,28 @@ recommended above.
 While aider is available in a number of system package managers,
 they often install aider with incorrect dependencies.
 
+## Uninstall aider
+
+If you installed aider with `aider-install` or `uv`, remove it with:
+
+```bash
+uv tool uninstall aider-chat
+```
+
+If you also installed the `aider-install` helper package, you can remove it with:
+
+```bash
+python -m pip uninstall aider-install
+```
+
+If you installed aider with pipx or pip instead, use the matching uninstall command:
+
+```bash
+pipx uninstall aider-chat
+python -m pip uninstall aider-chat
+```
+
 ## Next steps...
 
 There are some [optional install steps](/docs/install/optional.html) you could consider.
 See the [usage instructions](https://aider.chat/docs/usage.html) to start coding with aider.
-
