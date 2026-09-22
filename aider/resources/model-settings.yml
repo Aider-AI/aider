@@ -3126,3 +3126,19 @@
   use_repo_map: true
   use_temperature: false
   accepts_settings: ["reasoning_effort"]
+
+- name: yolo-auto/yolo
+  edit_format: diff
+  weak_model_name: yolo-auto/yolo-small
+  use_repo_map: true
+  examples_as_sys_msg: true
+  editor_model_name: yolo-auto/yolo-small
+  editor_edit_format: editor-diff
+
+- name: yolo-auto/yolo-small
+  edit_format: diff
+  weak_model_name: yolo-auto/yolo-small
+  use_repo_map: true
+  examples_as_sys_msg: true
+  editor_model_name: yolo-auto/yolo-small
+  editor_edit_format: editor-diff
