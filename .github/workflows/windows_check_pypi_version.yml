@@ -14,8 +14,12 @@ jobs:
   check_version:
     runs-on: windows-latest
     strategy:
+      # Report every supported PyPI version independently instead of
+      # cancelling the remaining matrix jobs after the first failure.
+      fail-fast: false
       matrix:
-        python-version: ["3.10", "3.11", "3.12", "3.13", "3.14"]
+        # aider-chat on PyPI currently declares Python >=3.10,<3.13.
+        python-version: ["3.10", "3.11", "3.12"]
     defaults:
       run:
         shell: pwsh # Use PowerShell for all run steps
