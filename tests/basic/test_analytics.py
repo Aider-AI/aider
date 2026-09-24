@@ -79,7 +79,31 @@ def test_analytics_event_logging(temp_analytics_file, temp_data_dir):
             assert "test_key" in log_entry["properties"]
 
 
-def test_system_info(temp_data_dir):
+def test_event_scrubs_sensitive_text_at_boundary(temp_analytics_file, temp_data_dir):
+    analytics = Analytics(logfile=temp_analytics_file)
+    analytics.event(
+        "test_event",
+        reason=(
+            "request https://api.example.test/v1?api_key=not-a-real-key "
+            "failed at /Users/example/project"
+        ),
+        model="/private/model",
+        attempts=3,
+        ratio=0.5,
+        label="plain value",
+    )
+
+    with open(temp_analytics_file) as f:
+        properties = json.loads(f.read().strip())["properties"]
+
+    assert "not-a-real-key" not in properties["reason"]
+    assert "/Users/example/project" not in properties["reason"]
+    assert "https://api.example.test/v1" in properties["reason"]
+    assert properties["model"] == "[REDACTED_PATH]"
+    assert properties["attempts"] == 3
+    assert properties["ratio"] == 0.5
+    assert properties["label"] == "plain value"
+
     analytics = Analytics()
     sys_info = analytics.get_system_info()
 
