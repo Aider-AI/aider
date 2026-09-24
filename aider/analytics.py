@@ -1,9 +1,11 @@
 import json
 import platform
+import re
 import sys
 import time
 import uuid
 from pathlib import Path
+from urllib.parse import urlsplit, urlunsplit
 
 from mixpanel import MixpanelException
 from posthog import Posthog
@@ -13,6 +15,47 @@ from aider.dump import dump  # noqa: F401
 from aider.models import model_info_manager
 
 PERCENT = 10
+_ANALYTICS_MAX_TEXT_LENGTH = 500
+_URL_RE = re.compile(r"[A-Za-z][A-Za-z0-9+.-]*://[^\s<>\"']+")
+_ABSOLUTE_PATH_RE = re.compile(
+    r"(?<![A-Za-z0-9_:/])(?:[A-Za-z]:[\\/]|~[\\/]|/)[^\s<>\"']*"
+)
+_SENSITIVE_ASSIGNMENT_RE = re.compile(
+    r"(?i)(\b(?:api[_-]?key|access[_-]?token|refresh[_-]?token|token|secret|password)\b"
+    r"\s*[:=]\s*['\"]?)[^'\"\s,}&]+"
+)
+
+
+def _redact_url(match):
+    value = match.group(0)
+    trailing = ""
+    while value and value[-1] in ".,;)]}":
+        trailing = value[-1] + trailing
+        value = value[:-1]
+
+    try:
+        parsed = urlsplit(value)
+    except ValueError:
+        return "[REDACTED_URL]" + trailing
+
+    if parsed.scheme.lower() in {"http", "https"}:
+        if parsed.query or parsed.fragment:
+            value = urlunsplit(
+                (parsed.scheme, parsed.netloc, parsed.path, "REDACTED", "")
+            )
+        return value + trailing
+
+    return "[REDACTED_URL]" + trailing
+
+
+def _redact_sensitive_text(value):
+    """Remove common secrets and local paths before analytics leaves the process."""
+    value = _URL_RE.sub(_redact_url, str(value))
+    value = _SENSITIVE_ASSIGNMENT_RE.sub(r"\1[REDACTED]", value)
+    value = _ABSOLUTE_PATH_RE.sub("[REDACTED_PATH]", value)
+    if len(value) > _ANALYTICS_MAX_TEXT_LENGTH:
+        value = value[:_ANALYTICS_MAX_TEXT_LENGTH] + "..."
+    return value
 
 
 def compute_hex_threshold(percent):
@@ -223,12 +266,12 @@ class Analytics:
 
         properties.update(kwargs)
 
-        # Handle numeric values
+        # Keep numeric metrics numeric, but scrub every free-form value at the boundary.
         for key, value in properties.items():
             if isinstance(value, (int, float)):
                 properties[key] = value
             else:
-                properties[key] = str(value)
+                properties[key] = _redact_sensitive_text(value)
 
         if self.mp:
             try:
@@ -237,7 +280,9 @@ class Analytics:
                 self.mp = None  # Disable mixpanel on connection errors
 
         if self.ph:
-            self.ph.capture(event_name, distinct_id=self.user_id, properties=dict(properties))
+            self.ph.capture(
+                event_name, distinct_id=self.user_id, properties=dict(properties)
+            )
 
         if self.logfile:
             log_entry = {
