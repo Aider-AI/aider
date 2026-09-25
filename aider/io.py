@@ -390,7 +390,7 @@ class InputOutput:
                 try:
                     # Try creating a style to validate the color
                     RichStyle(color=color_value)
-                except ColorParseError as e:
+                except (ColorParseError, ValueError) as e:
                     self.console.print(
                         "[bold red]Warning:[/bold red] Invalid configuration for"
                         f" {attr_name}: '{color_value}'. {e}. Disabling this color."
@@ -770,7 +770,10 @@ class InputOutput:
         else:
             style = dict()
 
-        self.console.print(Text(inp), **style)
+        try:
+            self.console.print(Text(inp), **style)
+        except Exception:
+            self.console.print(Text(inp))
 
     def user_input(self, inp, log_only=True):
         if not log_only:
@@ -974,16 +977,19 @@ class InputOutput:
 
         if not isinstance(message, Text):
             message = Text(message)
-        color = ensure_hash_prefix(color) if color else None
-        style = dict(style=color) if self.pretty and color else dict()
         try:
-            self.console.print(message, **style)
-        except UnicodeEncodeError:
-            # Fallback to ASCII-safe output
-            if isinstance(message, Text):
-                message = message.plain
-            message = str(message).encode("ascii", errors="replace").decode("ascii")
-            self.console.print(message, **style)
+            color = ensure_hash_prefix(color) if color else None
+            style = dict(style=color) if self.pretty and color else dict()
+            try:
+                self.console.print(message, **style)
+            except UnicodeEncodeError:
+                # Fallback to ASCII-safe output
+                if isinstance(message, Text):
+                    message = message.plain
+                message = str(message).encode("ascii", errors="replace").decode("ascii")
+                self.console.print(message, **style)
+        except Exception:
+            self.console.print(message)
 
     def tool_error(self, message="", strip=True):
         self.num_error_outputs += 1
@@ -1002,14 +1008,17 @@ class InputOutput:
             return
 
         messages = list(map(Text, messages))
-        style = dict()
-        if self.pretty:
-            if self.tool_output_color:
-                style["color"] = ensure_hash_prefix(self.tool_output_color)
-            style["reverse"] = bold
+        try:
+            style = dict()
+            if self.pretty:
+                if self.tool_output_color:
+                    style["color"] = ensure_hash_prefix(self.tool_output_color)
+                style["reverse"] = bold
 
-        style = RichStyle(**style)
-        self.console.print(*messages, style=style)
+            style = RichStyle(**style)
+            self.console.print(*messages, style=style)
+        except Exception:
+            self.console.print(*messages)
 
     def get_assistant_mdstream(self):
         mdargs = dict(
@@ -1031,14 +1040,17 @@ class InputOutput:
         if pretty is None:
             pretty = self.pretty
 
-        if pretty:
-            show_resp = Markdown(
-                message, style=self.assistant_output_color, code_theme=self.code_theme
-            )
-        else:
-            show_resp = Text(message or "(empty response)")
+        try:
+            if pretty:
+                show_resp = Markdown(
+                    message, style=self.assistant_output_color, code_theme=self.code_theme
+                )
+            else:
+                show_resp = Text(message or "(empty response)")
 
-        self.console.print(show_resp)
+            self.console.print(show_resp)
+        except Exception:
+            self.console.print(Text(message or "(empty response)"))
 
     def set_placeholder(self, placeholder):
         """Set a one-time placeholder text for the next input prompt."""
