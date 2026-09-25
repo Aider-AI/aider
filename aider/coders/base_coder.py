@@ -46,6 +46,7 @@ from aider.reasoning_tags import (
 from aider.repo import ANY_GIT_ERROR, GitRepo
 from aider.repomap import RepoMap
 from aider.run_cmd import run_cmd
+from aider.soul import is_protected_edit_target, load_soul, denial_message
 from aider.utils import format_content, format_messages, format_tokens, is_image_file
 from aider.waiting import WaitingSpinner
 
@@ -405,6 +406,19 @@ class Coder:
         self.io = io
 
         self.shell_commands = []
+
+        # Soul constitution layer: load the project's SOUL.md (if any) and
+        # compile it into the system prompt. A soul that fails the entry lint
+        # is rejected here and never reaches the model.
+        self.soul_section = None
+        try:
+            soul, soul_errors = load_soul()
+        except Exception as err:
+            soul, soul_errors = None, ["soul: failed to load: %s" % err]
+        for err in soul_errors:
+            self.io.tool_warning(err)
+        if soul is not None:
+            self.soul_section = soul.compile_system_section()
 
         if not auto_commits:
             dirty_commits = False
@@ -1260,6 +1274,11 @@ class Coder:
 
         if self.gpt_prompts.system_reminder:
             main_sys += "\n" + self.fmt_system_prompt(self.gpt_prompts.system_reminder)
+
+        if self.soul_section:
+            # The project's soul constitution goes into the system prompt,
+            # after aider's built-in system content.
+            main_sys += "\n\n" + self.soul_section
 
         chunks = ChatChunks()
 
@@ -2293,10 +2312,27 @@ class Coder:
 
         return res
 
+    def filter_soul_edits(self, edits):
+        # Soul formation guard: the model may never edit SOUL.md or its paired
+        # eval artifacts. This runs before anything else touches the edits, so
+        # no config can override it. Human edits in their own editor never pass
+        # through this path and are unaffected.
+        kept = []
+        for edit in edits:
+            fname = edit[0]
+            if fname and is_protected_edit_target(fname):
+                message = denial_message(fname)
+                self.io.tool_error(message)
+                self.reflected_message = message
+            else:
+                kept.append(edit)
+        return kept
+
     def apply_updates(self):
         edited = set()
         try:
             edits = self.get_edits()
+            edits = self.filter_soul_edits(edits)
             edits = self.apply_edits_dry_run(edits)
             edits = self.prepare_to_edit(edits)
             edited = set(edit[0] for edit in edits)

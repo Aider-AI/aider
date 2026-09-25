@@ -454,6 +454,11 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
     if argv is None:
         argv = sys.argv[1:]
 
+    if argv and argv[0] == "soul":
+        from aider.soul_cli import main as soul_main
+
+        return soul_main(argv[1:])
+
     if git is None:
         git_root = None
     elif force_git_root:
