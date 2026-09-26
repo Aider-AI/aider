@@ -28,7 +28,7 @@ from typing import List
 
 from rich.console import Console
 
-from aider import __version__, models, prompts, urls, utils
+from aider import __version__, models, prompts, superfast, urls, utils
 from aider.analytics import Analytics
 from aider.commands import Commands
 from aider.exceptions import LiteLLMExceptions
@@ -1417,6 +1417,10 @@ class Coder:
         return True
 
     def send_message(self, inp):
+        # Shadow-mode Decision Gate: classify the pending turn off-thread and log
+        # the recommendation only. Never changes routing or behavior (fail-open).
+        superfast.shadow_log(self.io, inp)
+
         self.event("message_send_starting")
 
         # Notify IO that LLM processing is starting
