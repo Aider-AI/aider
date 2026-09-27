@@ -1,3 +1,5 @@
+import pytest
+
 from aider.exceptions import ExInfo, LiteLLMExceptions
 
 
@@ -5,6 +7,19 @@ def test_litellm_exceptions_load():
     """Test that LiteLLMExceptions loads without errors"""
     ex = LiteLLMExceptions()
     assert len(ex.exceptions) > 0
+
+
+def test_new_litellm_exception_only_fails_strict_validation(monkeypatch):
+    import litellm
+
+    class AdditionalProviderError(Exception):
+        pass
+
+    monkeypatch.setattr(litellm, "AdditionalProviderError", AdditionalProviderError, raising=False)
+    ex = LiteLLMExceptions()
+    assert AdditionalProviderError not in ex.exceptions_tuple()
+    with pytest.raises(ValueError, match="AdditionalProviderError is in litellm"):
+        ex._load(strict=True)
 
 
 def test_exceptions_tuple():
