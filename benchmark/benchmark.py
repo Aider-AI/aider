@@ -1038,6 +1038,8 @@ def run_unit_tests(original_dname, testdir, history_fname, test_files):
     success = result.returncode == 0
     res = result.stdout
     res = cleanup_test_output(res, testdir)
+    if not success and not res:
+        res = f"Tests failed with exit code {result.returncode}"
     dump(res)
 
     with history_fname.open("a") as fh:
