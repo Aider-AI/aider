@@ -34,6 +34,9 @@ src="https://img.shields.io/badge/📈%20Tokens%2Fweek-15B-3498db?style=flat-squ
 src="https://img.shields.io/badge/🏆%20OpenRouter-Top%2020-9b59b6?style=flat-square&labelColor=555555"/></a>
   <a href="https://aider.chat/HISTORY.html"><img alt="Singularity" title="Percentage of the new code in Aider's last release written by Aider itself"
 src="https://img.shields.io/badge/🔄%20Singularity-88%25-e74c3c?style=flat-square&labelColor=555555"/></a>
+
+[![Aider Agent](https://agentemotes.com/a/aider-bot.svg)](https://agentemotes.com/@aider-bot)
+
 <!--[[[end]]]-->  
 </p>
 
