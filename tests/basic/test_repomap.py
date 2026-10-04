@@ -4,6 +4,7 @@ import re
 import time
 import unittest
 from pathlib import Path
+from unittest.mock import patch
 
 import git
 
@@ -45,6 +46,50 @@ class TestRepoMap(unittest.TestCase):
 
             # close the open cache files, so Windows won't error
             del repo_map
+
+    def test_get_repo_map_resource_errors(self):
+        with IgnorantTemporaryDirectory() as temp_dir:
+            fname = Path(temp_dir) / "example.py"
+            fname.write_text("def example():\n    return 42\n", encoding="utf-8")
+
+            for error, message in (
+                (MemoryError, "Disabling repo map, not enough memory."),
+                (RecursionError, "Disabling repo map, git repo too large?"),
+            ):
+                io = InputOutput()
+                repo_map = RepoMap(main_model=self.GPT35, root=temp_dir, io=io)
+                with (
+                    self.subTest(error=error.__name__),
+                    patch("networkx.to_scipy_sparse_array", side_effect=error) as convert,
+                    patch.object(io, "tool_error") as tool_error,
+                ):
+                    self.assertIsNone(repo_map.get_repo_map([], [str(fname)]))
+                    self.assertEqual(repo_map.max_map_tokens, 0)
+                    self.assertIsNone(repo_map.get_repo_map([], [str(fname)], force_refresh=True))
+                    convert.assert_called_once()
+                    self.assertGreater(convert.call_args.args[0].number_of_nodes(), 0)
+                    tool_error.assert_called_once_with(message)
+                del repo_map
+
+    def test_get_repo_map_propagates_other_errors(self):
+        with IgnorantTemporaryDirectory() as temp_dir:
+            fname = Path(temp_dir) / "example.py"
+            fname.write_text("def example():\n    return 42\n", encoding="utf-8")
+
+            for error in (RuntimeError, KeyboardInterrupt, SystemExit):
+                io = InputOutput()
+                repo_map = RepoMap(main_model=self.GPT35, root=temp_dir, io=io)
+                with (
+                    self.subTest(error=error.__name__),
+                    patch("networkx.to_scipy_sparse_array", side_effect=error) as convert,
+                    patch.object(io, "tool_error") as tool_error,
+                ):
+                    with self.assertRaises(error):
+                        repo_map.get_repo_map([], [str(fname)])
+                    self.assertEqual(repo_map.max_map_tokens, 1024)
+                    convert.assert_called_once()
+                    tool_error.assert_not_called()
+                del repo_map
 
     def test_repo_map_refresh_files(self):
         with GitTemporaryDirectory() as temp_dir:
