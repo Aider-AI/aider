@@ -1054,10 +1054,19 @@ class Coder:
         """
         if not lang_code:
             return None
+         
+        # if the user specifies "auto"
+        if lang_code.strip().lower()=="auto":
+            return "auto"    
 
         if lang_code.upper() in ("C", "POSIX"):
             return None
-
+        # if the windows locale format is used
+        if "_" in lang_code and not lang_code.startswith("zh"):
+            parts = lang_code.split("_")
+            if parts[0].isalpha() and len(parts[0]) > 2 and parts[0][0].isupper():
+                return parts[0]
+            
         # Probably already a language name
         if (
             len(lang_code) > 3
@@ -1087,6 +1096,7 @@ class Coder:
             "ja": "Japanese",
             "ko": "Korean",
             "ru": "Russian",
+            "pl": "Polish",
         }
         primary_lang_code = lang_code.replace("-", "_").split("_")[0].lower()
         return fallback.get(primary_lang_code, lang_code)
@@ -1179,9 +1189,21 @@ class Coder:
             final_reminders.append(self.gpt_prompts.overeager_prompt)
 
         user_lang = self.get_user_language()
-        if user_lang:
-            final_reminders.append(f"Reply in {user_lang}.\n")
 
+        # apply the strict language directive only when explicitly requested by the user
+        if self.chat_language:
+            norm_lang = self.normalize_language(self.chat_language)
+            if norm_lang == "auto":
+                final_reminders.append("Reply in the same language the user is using.\n")
+                language = "the same language they are using"
+            else:
+                final_reminders.append(f"Reply in {norm_lang}.\n")
+                language = norm_lang
+        else:
+            # If the user has not explicitly set a chat language:
+            # Allow the model to respond in the user's language.
+            language = "the same language they are using"
+        
         platform_text = self.get_platform_info()
 
         if self.suggest_shell_commands:
@@ -1194,11 +1216,6 @@ class Coder:
                 platform=platform_text
             )
             rename_with_shell = ""
-
-        if user_lang:  # user_lang is the result of self.get_user_language()
-            language = user_lang
-        else:
-            language = "the same language they are using"  # Default if no specific lang detected
 
         if self.fence[0] == "`" * 4:
             quad_backtick_reminder = (
