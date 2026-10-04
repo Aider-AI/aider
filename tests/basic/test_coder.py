@@ -1076,6 +1076,33 @@ This command will print 'Hello, World!' to the console."""
         system_message = next(msg for msg in messages if msg["role"] == "system")
         self.assertTrue(system_message["content"].startswith(test_prefix))
 
+    def test_format_messages_after_repo_map_memory_error(self):
+        with GitTemporaryDirectory():
+            repo = git.Repo()
+            fname = Path("example.py")
+            fname.write_text("def example():\n    return 42\n", encoding="utf-8")
+            repo.git.add(str(fname))
+
+            io = InputOutput(yes=True)
+            coder = Coder.create(self.GPT35, "whole", io=io, map_tokens=1024)
+            message = "Explain the code."
+            coder.cur_messages = [dict(role="user", content=message)]
+
+            with (
+                patch("networkx.to_scipy_sparse_array", side_effect=MemoryError) as convert,
+                patch.object(io, "tool_error") as tool_error,
+            ):
+                for _ in range(2):
+                    chunks = coder.format_messages()
+                    self.assertEqual(chunks.repo, [])
+                    self.assertTrue(chunks.cur[0]["content"].startswith(message))
+                self.assertEqual(coder.repo_map.max_map_tokens, 0)
+                convert.assert_called_once()
+                tool_error.assert_called_once_with("Disabling repo map, not enough memory.")
+
+            del coder
+            del repo
+
     def test_coder_create_with_new_file_oserror(self):
         with GitTemporaryDirectory():
             io = InputOutput(yes=True)

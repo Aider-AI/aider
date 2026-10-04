@@ -144,6 +144,10 @@ class RepoMap:
             self.io.tool_error("Disabling repo map, git repo too large?")
             self.max_map_tokens = 0
             return
+        except MemoryError:
+            self.io.tool_error("Disabling repo map, not enough memory.")
+            self.max_map_tokens = 0
+            return
 
         if not files_listing:
             return
