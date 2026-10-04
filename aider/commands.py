@@ -1458,7 +1458,29 @@ class Commands:
         if model_metadata:
             output += "\n" + model_metadata
         self.io.tool_output(output)
-
+    
+    def cmd_chat_language(self, args):
+        "Switch the chat language "
+        lang = args.strip()
+        if not lang:
+            current = self.coder.chat_language or "auto (replies in the user's language)"
+            self.io.tool_output(f"Current chat language: {current}")
+            return
+        if lang.lower() == "auto":
+            self.coder.chat_language = "auto"
+            if self.args:
+                self.args.chat_language = "auto"
+            self.io.tool_output("Chat language set to auto (will reply in the same language you use).")
+        else:
+            norm = self.coder.normalize_language(lang)
+            self.coder.chat_language = norm
+            if self.args:
+                self.args.chat_language = norm
+            self.io.tool_output(f"Chat language set to: {norm}")
+    def cmd_language(self, args):
+        """Switch the chat language (alias for /chat-language)"""
+        return self.cmd_chat_language(args)
+   
     def completions_raw_load(self, document, complete_event):
         return self.completions_raw_read_only(document, complete_event)
 
