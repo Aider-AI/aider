@@ -7,6 +7,88 @@ from io import BytesIO
 import pexpect
 import psutil
 
+# Opt-in sandbox mode. When enabled the child environment is built from a
+# minimal base allowlist instead of copying all of os.environ, so secrets
+# loaded from a .env file under an arbitrary name cannot reach child commands.
+# See https://github.com/Aider-AI/aider/issues/5658 and pull request #5692.
+SANDBOX_MODE = False
+
+# Minimal variables child shells need to run ordinary commands. Everything
+# else -- including arbitrary .env names -- is withheld in sandbox mode.
+SANDBOX_ENV_BASE_KEYS = frozenset(
+    {
+        "PATH",
+        "HOME",
+        "SHELL",
+        "USER",
+        "LOGNAME",
+        "TMPDIR",
+        "TEMP",
+        "TMP",
+        "TERM",
+        "TZ",
+        "LANG",
+        # POSIX/Windows system-location variables (needed to find system utils).
+        "SYSTEMROOT",
+        "SYSTEMDRIVE",
+        "WINDIR",
+        "COMSPEC",
+        "PATHEXT",
+        "NUMBER_OF_PROCESSORS",
+        "PROCESSOR_ARCHITECTURE",
+        "PROCESSOR_IDENTIFIER",
+        "PROCESSOR_LEVEL",
+        "PROCESSOR_REVISION",
+    }
+)
+
+
+def set_sandbox_mode(enabled):
+    """Enable/disable the minimal-base allowlist for child environments."""
+    global SANDBOX_MODE
+    SANDBOX_MODE = bool(enabled)
+
+
+def _allow_sandbox_env_key(name, profile="run"):
+    upper = name.upper()
+    if upper in SANDBOX_ENV_BASE_KEYS:
+        return True
+    # Locale variables (LANGUAGE and any LC_* variable).
+    if upper == "LANGUAGE" or upper.startswith("LC_"):
+        return True
+    if profile == "git":
+        # /git needs git/ssh configuration and the agent socket.
+        if upper.startswith("GIT_") or upper.startswith("SSH_"):
+            return True
+    return False
+
+
+def child_process_environ(base=None, extra=None, profile="run", sandbox=None):
+    """Build the environment for a child command.
+
+    By default child commands inherit the full process environment (aider's
+    historical behavior).
+
+    In sandbox mode the child environment is built from a minimal base
+    allowlist instead, so arbitrary-name variables (e.g. secrets sourced from
+    a .env file) are never inherited. profile="git" additionally keeps GIT_*
+    and SSH_* vars. ``extra`` overlays are always applied last.
+    """
+    source = os.environ if base is None else base
+    use_sandbox = SANDBOX_MODE if sandbox is None else sandbox
+
+    if use_sandbox:
+        env = {
+            key: value
+            for key, value in source.items()
+            if _allow_sandbox_env_key(key, profile=profile)
+        }
+    else:
+        env = dict(source)
+    if extra:
+        env.update(extra)
+    return env
+
 
 def run_cmd(command, verbose=False, error_print=None, cwd=None):
     try:
@@ -70,6 +152,7 @@ def run_cmd_subprocess(command, verbose=False, cwd=None, encoding=sys.stdout.enc
             bufsize=0,  # Set bufsize to 0 for unbuffered output
             universal_newlines=True,
             cwd=cwd,
+            env=child_process_environ(),
         )
 
         output = []
@@ -106,6 +189,7 @@ def run_cmd_pexpect(command, verbose=False, cwd=None):
     try:
         # Use the SHELL environment variable, falling back to /bin/sh if not set
         shell = os.environ.get("SHELL", "/bin/sh")
+        child_env = child_process_environ()
         if verbose:
             print("With shell:", shell)
 
@@ -113,12 +197,18 @@ def run_cmd_pexpect(command, verbose=False, cwd=None):
             # Use the shell from SHELL environment variable
             if verbose:
                 print("Running pexpect.spawn with shell:", shell)
-            child = pexpect.spawn(shell, args=["-i", "-c", command], encoding="utf-8", cwd=cwd)
+            child = pexpect.spawn(
+                shell,
+                args=["-i", "-c", command],
+                encoding="utf-8",
+                cwd=cwd,
+                env=child_env,
+            )
         else:
             # Fall back to spawning the command directly
             if verbose:
                 print("Running pexpect.spawn without shell.")
-            child = pexpect.spawn(command, encoding="utf-8", cwd=cwd)
+            child = pexpect.spawn(command, encoding="utf-8", cwd=cwd, env=child_env)
 
         # Transfer control to the user, capturing output
         child.interact(output_filter=output_callback)
