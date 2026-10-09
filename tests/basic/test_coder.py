@@ -2,6 +2,7 @@ import os
 import tempfile
 import unittest
 from pathlib import Path
+from types import SimpleNamespace
 from unittest.mock import MagicMock, patch
 
 import git
@@ -1432,6 +1433,489 @@ This command will print 'Hello, World!' to the console."""
                     # Verify that editor coder was NOT created or run
                     # (because user rejected the changes)
                     mock_editor.run.assert_not_called()
+
+
+class TestSkillContext(unittest.TestCase):
+    """Coverage for systems/specs/03-request-skill-context.md
+    and systems/specs/04-architect-handoff-and-docs.md.
+    """
+
+    def setUp(self):
+        self.model = Model("gpt-3.5-turbo")
+
+    def make_request_coder(self):
+        coder = object.__new__(Coder)
+        coder.main_model = self.model
+        coder.io = MagicMock()
+        coder.root = "/repo"
+        coder.done_messages = [{"role": "assistant", "content": "Earlier context"}]
+        coder.cur_messages = []
+        coder.init_before_message = MagicMock()
+        coder.num_reflections = 0
+        coder.max_reflections = 2
+        coder.preproc_user_input = MagicMock(side_effect=lambda message: message)
+        coder.send_message = MagicMock(return_value=iter(()))
+        return coder
+
+    def make_prompt_coder(self, coder_class, bodies, use_system_prompt=True):
+        coder = object.__new__(coder_class)
+        coder.gpt_prompts = SimpleNamespace(
+            main_system="Base system prompt",
+            example_messages=[],
+            system_reminder=None,
+        )
+        coder.main_model = SimpleNamespace(
+            system_prompt_prefix="",
+            examples_as_sys_msg=False,
+            use_system_prompt=use_system_prompt,
+            token_count=lambda _value: 1,
+            info={},
+            reminder="sys",
+        )
+        coder.io = MagicMock()
+        coder.request_skill_bodies = bodies
+        coder.choose_fence = MagicMock()
+        coder.fmt_system_prompt = lambda prompt: prompt
+        coder.summarize_end = MagicMock()
+        coder.done_messages = []
+        coder.cur_messages = []
+        coder.get_repo_messages = MagicMock(return_value=[])
+        coder.get_readonly_files_messages = MagicMock(return_value=[])
+        coder.get_chat_files_messages = MagicMock(return_value=[])
+        return coder
+
+    def test_selected_bodies_are_injected_in_selection_order_for_code_ask_and_architect(self):
+        from aider.coders.ask_coder import AskCoder
+        from aider.coders.architect_coder import ArchitectCoder
+        from aider.coders.editblock_coder import EditBlockCoder
+
+        bodies = [
+            SimpleNamespace(name="Review", body="First complete skill body."),
+            SimpleNamespace(name="Tests", body="Second complete skill body."),
+        ]
+        for coder_class in (EditBlockCoder, AskCoder, ArchitectCoder):
+            with self.subTest(coder=coder_class.__name__):
+                coder = self.make_prompt_coder(coder_class, bodies)
+                chunks = coder.format_chat_chunks()
+                system_content = chunks.system[0]["content"]
+
+                first = system_content.index("First complete skill body.")
+                second = system_content.index("Second complete skill body.")
+                self.assertLess(first, second)
+                self.assertIn("Review", system_content)
+                self.assertIn("Tests", system_content)
+
+    def test_selected_skills_follow_current_system_message_role_convention(self):
+        from aider.coders.ask_coder import AskCoder
+
+        body = SimpleNamespace(name="Review", body="Complete instructions")
+        for use_system_prompt, expected_role in ((True, "system"), (False, "user")):
+            with self.subTest(use_system_prompt=use_system_prompt):
+                coder = self.make_prompt_coder(AskCoder, [body], use_system_prompt)
+                chunks = coder.format_chat_chunks()
+                self.assertEqual(chunks.system[0]["role"], expected_role)
+                self.assertIn("Complete instructions", chunks.system[0]["content"])
+
+    def test_no_selected_skills_add_no_skill_content_and_long_bodies_are_not_truncated(self):
+        from aider.coders.ask_coder import AskCoder
+
+        empty_coder = self.make_prompt_coder(AskCoder, [])
+        empty_prompt = empty_coder.format_chat_chunks().system[0]["content"]
+        self.assertNotIn("skill", empty_prompt.lower())
+
+        complete_body = "instruction " * 10000
+        coder = self.make_prompt_coder(
+            AskCoder, [SimpleNamespace(name="Long", body=complete_body)]
+        )
+        prompt = coder.format_chat_chunks().system[0]["content"]
+        self.assertIn(complete_body, prompt)
+
+    def test_request_selection_is_reused_for_reflections_and_refreshed_next_request(self):
+        from aider.skills import Skill
+
+        review = Skill("review", "Review", "Review code", Path("review/SKILL.md"))
+        tests = Skill("tests", "Tests", "Write useful tests", Path("tests/SKILL.md"))
+        catalog = [review, tests]
+        coder = self.make_request_coder()
+        calls = []
+        skill_contexts = []
+
+        def send_message(message):
+            calls.append(message)
+            skill_contexts.append(repr(coder.request_skill_bodies))
+            coder.reflected_message = "reflection" if message == "first request" else None
+            return []
+
+        coder.send_message = send_message
+        with (
+            patch("aider.coders.base_coder.discover_skills", return_value=catalog),
+            patch(
+                "aider.coders.base_coder.select_skills",
+                side_effect=[[review], [tests]],
+            ) as select,
+            patch(
+                "aider.coders.base_coder.load_skill_body",
+                side_effect=["Review instructions", "Test instructions"],
+            ) as load_body,
+        ):
+            coder.run_one("first request", preproc=False)
+            self.assertEqual(calls, ["first request", "reflection"])
+            self.assertEqual(skill_contexts[0], skill_contexts[1])
+            self.assertIn("Review instructions", skill_contexts[0])
+            self.assertNotIn("Test instructions", skill_contexts[0])
+            coder.num_reflections = 0
+            calls.clear()
+            skill_contexts.clear()
+            coder.run_one("second request", preproc=False)
+
+        self.assertEqual(select.call_count, 2)
+        self.assertEqual(load_body.call_count, 2)
+        self.assertEqual(calls, ["second request"])
+        self.assertIn("Test instructions", skill_contexts[0])
+        self.assertNotIn("Review instructions", skill_contexts[0])
+        output_calls = " ".join(map(str, coder.io.tool_output.call_args_list))
+        self.assertIn("Review", output_calls)
+        self.assertIn("Tests", output_calls)
+        retained_history = repr(coder.done_messages + coder.cur_messages)
+        self.assertNotIn("Review instructions", retained_history)
+        self.assertNotIn("Test instructions", retained_history)
+        self.assertNotIn('"review"', retained_history)
+        self.assertNotIn('"tests"', retained_history)
+        self.assertEqual(coder.done_messages, [{"role": "assistant", "content": "Earlier context"}])
+        self.assertEqual(coder.cur_messages, [])
+
+    def test_selector_waits_for_summarization_and_receives_summary_and_request(self):
+        from aider.skills import Skill
+
+        coder = self.make_request_coder()
+        coder.done_messages = [{"role": "user", "content": "Old unsummarized detail"}]
+        summary = {"role": "assistant", "content": "Retained summary"}
+        catalog = [Skill("review", "Review", "Review code", Path("review/SKILL.md"))]
+        selector_calls = []
+        events = []
+
+        def finish_summarization():
+            events.append("summarize")
+            coder.done_messages = [summary]
+
+        def capture_selection(model, io, conversation, request, skills):
+            events.append("select")
+            selector_calls.append((conversation, request, skills))
+            return []
+
+        coder.summarize_end = MagicMock(side_effect=finish_summarization)
+        with (
+            patch("aider.coders.base_coder.discover_skills", return_value=catalog),
+            patch(
+                "aider.coders.base_coder.select_skills", side_effect=capture_selection
+            ),
+            patch("aider.coders.base_coder.load_skill_body") as load_body,
+        ):
+            coder.run_one("New request", preproc=False)
+
+        coder.summarize_end.assert_called()
+        self.assertLess(events.index("summarize"), events.index("select"))
+        self.assertEqual(selector_calls, [([summary], "New request", catalog)])
+        load_body.assert_not_called()
+
+    def test_context_overflow_keeps_complete_selected_body_for_existing_handling(self):
+        from aider.coders.ask_coder import AskCoder
+
+        complete_body = "BEGIN SKILL " + ("instruction " * 10000) + " END SKILL"
+        coder = self.make_prompt_coder(
+            AskCoder, [SimpleNamespace(name="Long", body=complete_body)]
+        )
+        coder.main_model.name = "test-model"
+        coder.main_model.info["max_input_tokens"] = 1
+        coder.main_model.token_count = MagicMock(return_value=2)
+        coder.io.confirm_ask.return_value = False
+
+        messages = coder.format_chat_chunks().all_messages()
+
+        self.assertTrue(any(complete_body in message["content"] for message in messages))
+        self.assertFalse(coder.check_tokens(messages))
+        self.assertTrue(any(complete_body in message["content"] for message in messages))
+        self.assertIn("exceeds the 1 token limit", coder.io.tool_error.call_args.args[0])
+
+    def test_commands_and_empty_input_skip_catalog_discovery(self):
+        for user_message, preprocessed in (("/help", None), ("", "")):
+            with self.subTest(user_message=user_message):
+                coder = self.make_request_coder()
+                coder.preproc_user_input.side_effect = None
+                coder.preproc_user_input.return_value = preprocessed
+                with (
+                    patch("aider.coders.base_coder.discover_skills") as discover,
+                    patch("aider.coders.base_coder.select_skills") as select,
+                ):
+                    coder.run_one(user_message, preproc=True)
+
+                discover.assert_not_called()
+                select.assert_not_called()
+                coder.send_message.assert_not_called()
+
+    def test_unreadable_selected_body_is_skipped_while_response_proceeds(self):
+        from aider.skills import Skill
+
+        catalog = [
+            Skill("broken", "Broken", "Unreadable", Path("broken/SKILL.md")),
+            Skill("usable", "Usable", "Readable", Path("usable/SKILL.md")),
+        ]
+        coder = self.make_request_coder()
+        skill_contexts = []
+        sent_messages = []
+
+        def send_message(message):
+            sent_messages.append(message)
+            skill_contexts.append(repr(coder.request_skill_bodies))
+            return []
+
+        coder.send_message = send_message
+        with (
+            patch("aider.coders.base_coder.discover_skills", return_value=catalog),
+            patch("aider.coders.base_coder.select_skills", return_value=catalog),
+            patch(
+                "aider.coders.base_coder.load_skill_body",
+                side_effect=[OSError("unreadable"), "Usable body"],
+            ),
+        ):
+            coder.run_one("request", preproc=False)
+
+        coder.io.tool_warning.assert_called_once()
+        warning = " ".join(map(str, coder.io.tool_warning.call_args_list))
+        self.assertIn("broken", warning)
+        self.assertEqual(sent_messages, ["request"])
+        self.assertEqual(len(skill_contexts), 1)
+        self.assertIn("Usable body", skill_contexts[0])
+        self.assertNotIn("Unreadable", skill_contexts[0])
+
+    def test_no_match_falls_back_without_skill_status(self):
+        from aider.skills import Skill
+
+        catalog = [Skill("review", "Review", "Review code", Path("review/SKILL.md"))]
+        coder = self.make_request_coder()
+        with (
+            patch("aider.coders.base_coder.discover_skills", return_value=catalog),
+            patch("aider.coders.base_coder.select_skills", return_value=[]),
+            patch("aider.coders.base_coder.load_skill_body") as load_body,
+        ):
+            coder.run_one("request", preproc=False)
+
+        coder.send_message.assert_called_once_with("request")
+        load_body.assert_not_called()
+        coder.io.tool_output.assert_not_called()
+
+    def test_empty_catalog_skips_selection_and_continues_normal_response(self):
+        coder = self.make_request_coder()
+        with (
+            patch("aider.coders.base_coder.discover_skills", return_value=[]),
+            patch("aider.coders.base_coder.select_skills") as select,
+            patch("aider.coders.base_coder.load_skill_body") as load_body,
+        ):
+            coder.run_one("request", preproc=False)
+
+        select.assert_not_called()
+        load_body.assert_not_called()
+        coder.send_message.assert_called_once_with("request")
+        coder.io.tool_output.assert_not_called()
+
+    def test_provider_failure_does_not_block_normal_response(self):
+        from aider.skills import Skill
+
+        catalog = [Skill("review", "Review", "Review code", Path("review/SKILL.md"))]
+        coder = self.make_request_coder()
+        with (
+            patch("aider.coders.base_coder.discover_skills", return_value=catalog),
+            patch.object(coder.main_model, "send_completion", side_effect=RuntimeError("offline")),
+            patch("aider.skills.LiteLLMExceptions") as exception_types,
+            patch("aider.skills.time.sleep"),
+            patch("aider.coders.base_coder.load_skill_body") as load_body,
+        ):
+            exception_types.return_value.exceptions_tuple.return_value = (RuntimeError,)
+            exception_types.return_value.get_ex_info.return_value = SimpleNamespace(
+                retry=False, description="provider offline"
+            )
+            coder.run_one("request", preproc=False)
+
+        coder.send_message.assert_called_once_with("request")
+        load_body.assert_not_called()
+        coder.io.tool_warning.assert_called()
+
+    def test_selector_and_response_usage_are_reported_once_with_cost_totals(self):
+        coder = object.__new__(Coder)
+        token_counts = iter((2, 1, 3, 4))
+        coder.main_model = SimpleNamespace(
+            token_count=lambda _value: next(token_counts),
+            info={"input_cost_per_token": 0.1, "output_cost_per_token": 0.2},
+        )
+        coder.partial_response_content = "normal response"
+        coder.message_tokens_sent = 0
+        coder.message_tokens_received = 0
+        coder.total_tokens_sent = 0
+        coder.total_tokens_received = 0
+        coder.total_cost = 0
+        coder.message_cost = 0
+        coder.usage_report = None
+        coder.io = MagicMock()
+        coder.event = MagicMock()
+        coder.edit_format = "ask"
+
+        with patch("aider.coders.base_coder.litellm.completion_cost", return_value=0):
+            coder.calculate_and_show_tokens_and_cost(
+                [{"role": "user", "content": "selector prompt"}],
+                response_text='["review"]',
+            )
+            coder.calculate_and_show_tokens_and_cost(
+                [{"role": "user", "content": "normal prompt"}]
+            )
+
+        self.assertEqual(coder.message_tokens_sent, 5)
+        self.assertEqual(coder.message_tokens_received, 5)
+        self.assertAlmostEqual(coder.total_cost, 1.5)
+        combined_report = coder.usage_report
+        self.assertIn("5 sent", combined_report)
+        self.assertIn("5 received", combined_report)
+        self.assertIn("$1.50 message", combined_report)
+        self.assertIn("$1.50 session", combined_report)
+
+        coder.show_usage_report()
+
+        coder.io.tool_output.assert_called_once_with(combined_report)
+        self.assertEqual(coder.total_tokens_sent, 5)
+        self.assertEqual(coder.total_tokens_received, 5)
+        coder.event.assert_called_once()
+        self.assertEqual(coder.event.call_args.kwargs["prompt_tokens"], 5)
+        self.assertEqual(coder.event.call_args.kwargs["completion_tokens"], 5)
+        self.assertAlmostEqual(coder.event.call_args.kwargs["cost"], 1.5)
+        self.assertAlmostEqual(coder.event.call_args.kwargs["total_cost"], 1.5)
+
+    # Spec 04: systems/specs/04-architect-handoff-and-docs.md
+    def test_architect_handoff_passes_selected_bodies_to_editor(self):
+        from aider.coders.architect_coder import ArchitectCoder
+
+        bodies = [SimpleNamespace(name="Review", body="Review instructions")]
+        with patch("aider.coders.architect_coder.AskCoder.__init__", return_value=None):
+            coder = ArchitectCoder()
+        coder.io = MagicMock()
+        coder.io.confirm_ask.return_value = True
+        coder.main_model = self.model
+        coder.auto_accept_architect = True
+        coder.verbose = False
+        coder.total_cost = 0
+        coder.cur_messages = []
+        coder.done_messages = []
+        coder.summarizer = MagicMock()
+        coder.summarizer.too_big.return_value = False
+        coder.partial_response_content = "Implement the proposal"
+        coder.request_skill_bodies = bodies
+        editor = MagicMock()
+
+        with patch("aider.coders.architect_coder.Coder.create", return_value=editor) as create:
+            coder.reply_completed()
+
+        self.assertEqual(create.call_args.kwargs["handoff_skill_bodies"], bodies)
+        editor.run.assert_called_once()
+
+    def test_architect_handoff_passes_no_skill_context_when_selection_is_empty(self):
+        from aider.coders.architect_coder import ArchitectCoder
+
+        with patch("aider.coders.architect_coder.AskCoder.__init__", return_value=None):
+            coder = ArchitectCoder()
+        coder.io = MagicMock()
+        coder.main_model = self.model
+        coder.auto_accept_architect = True
+        coder.verbose = False
+        coder.total_cost = 0
+        coder.cur_messages = []
+        coder.done_messages = []
+        coder.summarizer = MagicMock()
+        coder.summarizer.too_big.return_value = False
+        coder.partial_response_content = "Implement the proposal"
+        coder.request_skill_bodies = []
+        editor = MagicMock()
+
+        with patch("aider.coders.architect_coder.Coder.create", return_value=editor) as create:
+            coder.reply_completed()
+
+        self.assertFalse(create.call_args.kwargs.get("handoff_skill_bodies", []))
+        editor.run.assert_called_once()
+
+    def test_canceled_architect_handoff_does_not_create_editor_with_skills(self):
+        from aider.coders.architect_coder import ArchitectCoder
+
+        with patch("aider.coders.architect_coder.AskCoder.__init__", return_value=None):
+            coder = ArchitectCoder()
+        coder.io = MagicMock()
+        coder.io.confirm_ask.return_value = False
+        coder.main_model = self.model
+        coder.auto_accept_architect = False
+        coder.partial_response_content = "Implement the proposal"
+        coder.request_skill_bodies = [SimpleNamespace(name="Review", body="Instructions")]
+
+        with patch("aider.coders.architect_coder.Coder.create") as create:
+            coder.reply_completed()
+
+        create.assert_not_called()
+
+    def test_editor_consumes_handoff_once_then_selects_for_next_request(self):
+        from aider.coders import Coder as CoderFactory
+        from aider.skills import Skill
+
+        bodies = [SimpleNamespace(name="Review", body="Review instructions")]
+        catalog = [Skill("review", "Review", "Review code", Path("review/SKILL.md"))]
+        captured_bodies = []
+        with GitTemporaryDirectory():
+            coder = CoderFactory.create(
+                main_model=self.model,
+                edit_format="ask",
+                io=InputOutput(yes=True, pretty=False),
+                handoff_skill_bodies=bodies,
+            )
+            coder.send_message = lambda _message: (
+                captured_bodies.append(coder.request_skill_bodies) or iter(())
+            )
+
+            with (
+                patch("aider.coders.base_coder.discover_skills", return_value=catalog) as discover,
+                patch("aider.coders.base_coder.select_skills", return_value=[]) as select,
+            ):
+                coder.run_one("architect handoff", preproc=False)
+                self.assertEqual(captured_bodies, [bodies])
+                discover.assert_not_called()
+                select.assert_not_called()
+
+                captured_bodies.clear()
+                coder.run_one("new user request", preproc=False)
+                self.assertEqual(len(captured_bodies), 1)
+                self.assertFalse(captured_bodies[0])
+
+        discover.assert_called_once()
+        select.assert_called_once()
+
+    def test_empty_architect_handoff_gives_editor_no_skill_context(self):
+        from aider.coders import Coder as CoderFactory
+
+        captured_bodies = []
+        with GitTemporaryDirectory():
+            coder = CoderFactory.create(
+                main_model=self.model,
+                edit_format="ask",
+                io=InputOutput(yes=True, pretty=False),
+                handoff_skill_bodies=[],
+            )
+            coder.send_message = lambda _message: (
+                captured_bodies.append(coder.request_skill_bodies) or iter(())
+            )
+
+            with (
+                patch("aider.coders.base_coder.discover_skills") as discover,
+                patch("aider.coders.base_coder.select_skills") as select,
+            ):
+                coder.run_one("architect handoff without selected skills", preproc=False)
+
+        self.assertEqual(len(captured_bodies), 1)
+        self.assertFalse(captured_bodies[0])
+        discover.assert_not_called()
+        select.assert_not_called()
 
 
 if __name__ == "__main__":

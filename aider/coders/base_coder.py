@@ -46,6 +46,7 @@ from aider.reasoning_tags import (
 from aider.repo import ANY_GIT_ERROR, GitRepo
 from aider.repomap import RepoMap
 from aider.run_cmd import run_cmd
+from aider.skills import discover_skills, load_skill_body, select_skills
 from aider.utils import format_content, format_messages, format_tokens, is_image_file
 from aider.waiting import WaitingSpinner
 
@@ -129,6 +130,7 @@ class Coder:
         io=None,
         from_coder=None,
         summarize_from_coder=True,
+        handoff_skill_bodies=None,
         **kwargs,
     ):
         import aider.coders as coders
@@ -191,6 +193,7 @@ class Coder:
             if hasattr(coder, "edit_format") and coder.edit_format == edit_format:
                 res = coder(main_model, io, **kwargs)
                 res.original_kwargs = dict(kwargs)
+                res._handoff_skill_bodies = handoff_skill_bodies
                 return res
 
         valid_formats = [
@@ -386,6 +389,7 @@ class Coder:
         self.total_tokens_received = total_tokens_received
         self.message_tokens_sent = 0
         self.message_tokens_received = 0
+        self.request_skill_bodies = []
 
         self.verbose = verbose
         self.abs_fnames = set()
@@ -923,25 +927,94 @@ class Coder:
 
     def run_one(self, user_message, preproc):
         self.init_before_message()
+        handoff_skill_bodies = getattr(self, "_handoff_skill_bodies", None)
+        self._handoff_skill_bodies = None
+        self.request_skill_bodies = []
+        if handoff_skill_bodies is not None:
+            self.request_skill_bodies = handoff_skill_bodies
+
+        is_command = bool(
+            preproc
+            and user_message
+            and getattr(getattr(self, "commands", None), "is_command", lambda _message: False)(
+                user_message
+            )
+        )
 
         if preproc:
             message = self.preproc_user_input(user_message)
         else:
             message = user_message
 
-        while message:
-            self.reflected_message = None
-            list(self.send_message(message))
+        try:
+            if message and not is_command and handoff_skill_bodies is None:
+                catalog = discover_skills(self.root, self.io)
+                if catalog:
+                    # Match the normal prompt's history boundary before asking the selector.
+                    getattr(self, "summarize_end", lambda: None)()
+                    conversation = list(self.done_messages) + list(self.cur_messages)
+                    usage_callback = self._account_skill_selector_usage
+                    io_state = getattr(self.io, "__dict__", {})
+                    had_callback = "_skill_usage_callback" in io_state
+                    previous_callback = io_state.get("_skill_usage_callback")
+                    self.io._skill_usage_callback = usage_callback
+                    try:
+                        selected = select_skills(
+                            self.main_model, self.io, conversation, message, catalog
+                        )
+                    except Exception as error:
+                        self.io.tool_warning(
+                            f"Skill selection failed; continuing without skills: {error}"
+                        )
+                        selected = []
+                    finally:
+                        if had_callback:
+                            self.io._skill_usage_callback = previous_callback
+                        else:
+                            del self.io._skill_usage_callback
 
-            if not self.reflected_message:
-                break
+                    for skill in selected:
+                        try:
+                            body = load_skill_body(skill)
+                        except Exception as error:
+                            self.io.tool_warning(f"Skipping skill {skill.path}: {error}")
+                            continue
+                        self.request_skill_bodies.append(
+                            {"name": skill.name, "body": body}
+                        )
 
-            if self.num_reflections >= self.max_reflections:
-                self.io.tool_warning(f"Only {self.max_reflections} reflections allowed, stopping.")
-                return
+                    if self.request_skill_bodies:
+                        names = ", ".join(
+                            skill_body["name"] for skill_body in self.request_skill_bodies
+                        )
+                        self.io.tool_output(f"Using project skills: {names}")
 
-            self.num_reflections += 1
-            message = self.reflected_message
+            while message:
+                self.reflected_message = None
+                list(self.send_message(message))
+
+                if not self.reflected_message:
+                    break
+
+                if self.num_reflections >= self.max_reflections:
+                    self.io.tool_warning(
+                        f"Only {self.max_reflections} reflections allowed, stopping."
+                    )
+                    return
+
+                self.num_reflections += 1
+                message = self.reflected_message
+        finally:
+            self.request_skill_bodies = []
+
+    def _account_skill_selector_usage(self, messages, completion, response_text):
+        """Include one selector call in the active user message's usage totals."""
+        try:
+            self.calculate_and_show_tokens_and_cost(
+                messages, completion, response_text=response_text
+            )
+        except Exception as error:
+            self.io.tool_warning(f"Could not account for skill selector usage: {error}")
 
     def check_and_open_urls(self, exc, friendly_msg=None):
         """Check exception for URLs, offer to open in a browser, with user-friendly error msgs."""
@@ -1022,7 +1095,7 @@ class Coder:
             self.io.tool_output("Finished summarizing chat history.")
 
     def summarize_end(self):
-        if self.summarizer_thread is None:
+        if getattr(self, "summarizer_thread", None) is None:
             return
 
         self.summarizer_thread.join()
@@ -1228,6 +1301,18 @@ class Coder:
         main_sys = self.fmt_system_prompt(self.gpt_prompts.main_system)
         if self.main_model.system_prompt_prefix:
             main_sys = self.main_model.system_prompt_prefix + "\n" + main_sys
+
+        if self.request_skill_bodies:
+            skill_sections = []
+            for selected_skill in self.request_skill_bodies:
+                if isinstance(selected_skill, dict):
+                    name = selected_skill["name"]
+                    body = selected_skill["body"]
+                else:
+                    name = selected_skill.name
+                    body = selected_skill.body
+                skill_sections.append(f"## {name}\n\n{body}")
+            main_sys += "\n\n# Selected project skills\n\n" + "\n\n".join(skill_sections)
 
         example_messages = []
         if self.main_model.examples_as_sys_msg:
@@ -1991,7 +2076,7 @@ class Coder:
             self.reasoning_tag_name,
         )
 
-    def calculate_and_show_tokens_and_cost(self, messages, completion=None):
+    def calculate_and_show_tokens_and_cost(self, messages, completion=None, response_text=None):
         prompt_tokens = 0
         completion_tokens = 0
         cache_hit_tokens = 0
@@ -2015,7 +2100,9 @@ class Coder:
 
         else:
             prompt_tokens = self.main_model.token_count(messages)
-            completion_tokens = self.main_model.token_count(self.partial_response_content)
+            if response_text is None:
+                response_text = self.partial_response_content
+            completion_tokens = self.main_model.token_count(response_text)
             self.message_tokens_sent += prompt_tokens
 
         self.message_tokens_received += completion_tokens
