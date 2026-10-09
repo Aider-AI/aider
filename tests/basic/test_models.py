@@ -595,6 +595,12 @@ class TestModels(unittest.TestCase):
                 self.assertEqual(model.editor_model.name, editor_name)
                 self.assertIn("reasoning_effort", model.accepts_settings)
 
+    def test_gemini_3_flash_lite_and_3_8_flash_omit_temperature(self):
+        for name in ["gemini/gemini-3.5-flash-lite", "gemini/gemini-3.8-flash"]:
+            with self.subTest(name=name):
+                model = Model(name)
+                self.assertFalse(model.use_temperature)
+
 
 if __name__ == "__main__":
     unittest.main()

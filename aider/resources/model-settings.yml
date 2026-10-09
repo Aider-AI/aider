@@ -1558,6 +1558,14 @@
   use_temperature: false
   accepts_settings: ["thinking_tokens"]
 
+- name: gemini/gemini-3.5-flash-lite
+  use_temperature: false
+  accepts_settings: ["thinking_tokens"]
+
+- name: gemini/gemini-3.8-flash
+  use_temperature: false
+  accepts_settings: ["thinking_tokens"]
+
 - name: vertex_ai/gemini-3-flash-preview
   overeager: true
   edit_format: diff-fenced
