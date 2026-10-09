@@ -98,6 +98,22 @@ def make_new_repo(git_root, io):
     return repo
 
 
+def _persist_git_false(cwd, io):
+    """Write git: false to .aider.conf.yml so the user isn't asked again."""
+    import yaml
+
+    conf_path = cwd / ".aider.conf.yml"
+    config = {}
+    if conf_path.exists():
+        try:
+            config = yaml.safe_load(conf_path.read_text()) or {}
+        except Exception:
+            config = {}
+    config["git"] = False
+    conf_path.write_text(yaml.dump(config, default_flow_style=False))
+    io.tool_output(f"Saved git: false to {conf_path}")
+
+
 def setup_git(git_root, io):
     if git is None:
         return
@@ -124,6 +140,12 @@ def setup_git(git_root, io):
     ):
         git_root = str(cwd.resolve())
         repo = make_new_repo(git_root, io)
+    elif cwd:
+        # User declined repo creation — offer to persist the choice
+        if io.confirm_ask(
+            "Disable git for this project so you won't be asked again?"
+        ):
+            _persist_git_false(cwd, io)
 
     if not repo:
         return
