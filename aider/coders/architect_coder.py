@@ -30,6 +30,7 @@ class ArchitectCoder(AskCoder):
         kwargs["cache_prompts"] = False
         kwargs["num_cache_warming_pings"] = 0
         kwargs["summarize_from_coder"] = False
+        kwargs["handoff_skill_bodies"] = getattr(self, "request_skill_bodies", [])
 
         new_kwargs = dict(io=self.io, from_coder=self)
         new_kwargs.update(kwargs)
