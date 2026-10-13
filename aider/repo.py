@@ -586,12 +586,12 @@ class GitRepo:
         dirty_files = set()
 
         # Get staged files
-        staged_files = self.repo.git.diff("--name-only", "--cached").splitlines()
-        dirty_files.update(staged_files)
+        staged_files = self.repo.git.diff("--name-only", "-z", "--cached").split("\0")
+        dirty_files.update(path for path in staged_files if path)
 
         # Get unstaged files
-        unstaged_files = self.repo.git.diff("--name-only").splitlines()
-        dirty_files.update(unstaged_files)
+        unstaged_files = self.repo.git.diff("--name-only", "-z").split("\0")
+        dirty_files.update(path for path in unstaged_files if path)
 
         return list(dirty_files)
 
