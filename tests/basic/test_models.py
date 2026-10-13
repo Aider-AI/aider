@@ -371,6 +371,40 @@ class TestModels(unittest.TestCase):
         self.assertEqual(model.editor_edit_format, "editor-diff")
         self.assertTrue(model.use_repo_map)
 
+    @patch.object(Model, "get_model_info", return_value={"max_input_tokens": 1000000})
+    def test_netmind_model_settings(self, _mock_model_info):
+        model = Model("openai/openai/gpt-6-astra")
+
+        self.assertEqual(model.edit_format, "diff")
+        self.assertEqual(model.editor_edit_format, "editor-diff")
+        self.assertTrue(model.use_repo_map)
+        self.assertIs(model.weak_model, model)
+        self.assertIs(model.editor_model, model)
+
+    def test_netmind_model_metadata(self):
+        import importlib.resources
+
+        import json5
+
+        with importlib.resources.open_text("aider.resources", "model-metadata.json") as file:
+            metadata = json5.load(file)
+
+        info = metadata["openai/openai/gpt-6-astra"]
+        self.assertEqual(info["litellm_provider"], "openai")
+        self.assertEqual(info["input_cost_per_token"], 0.00001)
+        self.assertEqual(info["output_cost_per_token"], 0.00005)
+        self.assertEqual(info["cache_read_input_token_cost"], 0.000001)
+        self.assertEqual(info["max_input_tokens"], 1000000)
+        self.assertEqual(info["max_output_tokens"], 128000)
+        self.assertFalse(info["supports_function_calling"])
+
+        claude = metadata["openai/anthropic/claude-opus-5-5"]
+        self.assertEqual(claude["input_cost_per_token"], 0.000004)
+        self.assertEqual(claude["output_cost_per_token"], 0.00002)
+        self.assertEqual(claude["max_input_tokens"], 1000000)
+        self.assertEqual(claude["max_output_tokens"], 128000)
+        self.assertTrue(claude["supports_function_calling"])
+
     def test_aider_extra_model_settings(self):
         import tempfile
 

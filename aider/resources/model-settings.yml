@@ -788,6 +788,225 @@
   editor_model_name: openrouter/qwen/qwen-2.5-coder-32b-instruct
   editor_edit_format: editor-diff
 
+# netmind-catalog:start
+- name: openai/openai/gpt-6-astra
+  edit_format: diff
+  weak_model_name: openai/openai/gpt-6-astra
+  use_repo_map: true
+  editor_model_name: openai/openai/gpt-6-astra
+  editor_edit_format: editor-diff
+
+- name: openai/openai/gpt-6-sol
+  edit_format: diff
+  weak_model_name: openai/openai/gpt-6-sol
+  use_repo_map: true
+  editor_model_name: openai/openai/gpt-6-sol
+  editor_edit_format: editor-diff
+
+- name: openai/openai/gpt-6-luna
+  edit_format: diff
+  weak_model_name: openai/openai/gpt-6-luna
+  use_repo_map: true
+  editor_model_name: openai/openai/gpt-6-luna
+  editor_edit_format: editor-diff
+
+- name: openai/openai/gpt-6.1-sol
+  edit_format: diff
+  weak_model_name: openai/openai/gpt-6.1-sol
+  use_repo_map: true
+  editor_model_name: openai/openai/gpt-6.1-sol
+  editor_edit_format: editor-diff
+
+- name: openai/openai/gpt-5.6-sol
+  edit_format: diff
+  weak_model_name: openai/openai/gpt-5.6-sol
+  use_repo_map: true
+  editor_model_name: openai/openai/gpt-5.6-sol
+  editor_edit_format: editor-diff
+
+- name: openai/openai/gpt-5.6-terra
+  edit_format: diff
+  weak_model_name: openai/openai/gpt-5.6-terra
+  use_repo_map: true
+  editor_model_name: openai/openai/gpt-5.6-terra
+  editor_edit_format: editor-diff
+
+- name: openai/openai/gpt-5.6-luna
+  edit_format: diff
+  weak_model_name: openai/openai/gpt-5.6-luna
+  use_repo_map: true
+  editor_model_name: openai/openai/gpt-5.6-luna
+  editor_edit_format: editor-diff
+
+- name: openai/openai/gpt-5.5
+  edit_format: diff
+  weak_model_name: openai/openai/gpt-5.5
+  use_repo_map: true
+  editor_model_name: openai/openai/gpt-5.5
+  editor_edit_format: editor-diff
+
+- name: openai/openai/gpt-5.4
+  edit_format: diff
+  weak_model_name: openai/openai/gpt-5.4
+  use_repo_map: true
+  editor_model_name: openai/openai/gpt-5.4
+  editor_edit_format: editor-diff
+
+- name: openai/openai/gpt-5.4-mini
+  edit_format: diff
+  weak_model_name: openai/openai/gpt-5.4-mini
+  use_repo_map: true
+  editor_model_name: openai/openai/gpt-5.4-mini
+  editor_edit_format: editor-diff
+
+- name: openai/anthropic/claude-opus-5-5
+  edit_format: diff
+  weak_model_name: openai/anthropic/claude-opus-5-5
+  use_repo_map: true
+  editor_model_name: openai/anthropic/claude-opus-5-5
+  editor_edit_format: editor-diff
+
+- name: openai/anthropic/claude-sonnet-5-5
+  edit_format: diff
+  weak_model_name: openai/anthropic/claude-sonnet-5-5
+  use_repo_map: true
+  editor_model_name: openai/anthropic/claude-sonnet-5-5
+  editor_edit_format: editor-diff
+
+- name: openai/anthropic/claude-haiku-5-5
+  edit_format: diff
+  weak_model_name: openai/anthropic/claude-haiku-5-5
+  use_repo_map: true
+  editor_model_name: openai/anthropic/claude-haiku-5-5
+  editor_edit_format: editor-diff
+
+- name: openai/anthropic/claude-fable-5-1
+  edit_format: diff
+  weak_model_name: openai/anthropic/claude-fable-5-1
+  use_repo_map: true
+  editor_model_name: openai/anthropic/claude-fable-5-1
+  editor_edit_format: editor-diff
+
+- name: openai/anthropic/claude-sonnet-5
+  edit_format: diff
+  weak_model_name: openai/anthropic/claude-sonnet-5
+  use_repo_map: true
+  editor_model_name: openai/anthropic/claude-sonnet-5
+  editor_edit_format: editor-diff
+
+- name: openai/anthropic/claude-haiku-4-5
+  edit_format: diff
+  weak_model_name: openai/anthropic/claude-haiku-4-5
+  use_repo_map: true
+  editor_model_name: openai/anthropic/claude-haiku-4-5
+  editor_edit_format: editor-diff
+
+- name: openai/deepseek-ai/DeepSeek-V4-Pro
+  edit_format: diff
+  weak_model_name: openai/deepseek-ai/DeepSeek-V4-Pro
+  use_repo_map: true
+  editor_model_name: openai/deepseek-ai/DeepSeek-V4-Pro
+  editor_edit_format: editor-diff
+
+- name: openai/deepseek-ai/DeepSeek-V4.1-Flash
+  edit_format: diff
+  weak_model_name: openai/deepseek-ai/DeepSeek-V4.1-Flash
+  use_repo_map: true
+  editor_model_name: openai/deepseek-ai/DeepSeek-V4.1-Flash
+  editor_edit_format: editor-diff
+
+- name: openai/deepseek-ai/DeepSeek-V4-Flash-Vision-Exp
+  edit_format: diff
+  weak_model_name: openai/deepseek-ai/DeepSeek-V4-Flash-Vision-Exp
+  use_repo_map: true
+  editor_model_name: openai/deepseek-ai/DeepSeek-V4-Flash-Vision-Exp
+  editor_edit_format: editor-diff
+
+- name: openai/Qwen/Qwen3.8-Max
+  edit_format: diff
+  weak_model_name: openai/Qwen/Qwen3.8-Max
+  use_repo_map: true
+  editor_model_name: openai/Qwen/Qwen3.8-Max
+  editor_edit_format: editor-diff
+
+- name: openai/Qwen/Qwen3.8-Flash
+  edit_format: diff
+  weak_model_name: openai/Qwen/Qwen3.8-Flash
+  use_repo_map: true
+  editor_model_name: openai/Qwen/Qwen3.8-Flash
+  editor_edit_format: editor-diff
+
+- name: openai/Qwen/Qwen3.7-Plus
+  edit_format: diff
+  weak_model_name: openai/Qwen/Qwen3.7-Plus
+  use_repo_map: true
+  editor_model_name: openai/Qwen/Qwen3.7-Plus
+  editor_edit_format: editor-diff
+
+- name: openai/zai-org/GLM-5.3
+  edit_format: diff
+  weak_model_name: openai/zai-org/GLM-5.3
+  use_repo_map: true
+  editor_model_name: openai/zai-org/GLM-5.3
+  editor_edit_format: editor-diff
+
+- name: openai/zai-org/GLM-5.3-Flash
+  edit_format: diff
+  weak_model_name: openai/zai-org/GLM-5.3-Flash
+  use_repo_map: true
+  editor_model_name: openai/zai-org/GLM-5.3-Flash
+  editor_edit_format: editor-diff
+
+- name: openai/zai-org/GLM-5.3-FlashX
+  edit_format: diff
+  weak_model_name: openai/zai-org/GLM-5.3-FlashX
+  use_repo_map: true
+  editor_model_name: openai/zai-org/GLM-5.3-FlashX
+  editor_edit_format: editor-diff
+
+- name: openai/google/gemini-3.8-flash
+  edit_format: diff
+  weak_model_name: openai/google/gemini-3.8-flash
+  use_repo_map: true
+  editor_model_name: openai/google/gemini-3.8-flash
+  editor_edit_format: editor-diff
+
+- name: openai/moonshotai/Kimi-K3
+  edit_format: diff
+  weak_model_name: openai/moonshotai/Kimi-K3
+  use_repo_map: true
+  editor_model_name: openai/moonshotai/Kimi-K3
+  editor_edit_format: editor-diff
+
+- name: openai/minimax/minimax-m3
+  edit_format: diff
+  weak_model_name: openai/minimax/minimax-m3
+  use_repo_map: true
+  editor_model_name: openai/minimax/minimax-m3
+  editor_edit_format: editor-diff
+
+- name: openai/x-ai/grok-4.7
+  edit_format: diff
+  weak_model_name: openai/x-ai/grok-4.7
+  use_repo_map: true
+  editor_model_name: openai/x-ai/grok-4.7
+  editor_edit_format: editor-diff
+
+- name: openai/XiaomiMiMo/MiMo-V2.5-Pro
+  edit_format: diff
+  weak_model_name: openai/XiaomiMiMo/MiMo-V2.5-Pro
+  use_repo_map: true
+  editor_model_name: openai/XiaomiMiMo/MiMo-V2.5-Pro
+  editor_edit_format: editor-diff
+
+- name: openai/XiaomiMiMo/MiMo-V2.5
+  edit_format: diff
+  weak_model_name: openai/XiaomiMiMo/MiMo-V2.5
+  use_repo_map: true
+  editor_model_name: openai/XiaomiMiMo/MiMo-V2.5
+  editor_edit_format: editor-diff
+# netmind-catalog:end
+
 - name: openrouter/deepseek/deepseek-r1-distill-llama-70b
   edit_format: diff
   weak_model_name: openrouter/deepseek/deepseek-chat
