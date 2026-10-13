@@ -29,6 +29,10 @@ setx OPENAI_API_KEY "<your-netmind-api-key>"
 # Restart PowerShell after running setx.
 ```
 
+The bundled metadata covers all 31 models in NetMind's current catalog. The commands
+below use `Qwen/Qwen3.8-Flash` as an example; you can replace it with any supported
+NetMind model ID.
+
 Start aider with the fully qualified NetMind model ID:
 
 ```bash
