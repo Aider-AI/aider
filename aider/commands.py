@@ -973,6 +973,7 @@ class Commands:
             env["GIT_EDITOR"] = "true"
             result = subprocess.run(
                 args,
+                cwd=self.coder.root,
                 stdout=subprocess.PIPE,
                 stderr=subprocess.STDOUT,
                 text=True,
