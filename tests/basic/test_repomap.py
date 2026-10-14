@@ -505,6 +505,39 @@ class TestRepoMapAllLanguages(unittest.TestCase):
         # If we reach here, the maps are identical
         self.assertEqual(generated_map_str, expected_map, "Generated map matches expected map")
 
+    def test_repo_map_strict_token_budget_ceiling(self):
+        with GitTemporaryDirectory() as temp_dir:
+            other_files = []
+            for i in range(12):
+                fpath = os.path.join(temp_dir, f"module_{i}.py")
+                with open(fpath, "w") as f:
+                    for j in range(8):
+                        f.write(
+                            f"def calculate_metric_{i}_{j}(x, y):\n"
+                            f"    '''Compute metric for module {i} slot {j}.'''\n"
+                            f"    return x * y + {i} - {j}\n\n"
+                        )
+                other_files.append(fpath)
+
+            io = InputOutput()
+            chat_files = [other_files[0]]
+            for target_budget in [150, 300, 500, 750]:
+                repo_map = RepoMap(
+                    main_model=self.GPT35,
+                    root=temp_dir,
+                    io=io,
+                    map_tokens=target_budget,
+                )
+                result = repo_map.get_repo_map(chat_files, other_files[1:])
+                self.assertIsNotNone(result)
+                actual_tokens = repo_map.token_count(result)
+                msg = (
+                    f"Generated repo map tokens ({actual_tokens}) "
+                    f"exceeded target budget ceiling ({target_budget})"
+                )
+                self.assertLessEqual(actual_tokens, target_budget, msg)
+                del repo_map
+
 
 if __name__ == "__main__":
     unittest.main()
