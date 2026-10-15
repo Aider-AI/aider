@@ -12,7 +12,7 @@ from grep_ast import TreeContext, filename_to_lang
 from grep_ast.tsl import get_parser  # noqa: E402
 
 from aider.dump import dump  # noqa: F401
-from aider.run_cmd import run_cmd_subprocess  # noqa: F401
+from aider.run_cmd import child_process_environ, run_cmd_subprocess  # noqa: F401
 
 # tree_sitter is throwing a FutureWarning
 warnings.simplefilter("ignore", category=FutureWarning)
@@ -156,6 +156,7 @@ class Linter:
                 encoding=self.encoding,
                 errors="replace",
                 cwd=self.root,
+                env=child_process_environ(),
             )
             errors = result.stdout + result.stderr
         except Exception as e:
