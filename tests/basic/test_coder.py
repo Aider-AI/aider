@@ -22,6 +22,35 @@ class TestCoder(unittest.TestCase):
         self.webbrowser_patcher = patch("aider.io.webbrowser.open")
         self.mock_webbrowser = self.webbrowser_patcher.start()
 
+    def test_function_call_history_text(self):
+        with GitTemporaryDirectory():
+            io = InputOutput(pretty=False, fancy_input=False, yes=True)
+            coder = Coder.create(self.GPT35, "diff", io=io)
+            coder.cur_messages = [dict(role="user", content="Update the file")]
+            coder.partial_response_content = "Updating the file"
+            coder.partial_response_function_call = dict(
+                name="replace_lines", arguments='{"explanation": "Update", "edits": []}'
+            )
+            coder.add_assistant_reply_to_cur_messages()
+
+            self.assertIsNone(coder.cur_messages[-1]["content"])
+            self.assertEqual(coder.get_cur_message_text(), "Update the file\nUpdating the file\n")
+            self.assertEqual(
+                coder.get_context_from_history(coder.cur_messages),
+                "\nUSER: Update the file\n\nASSISTANT: Updating the file\n",
+            )
+
+    def test_function_only_history_text(self):
+        with GitTemporaryDirectory():
+            io = InputOutput(pretty=False, fancy_input=False, yes=True)
+            coder = Coder.create(self.GPT35, "diff", io=io)
+            coder.partial_response_content = ""
+            coder.partial_response_function_call = dict(name="replace_lines", arguments="{}")
+            coder.add_assistant_reply_to_cur_messages()
+
+            self.assertEqual(coder.get_cur_message_text(), "")
+            self.assertEqual(coder.get_context_from_history(coder.cur_messages), "")
+
     def test_allowed_to_edit(self):
         with GitTemporaryDirectory():
             repo = git.Repo()
@@ -1432,43 +1461,6 @@ This command will print 'Hello, World!' to the console."""
                     # Verify that editor coder was NOT created or run
                     # (because user rejected the changes)
                     mock_editor.run.assert_not_called()
-
-    def test_get_cur_message_text_with_none_content(self):
-        """Test that get_cur_message_text handles None content gracefully.
-
-        This can happen when assistant messages have no text content
-        (e.g., image-only responses or refusals).
-        """
-        with GitTemporaryDirectory():
-            io = InputOutput(yes=True)
-            coder = Coder.create(self.GPT35, "diff", io=io)
-
-            # Test with mixed None and string content
-            coder.cur_messages = [
-                {"role": "user", "content": "Hello"},
-                {"role": "assistant", "content": None},  # Image-only or refusal
-                {"role": "user", "content": "Continue"},
-            ]
-
-            # Should not raise TypeError
-            result = coder.get_cur_message_text()
-            self.assertEqual(result, "Hello\nContinue\n")
-
-    def test_get_cur_message_text_all_none(self):
-        """Test that get_cur_message_text handles all None content."""
-        with GitTemporaryDirectory():
-            io = InputOutput(yes=True)
-            coder = Coder.create(self.GPT35, "diff", io=io)
-
-            # Test with all None content
-            coder.cur_messages = [
-                {"role": "assistant", "content": None},
-                {"role": "assistant", "content": None},
-            ]
-
-            # Should not raise and return empty string
-            result = coder.get_cur_message_text()
-            self.assertEqual(result, "")
 
 
 if __name__ == "__main__":

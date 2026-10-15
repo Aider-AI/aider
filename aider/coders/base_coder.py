@@ -672,6 +672,7 @@ class Coder:
     def get_cur_message_text(self):
         text = ""
         for msg in self.cur_messages:
+            # Function-call messages have no text content.
             if msg["content"] is not None:
                 text += msg["content"] + "\n"
         return text
@@ -2369,7 +2370,8 @@ class Coder:
         context = ""
         if history:
             for msg in history:
-                context += "\n" + msg["role"].upper() + ": " + msg["content"] + "\n"
+                if msg["content"] is not None:
+                    context += "\n" + msg["role"].upper() + ": " + msg["content"] + "\n"
 
         return context
 

@@ -99,7 +99,7 @@ class ChatSummary:
         content = ""
         for msg in messages:
             role = msg["role"].upper()
-            if role not in ("USER", "ASSISTANT"):
+            if role not in ("USER", "ASSISTANT") or msg["content"] is None:
                 continue
             content += f"# {role}\n"
             content += msg["content"]

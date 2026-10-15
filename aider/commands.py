@@ -1528,7 +1528,11 @@ class Commands:
     def cmd_copy(self, args):
         "Copy the last assistant message to the clipboard"
         all_messages = self.coder.done_messages + self.coder.cur_messages
-        assistant_messages = [msg for msg in reversed(all_messages) if msg["role"] == "assistant"]
+        assistant_messages = [
+            msg
+            for msg in reversed(all_messages)
+            if msg["role"] == "assistant" and msg["content"] is not None
+        ]
 
         if not assistant_messages:
             self.io.tool_error("No assistant messages found to copy.")
