@@ -686,18 +686,21 @@ class RepoMap:
             tree = self.to_tree(ranked_tags[:middle], chat_rel_fnames)
             num_tokens = self.token_count(tree)
 
-            pct_err = abs(num_tokens - max_map_tokens) / max_map_tokens
             ok_err = 0.15
-            if (num_tokens <= max_map_tokens and num_tokens > best_tree_tokens) or pct_err < ok_err:
-                best_tree = tree
-                best_tree_tokens = num_tokens
+            if num_tokens <= max_map_tokens:
+                if num_tokens > best_tree_tokens:
+                    best_tree = tree
+                    best_tree_tokens = num_tokens
 
+                pct_err = (max_map_tokens - num_tokens) / max_map_tokens
                 if pct_err < ok_err:
                     break
-
-            if num_tokens < max_map_tokens:
                 lower_bound = middle + 1
             else:
+                if best_tree is None:
+                    # Fallback only if no within-budget tree has been observed yet
+                    best_tree = tree
+                    best_tree_tokens = num_tokens
                 upper_bound = middle - 1
 
             middle = int((lower_bound + upper_bound) // 2)
