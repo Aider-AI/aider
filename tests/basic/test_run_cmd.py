@@ -1,6 +1,8 @@
+import sys
+
 import pytest  # noqa: F401
 
-from aider.run_cmd import child_process_environ, run_cmd
+from aider.run_cmd import child_process_environ, run_cmd, run_cmd_subprocess
 
 
 def test_child_process_environ_strips_provider_credentials(monkeypatch):
@@ -29,3 +31,19 @@ def test_run_cmd_echo():
 
     assert exit_code == 0
     assert output.strip() == "Hello, World!"
+
+
+def test_run_cmd_subprocess_hides_provider_api_key(monkeypatch):
+    monkeypatch.setenv("OPENAI_API_KEY", "sk-secret")
+    monkeypatch.setenv("GITHUB_TOKEN", "gh-visible")
+    command = (
+        sys.executable
+        + " -c 'import os; print(\"KEY=\" + os.environ.get(\"OPENAI_API_KEY\", \"\")); "
+        + "print(\"GH=\" + os.environ.get(\"GITHUB_TOKEN\", \"\"))'"
+    )
+    exit_code, output = run_cmd_subprocess(command)
+
+    assert exit_code == 0
+    assert "KEY=" in output
+    assert "KEY=sk-secret" not in output
+    assert "GH=gh-visible" in output
