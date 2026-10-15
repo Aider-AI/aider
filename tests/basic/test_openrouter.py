@@ -71,3 +71,41 @@ def test_model_info_manager_uses_openrouter_manager(monkeypatch):
     info = mim.get_model_info("openrouter/fake/model")
 
     assert info == stub_info
+
+
+def test_openrouter_attribution_env_defaults(monkeypatch):
+    """
+    aider.llm should default OR_SITE_URL and OR_APP_NAME if not set in the environment.
+    """
+    import importlib
+    import os
+
+    monkeypatch.delenv("OR_SITE_URL", raising=False)
+    monkeypatch.delenv("OR_APP_NAME", raising=False)
+
+    import aider.llm
+
+    importlib.reload(aider.llm)
+
+    assert os.environ.get("OR_SITE_URL") == "https://aider.chat"
+    assert os.environ.get("OR_APP_NAME") == "Aider"
+
+
+def test_openrouter_attribution_env_preserved_when_preexisting(monkeypatch):
+    """
+    aider.llm should preserve custom OR_SITE_URL and OR_APP_NAME if already set.
+    """
+    import importlib
+    import os
+
+    custom_url = "https://example.com/custom-tool"
+    custom_name = "CustomTool"
+    monkeypatch.setenv("OR_SITE_URL", custom_url)
+    monkeypatch.setenv("OR_APP_NAME", custom_name)
+
+    import aider.llm
+
+    importlib.reload(aider.llm)
+
+    assert os.environ.get("OR_SITE_URL") == custom_url
+    assert os.environ.get("OR_APP_NAME") == custom_name
