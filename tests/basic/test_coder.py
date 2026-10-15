@@ -22,6 +22,35 @@ class TestCoder(unittest.TestCase):
         self.webbrowser_patcher = patch("aider.io.webbrowser.open")
         self.mock_webbrowser = self.webbrowser_patcher.start()
 
+    def test_function_call_history_text(self):
+        with GitTemporaryDirectory():
+            io = InputOutput(pretty=False, fancy_input=False, yes=True)
+            coder = Coder.create(self.GPT35, "diff", io=io)
+            coder.cur_messages = [dict(role="user", content="Update the file")]
+            coder.partial_response_content = "Updating the file"
+            coder.partial_response_function_call = dict(
+                name="replace_lines", arguments='{"explanation": "Update", "edits": []}'
+            )
+            coder.add_assistant_reply_to_cur_messages()
+
+            self.assertIsNone(coder.cur_messages[-1]["content"])
+            self.assertEqual(coder.get_cur_message_text(), "Update the file\nUpdating the file\n")
+            self.assertEqual(
+                coder.get_context_from_history(coder.cur_messages),
+                "\nUSER: Update the file\n\nASSISTANT: Updating the file\n",
+            )
+
+    def test_function_only_history_text(self):
+        with GitTemporaryDirectory():
+            io = InputOutput(pretty=False, fancy_input=False, yes=True)
+            coder = Coder.create(self.GPT35, "diff", io=io)
+            coder.partial_response_content = ""
+            coder.partial_response_function_call = dict(name="replace_lines", arguments="{}")
+            coder.add_assistant_reply_to_cur_messages()
+
+            self.assertEqual(coder.get_cur_message_text(), "")
+            self.assertEqual(coder.get_context_from_history(coder.cur_messages), "")
+
     def test_allowed_to_edit(self):
         with GitTemporaryDirectory():
             repo = git.Repo()

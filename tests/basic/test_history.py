@@ -60,6 +60,23 @@ class TestChatSummary(TestCase):
             ],
         )
 
+    def test_summarize_function_call_history(self):
+        self.mock_model.simple_send_with_retries.return_value = "Summary"
+        messages = [
+            dict(role="user", content="Update the file"),
+            dict(role="assistant", content="Updating the file"),
+            dict(
+                role="assistant",
+                content=None,
+                function_call=dict(name="replace_lines", arguments="{}"),
+            ),
+        ]
+        self.chat_summary.summarize_all(messages)
+        sent = self.mock_model.simple_send_with_retries.call_args.args[0]
+        self.assertEqual(
+            sent[1]["content"], "# USER\nUpdate the file\n# ASSISTANT\nUpdating the file\n"
+        )
+
     def test_summarize(self):
         N = 100
         messages = [None] * (2 * N)

@@ -124,6 +124,34 @@ class TestCommands(TestCase):
             # Assert tool_error was called indicating no assistant messages
             mock_tool_error.assert_called_once_with("No assistant messages found to copy.")
 
+    def test_cmd_copy_after_function_call(self):
+        io = InputOutput(pretty=False, fancy_input=False, yes=True)
+        coder = Coder.create(self.GPT35, None, io)
+        commands = Commands(io, coder)
+        coder.partial_response_content = "Updating the file"
+        coder.partial_response_function_call = dict(name="replace_lines", arguments="{}")
+        coder.add_assistant_reply_to_cur_messages()
+
+        with mock.patch("pyperclip.copy") as mock_copy:
+            commands.cmd_copy("")
+            mock_copy.assert_called_once_with("Updating the file")
+
+    def test_cmd_copy_function_only(self):
+        io = InputOutput(pretty=False, fancy_input=False, yes=True)
+        coder = Coder.create(self.GPT35, None, io)
+        commands = Commands(io, coder)
+        coder.partial_response_content = ""
+        coder.partial_response_function_call = dict(name="replace_lines", arguments="{}")
+        coder.add_assistant_reply_to_cur_messages()
+
+        with (
+            mock.patch("pyperclip.copy") as mock_copy,
+            mock.patch.object(io, "tool_error") as mock_error,
+        ):
+            commands.cmd_copy("")
+            mock_copy.assert_not_called()
+            mock_error.assert_called_once_with("No assistant messages found to copy.")
+
     def test_cmd_copy_pyperclip_exception(self):
         io = InputOutput(pretty=False, fancy_input=False, yes=True)
         coder = Coder.create(self.GPT35, None, io)
