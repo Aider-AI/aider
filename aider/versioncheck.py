@@ -62,14 +62,18 @@ def install_upgrade(io, latest_version=None):
 
 
 def check_version(io, just_check=False, verbose=False):
-    if not just_check and VERSION_CHECK_FNAME.exists():
-        day = 60 * 60 * 24
-        since = time.time() - os.path.getmtime(VERSION_CHECK_FNAME)
-        if 0 < since < day:
-            if verbose:
-                hours = since / 60 / 60
-                io.tool_output(f"Too soon to check version: {hours:.1f} hours")
-            return
+    if not just_check:
+        try:
+            if VERSION_CHECK_FNAME.exists():
+                day = 60 * 60 * 24
+                since = time.time() - os.path.getmtime(VERSION_CHECK_FNAME)
+                if 0 < since < day:
+                    if verbose:
+                        hours = since / 60 / 60
+                        io.tool_output(f"Too soon to check version: {hours:.1f} hours")
+                    return
+        except OSError:
+            pass
 
     # To keep startup fast, avoid importing this unless needed
     import requests
@@ -91,8 +95,11 @@ def check_version(io, just_check=False, verbose=False):
         io.tool_error(f"Error checking pypi for new version: {err}")
         return False
     finally:
-        VERSION_CHECK_FNAME.parent.mkdir(parents=True, exist_ok=True)
-        VERSION_CHECK_FNAME.touch()
+        try:
+            VERSION_CHECK_FNAME.parent.mkdir(parents=True, exist_ok=True)
+            VERSION_CHECK_FNAME.touch()
+        except OSError:
+            pass
 
     ###
     # is_update_available = True
