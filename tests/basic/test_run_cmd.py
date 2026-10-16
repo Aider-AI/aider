@@ -1,6 +1,8 @@
 import os
+from io import StringIO
 
 import pytest  # noqa: F401
+from dotenv import dotenv_values
 
 from aider.run_cmd import (
     KNOWN_SECRET_VALUES,
@@ -58,6 +60,16 @@ def test_child_process_environ_scrubs_by_secret_value():
     }
     scrubbed = child_process_environ(base=base)
     assert "CUSTOM_PROVIDER_SECRET" not in scrubbed
+    assert scrubbed["KEEP_ME"] == "yes"
+
+
+def test_dotenv_value_with_custom_name_is_scrubbed():
+    """Secrets loaded from .env are scrubbed even when their key is not recognizable."""
+    values = dotenv_values(stream=StringIO("MY_CUSTOM_GATEWAY=custom-gateway-secret-value-123\n"))
+    register_known_secrets(*values.values())
+
+    scrubbed = child_process_environ(base={**values, "KEEP_ME": "yes"})
+    assert "MY_CUSTOM_GATEWAY" not in scrubbed
     assert scrubbed["KEEP_ME"] == "yes"
 
 

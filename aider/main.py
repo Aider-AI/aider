@@ -15,7 +15,7 @@ except ImportError:
 
 import importlib_resources
 import shtab
-from dotenv import load_dotenv
+from dotenv import dotenv_values, load_dotenv
 from prompt_toolkit.enums import EditingMode
 
 from aider import __version__, models, urls, utils
@@ -379,7 +379,9 @@ def load_dotenv_files(git_root, dotenv_fname, encoding="utf-8"):
     for fname in dotenv_files:
         try:
             if Path(fname).exists():
+                dotenv_vars = dotenv_values(fname, encoding=encoding)
                 load_dotenv(fname, override=True, encoding=encoding)
+                register_known_secrets(*dotenv_vars.values())
                 loaded.append(fname)
         except OSError as e:
             print(f"OSError loading {fname}: {e}")
