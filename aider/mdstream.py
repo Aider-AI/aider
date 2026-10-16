@@ -49,6 +49,67 @@ The end.
 """  # noqa: E501
 
 
+def _patch_pygments_syntax_theme():
+    """Ensure tokens not explicitly in Pygments _styles inherit from their parent token,
+    preventing unquoted YAML values (Token.Literal.Scalar.Plain) and other subtokens
+    from rendering unstyled/invisible against background colors (#5855)."""
+    try:
+        from rich.style import Style
+        from rich.syntax import PygmentsSyntaxTheme
+    except ImportError:
+        return
+
+    if getattr(PygmentsSyntaxTheme, "_aider_patched", False):
+        return
+
+    PygmentsSyntaxTheme._aider_patched = True
+
+    def _is_dark(hex_col):
+        if not hex_col or not hex_col.startswith("#") or len(hex_col) < 7:
+            return False
+        try:
+            r = int(hex_col[1:3], 16)
+            g = int(hex_col[3:5], 16)
+            b = int(hex_col[5:7], 16)
+            return (0.299 * r + 0.587 * g + 0.114 * b) < 128
+        except (ValueError, IndexError):
+            return False
+
+    def get_style_for_token(self, token_type):
+        try:
+            return self._style_cache[token_type]
+        except KeyError:
+            current = token_type
+            pygments_style = None
+            while current:
+                try:
+                    pygments_style = self._pygments_style_class.style_for_token(current)
+                    break
+                except KeyError:
+                    current = current.parent
+
+            default_fg = "#ffffff" if _is_dark(self._background_color) else "#000000"
+            if pygments_style is None:
+                style = Style(color=default_fg, bgcolor=self._background_color)
+            else:
+                color = pygments_style["color"]
+                bgcolor = pygments_style["bgcolor"]
+                style = Style(
+                    color="#" + color if color else default_fg,
+                    bgcolor="#" + bgcolor if bgcolor else self._background_color,
+                    bold=pygments_style["bold"],
+                    italic=pygments_style["italic"],
+                    underline=pygments_style["underline"],
+                )
+            self._style_cache[token_type] = style
+            return style
+
+    PygmentsSyntaxTheme.get_style_for_token = get_style_for_token
+
+
+_patch_pygments_syntax_theme()
+
+
 class NoInsetCodeBlock(CodeBlock):
     """A code block with syntax highlighting and no padding."""
 

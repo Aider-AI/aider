@@ -606,5 +606,30 @@ class TestInputOutputFormatFiles(unittest.TestCase):
         )
 
 
+class TestMarkdownSyntaxHighlighting(unittest.TestCase):
+    def test_yaml_unquoted_values_syntax_styling(self):
+        """Test that unquoted YAML scalars (Token.Literal.Scalar.Plain) receive explicit styling
+        and do not render unstyled against background colors (#5855)."""
+        from rich.console import Console
+        from rich.markdown import Markdown
+
+        # Trigger mdstream import so PygmentsSyntaxTheme is patched
+        import aider.mdstream  # noqa: F401
+
+        doc = (
+            "```yaml\n"
+            "valid_colon: \"text with : colon\"\n"
+            "text_without_quotes: text without quotes\n"
+            "```\n"
+        )
+        c = Console(force_terminal=True, color_system="truecolor")
+        m = Markdown(doc, code_theme="default")
+        with c.capture() as cap:
+            c.print(m)
+        output = cap.get()
+        # Verify unquoted text has an explicit foreground escape sequence and is not unstyled
+        self.assertIn("\x1b[38;2;0;0;0;", output)
+
+
 if __name__ == "__main__":
     unittest.main()
