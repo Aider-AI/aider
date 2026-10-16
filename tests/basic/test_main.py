@@ -11,6 +11,7 @@ import git
 from prompt_toolkit.input import DummyInput
 from prompt_toolkit.output import DummyOutput
 
+from aider.args import get_parser
 from aider.coders import Coder
 from aider.dump import dump  # noqa: F401
 from aider.io import InputOutput
@@ -1223,6 +1224,43 @@ class TestMain(TestCase):
 
                 # Check that the unique model name from our metadata file is listed
                 self.assertIn("test-provider/unique-model-name", output)
+
+    def test_list_models_without_filter(self):
+        with GitTemporaryDirectory():
+            metadata_file = Path(".aider.model.metadata.json")
+            test_models = {
+                "model-without-filter": {
+                    "max_input_tokens": 8192,
+                    "litellm_provider": "test-provider",
+                    "mode": "chat",
+                }
+            }
+            metadata_file.write_text(json.dumps(test_models))
+
+            for list_models_args in (("--list-models",), ("--list-models", "")):
+                with patch("sys.stdout", new_callable=StringIO) as mock_stdout:
+                    main(
+                        [
+                            *list_models_args,
+                            "--model-metadata-file",
+                            str(metadata_file),
+                            "--yes",
+                            "--no-gitignore",
+                        ],
+                        input=DummyInput(),
+                        output=DummyOutput(),
+                    )
+
+                self.assertIn("test-provider/model-without-filter", mock_stdout.getvalue())
+
+    def test_list_models_optional_filter(self):
+        parser = get_parser([], None)
+
+        self.assertEqual(parser.parse_args(["--list-models"]).list_models, "")
+        self.assertEqual(parser.parse_args(["--list-models", ""]).list_models, "")
+        self.assertEqual(parser.parse_args(["--models"]).list_models, "")
+        self.assertEqual(parser.parse_args(["--models", ""]).list_models, "")
+        self.assertIsNone(parser.parse_args([]).list_models)
 
     def test_list_models_includes_all_model_sources(self):
         # Test that models from both litellm.model_cost and model-metadata.json

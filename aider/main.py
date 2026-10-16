@@ -756,7 +756,7 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
     register_models(git_root, args.model_settings_file, io, verbose=args.verbose)
     register_litellm_models(git_root, args.model_metadata_file, io, verbose=args.verbose)
 
-    if args.list_models:
+    if args.list_models is not None:
         models.print_matching_models(io, args.list_models)
         analytics.event("exit", reason="Listed models")
         return 0

@@ -9,8 +9,8 @@ Aider uses the [litellm](https://docs.litellm.ai/docs/providers) package
 to connect to hundreds of other models.
 You can use `aider --model <model-name>` to use any supported model.
 
-To explore the list of supported models you can run `aider --list-models <model-name>`
-with a partial model name.
+To explore the full list of supported models you can run `aider --list-models`.
+You can also provide a partial model name with `aider --list-models <model-name>`.
 If the supplied name is not an exact match for a known model, aider will
 return a list of possible matching models.
 For example:
