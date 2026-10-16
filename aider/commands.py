@@ -20,7 +20,7 @@ from aider.help import Help, install_help_extra
 from aider.io import CommandCompletionException
 from aider.llm import litellm
 from aider.repo import ANY_GIT_ERROR
-from aider.run_cmd import run_cmd
+from aider.run_cmd import child_process_environ, run_cmd
 from aider.scrape import Scraper, install_playwright
 from aider.utils import is_image_file
 
@@ -969,8 +969,7 @@ class Commands:
         combined_output = None
         try:
             args = "git " + args
-            env = dict(subprocess.os.environ)
-            env["GIT_EDITOR"] = "true"
+            env = child_process_environ(extra={"GIT_EDITOR": "true"}, profile="git")
             result = subprocess.run(
                 args,
                 stdout=subprocess.PIPE,

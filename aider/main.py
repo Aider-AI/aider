@@ -15,7 +15,7 @@ except ImportError:
 
 import importlib_resources
 import shtab
-from dotenv import load_dotenv
+from dotenv import dotenv_values, load_dotenv
 from prompt_toolkit.enums import EditingMode
 
 from aider import __version__, models, urls, utils
@@ -34,6 +34,7 @@ from aider.models import ModelSettings
 from aider.onboarding import offer_openrouter_oauth, select_default_model
 from aider.repo import ANY_GIT_ERROR, GitRepo
 from aider.report import report_uncaught_exceptions
+from aider.run_cmd import refresh_known_secrets_from_process_env, register_known_secrets
 from aider.versioncheck import check_version, install_from_main_branch, install_upgrade
 from aider.watch import FileWatcher
 
@@ -378,7 +379,9 @@ def load_dotenv_files(git_root, dotenv_fname, encoding="utf-8"):
     for fname in dotenv_files:
         try:
             if Path(fname).exists():
+                dotenv_vars = dotenv_values(fname, encoding=encoding)
                 load_dotenv(fname, override=True, encoding=encoding)
+                register_known_secrets(*dotenv_vars.values())
                 loaded.append(fname)
         except OSError as e:
             print(f"OSError loading {fname}: {e}")
@@ -614,6 +617,9 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
 
     if args.openai_api_key:
         os.environ["OPENAI_API_KEY"] = args.openai_api_key
+
+    register_known_secrets(args.openai_api_key, args.anthropic_api_key)
+    refresh_known_secrets_from_process_env()
 
     # Handle deprecated model shortcut args
     handle_deprecated_model_args(args, io)
