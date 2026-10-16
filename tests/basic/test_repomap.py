@@ -505,6 +505,19 @@ class TestRepoMapAllLanguages(unittest.TestCase):
         # If we reach here, the maps are identical
         self.assertEqual(generated_map_str, expected_map, "Generated map matches expected map")
 
+    def test_repomap_networkx_import_error(self):
+        from unittest.mock import patch
+
+        io = InputOutput()
+        repo_map = RepoMap(main_model=self.GPT35, io=io)
+
+        # Simulate networkx import failure (Issue #5835)
+        with patch.dict("sys.modules", {"networkx": None}):
+            ranked_tags = repo_map.get_ranked_tags([], [], [], [])
+            self.assertEqual(ranked_tags, [])
+
+        del repo_map
+
 
 if __name__ == "__main__":
     unittest.main()
