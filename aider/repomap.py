@@ -365,7 +365,12 @@ class RepoMap:
     def get_ranked_tags(
         self, chat_fnames, other_fnames, mentioned_fnames, mentioned_idents, progress=None
     ):
-        import networkx as nx
+        try:
+            import networkx as nx
+        except (ImportError, ModuleNotFoundError) as err:
+            if self.io:
+                self.io.tool_warning(f"Repo-map disabled: could not import networkx ({err})")
+            return []
 
         defines = defaultdict(set)
         references = defaultdict(list)
@@ -529,6 +534,10 @@ class RepoMap:
                 ranked = nx.pagerank(G, weight="weight")
             except ZeroDivisionError:
                 return []
+        except Exception as err:
+            if self.io:
+                self.io.tool_warning(f"Repo-map pagerank failed: {err}")
+            return []
 
         # distribute the rank from each source node, across all of its out edges
         ranked_definitions = defaultdict(float)
