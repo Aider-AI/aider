@@ -16,7 +16,7 @@ import json5
 import yaml
 from PIL import Image
 
-from aider import __version__
+from aider import __version__, acedatacloud
 from aider.dump import dump  # noqa: F401
 from aider.llm import litellm
 from aider.openrouter import OpenRouterModelManager
@@ -247,6 +247,9 @@ class ModelInfoManager:
         return dict()
 
     def get_model_info(self, model):
+        if acedatacloud.is_model(model):
+            # Other providers' prices/context are not Ace account entitlements.
+            return self.local_model_metadata.get(model, {})
         cached_info = self.get_model_from_cached_json_db(model)
 
         litellm_info = None
@@ -332,6 +335,7 @@ class Model(ModelSettings):
     ):
         # Map any alias to its canonical name
         model = MODEL_ALIASES.get(model, model)
+        acedatacloud.transport_model(model)  # Reject an empty provider model ID.
 
         self.name = model
         self.verbose = verbose
@@ -645,12 +649,14 @@ class Model(ModelSettings):
         return self.editor_model
 
     def tokenizer(self, text):
-        return litellm.encode(model=self.name, text=text)
+        return litellm.encode(model=acedatacloud.transport_model(self.name), text=text)
 
     def token_count(self, messages):
         if type(messages) is list:
             try:
-                return litellm.token_counter(model=self.name, messages=messages)
+                return litellm.token_counter(
+                    model=acedatacloud.transport_model(self.name), messages=messages
+                )
             except Exception as err:
                 print(f"Unable to count tokens: {err}")
                 return 0
@@ -741,6 +747,8 @@ class Model(ModelSettings):
             return dict(keys_in_environment=[var], missing_keys=[])
 
     def validate_environment(self):
+        if acedatacloud.is_model(self.name):
+            return acedatacloud.validate_environment()
         res = self.fast_validate_environment()
         if res:
             return res
@@ -1024,7 +1032,7 @@ class Model(ModelSettings):
         kwargs["messages"] = messages
 
         # Are we using github copilot?
-        if "GITHUB_COPILOT_TOKEN" in os.environ:
+        if "GITHUB_COPILOT_TOKEN" in os.environ and not acedatacloud.is_model(self.name):
             if "extra_headers" not in kwargs:
                 kwargs["extra_headers"] = {
                     "Editor-Version": f"aider/{__version__}",
@@ -1033,6 +1041,11 @@ class Model(ModelSettings):
 
             self.github_copilot_token_to_open_ai_key(kwargs["extra_headers"])
 
+        if acedatacloud.is_model(self.name):
+            # Do this after verbose logging so the dedicated key is never printed.
+            # Explicit transport parameters also isolate this provider from unrelated
+            # OPENAI_API_BASE/OPENAI_API_KEY and Copilot credentials.
+            kwargs.update(acedatacloud.completion_kwargs(self.name))
         res = litellm.completion(**kwargs)
         return hash_object, res
 
@@ -1228,6 +1241,7 @@ def fuzzy_match_models(name):
     name = name.lower()
 
     chat_models = set()
+    chat_models.update(ms.name for ms in MODEL_SETTINGS if acedatacloud.is_model(ms.name))
     model_metadata = list(litellm.model_cost.items())
     model_metadata += list(model_info_manager.local_model_metadata.items())
 
