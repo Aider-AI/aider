@@ -60,7 +60,7 @@ def get_parser(default_config_files, git_root):
         "--model",
         metavar="MODEL",
         default=None,
-        help="Specify the model to use for the main chat",
+        help="Specify the main chat model (eg: acedatacloud/<model>)",
     )
 
     ##########

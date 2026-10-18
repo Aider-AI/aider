@@ -3126,3 +3126,8 @@
   use_repo_map: true
   use_temperature: false
   accepts_settings: ["reasoning_effort"]
+
+- name: acedatacloud/gpt-4.1
+  edit_format: diff
+  use_repo_map: true
+  reminder: sys

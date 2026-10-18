@@ -135,6 +135,13 @@ def select_default_model(args, io, analytics):
         analytics.event("auto_model_selection", model=model)
         return model
 
+    if os.environ.get("ACEDATACLOUD_API_KEY", "").strip():
+        io.tool_warning(
+            "For Ace Data Cloud, choose a model explicitly with --model acedatacloud/<model>."
+        )
+        io.offer_url("https://aider.chat/docs/llms/acedatacloud.html", "Open Ace Data Cloud setup?")
+        return None
+
     no_model_msg = "No LLM model was specified and no API keys were provided."
     io.tool_warning(no_model_msg)
 
