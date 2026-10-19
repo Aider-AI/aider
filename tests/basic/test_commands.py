@@ -11,6 +11,7 @@ from unittest import TestCase, mock
 import git
 import pyperclip
 
+from aider import prompts
 from aider.coders import Coder
 from aider.commands import Commands, SwitchCoder
 from aider.dump import dump  # noqa: F401
@@ -1220,6 +1221,33 @@ class TestCommands(TestCase):
             del coder
             del commands
             del repo
+
+    def test_cmd_undo_returns_model_reply(self):
+        with GitTemporaryDirectory() as repo_dir:
+            repo = git.Repo(repo_dir)
+            io = InputOutput(pretty=False, fancy_input=False, yes=True)
+            coder = Coder.create(self.GPT35, None, io)
+            commands = Commands(io, coder)
+
+            filename = "test_file.txt"
+            file_path = Path(repo_dir) / filename
+            file_path.write_text("first content")
+            repo.git.add(filename)
+            repo.git.commit("-m", "first commit")
+
+            file_path.write_text("second content")
+            repo.git.add(filename)
+            repo.git.commit("-m", "second commit")
+
+            last_commit_hash = repo.head.commit.hexsha[:7]
+            coder.aider_commit_hashes.add(last_commit_hash)
+            coder.main_model.send_undo_reply = True
+
+            result = commands.cmd_undo("")
+
+            self.assertEqual(result, prompts.undo_command_reply)
+            self.assertNotEqual(last_commit_hash, repo.head.commit.hexsha[:7])
+            self.assertEqual(file_path.read_text(), "first content")
 
     def test_cmd_undo_with_newly_committed_file(self):
         with GitTemporaryDirectory() as repo_dir:

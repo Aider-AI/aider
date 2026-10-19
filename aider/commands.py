@@ -553,7 +553,7 @@ class Commands:
     def cmd_undo(self, args):
         "Undo the last git commit if it was done by aider"
         try:
-            self.raw_cmd_undo(args)
+            return self.raw_cmd_undo(args)
         except ANY_GIT_ERROR as err:
             self.io.tool_error(f"Unable to complete undo: {err}")
 
