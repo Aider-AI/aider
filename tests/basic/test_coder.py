@@ -22,6 +22,18 @@ class TestCoder(unittest.TestCase):
         self.webbrowser_patcher = patch("aider.io.webbrowser.open")
         self.mock_webbrowser = self.webbrowser_patcher.start()
 
+    def test_get_platform_info_with_callable_test_cmd(self):
+        def run_tests():
+            return "1 test failed"
+
+        io = InputOutput(pretty=False, fancy_input=False, yes=True)
+        coder = Coder.create(self.GPT35, None, io=io, use_git=False, test_cmd=run_tests)
+
+        platform_info = coder.get_platform_info()
+
+        self.assertIn("test command", platform_info)
+        self.assertIn("run_tests (callable)", platform_info)
+
     def test_allowed_to_edit(self):
         with GitTemporaryDirectory():
             repo = git.Repo()

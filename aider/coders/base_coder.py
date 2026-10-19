@@ -1167,7 +1167,12 @@ class Coder:
                 )
             else:
                 platform_text += "- The user prefers this test command: "
-            platform_text += self.test_cmd + "\n"
+            if isinstance(self.test_cmd, str):
+                platform_text += self.test_cmd
+            else:
+                test_cmd_name = getattr(self.test_cmd, "__name__", type(self.test_cmd).__name__)
+                platform_text += f"{test_cmd_name} (callable)"
+            platform_text += "\n"
 
         return platform_text
 
