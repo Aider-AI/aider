@@ -1185,6 +1185,8 @@ class Commands:
 
     def cmd_code(self, args):
         """Ask for changes to your code. If no prompt provided, switches to code mode."""  # noqa
+        if not args.strip():
+            return self.cmd_chat_mode("code")
         return self._generic_chat_command(args, self.coder.main_model.edit_format)
 
     def cmd_architect(self, args):

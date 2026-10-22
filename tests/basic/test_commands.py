@@ -1823,6 +1823,53 @@ class TestCommands(TestCase):
             mock_run.assert_called_once()
             mock_run.assert_called_once_with(question)
 
+    def test_cmd_code_without_prompt_preserves_history(self):
+        for edit_format in ("whole", "diff", "udiff"):
+            for args in ("", " \t "):
+                with self.subTest(edit_format=edit_format, args=args):
+                    self.GPT35.edit_format = edit_format
+                    io = InputOutput(pretty=False, fancy_input=False, yes=True)
+                    coder = Coder.create(self.GPT35, "ask", io, use_git=False, map_tokens=0)
+                    history = [
+                        {"role": "user", "content": "Keep the retry limit at 5."},
+                        {"role": "assistant", "content": "The retry limit is now 5."},
+                    ]
+                    current = [{"role": "user", "content": "Explain the retry behavior."}]
+                    coder.done_messages = list(history)
+                    coder.cur_messages = list(current)
+
+                    with mock.patch.object(
+                        coder.summarizer,
+                        "summarize_all",
+                        return_value=[{"role": "user", "content": "Summary"}],
+                    ) as summarize:
+                        with self.assertRaises(SwitchCoder) as switch:
+                            coder.commands.cmd_code(args)
+                        new_coder = Coder.create(from_coder=coder, **switch.exception.kwargs)
+
+                    self.assertEqual(new_coder.edit_format, edit_format)
+                    self.assertEqual(new_coder.done_messages, history)
+                    self.assertEqual(new_coder.cur_messages, current)
+                    summarize.assert_not_called()
+
+    def test_cmd_code_with_prompt_uses_model_edit_format(self):
+        for edit_format in ("whole", "diff", "udiff"):
+            with self.subTest(edit_format=edit_format):
+                self.GPT35.edit_format = edit_format
+                io = InputOutput(pretty=False, fancy_input=False, yes=True)
+                coder = Coder.create(self.GPT35, "ask", io, use_git=False, map_tokens=0)
+                prompt = "Set the retry limit to 5."
+
+                with mock.patch.object(Coder, "run", autospec=True) as run:
+                    with self.assertRaises(SwitchCoder) as switch:
+                        coder.commands.cmd_code(prompt)
+
+                temporary_coder = run.call_args.args[0]
+                run.assert_called_once_with(temporary_coder, prompt)
+                self.assertEqual(temporary_coder.edit_format, edit_format)
+                self.assertEqual(switch.exception.kwargs["edit_format"], "ask")
+                self.assertIs(switch.exception.kwargs["from_coder"], temporary_coder)
+
     def test_cmd_lint_with_dirty_file(self):
         with GitTemporaryDirectory() as repo_dir:
             repo = git.Repo(repo_dir)
