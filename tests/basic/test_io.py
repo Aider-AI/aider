@@ -71,6 +71,22 @@ class TestInputOutput(unittest.TestCase):
             self.assertFalse(io.pretty)
             self.assertIsNone(io.prompt_session)
 
+    def test_assistant_output_color_fallback(self):
+        for color in ("not-a-color", None, "", "blue"):
+            with self.subTest(color=color):
+                io = InputOutput(pretty=True, fancy_input=False, assistant_output_color=color)
+                with io.console.capture() as capture:
+                    io.assistant_output("A **rendered** reply", pretty=True)
+                self.assertIn("A rendered reply", capture.get())
+
+    def test_assistant_stream_color_fallback(self):
+        for color in ("not-a-color", None, "", "blue"):
+            with self.subTest(color=color):
+                io = InputOutput(pretty=True, fancy_input=False, assistant_output_color=color)
+                stream = io.get_assistant_mdstream()
+                rendered = "".join(stream._render_markdown_to_lines("A **rendered** reply"))
+                self.assertIn("A rendered reply", Text.from_ansi(rendered).plain)
+
     def test_autocompleter_get_command_completions(self):
         # Step 3: Mock the commands object
         commands = MagicMock()
