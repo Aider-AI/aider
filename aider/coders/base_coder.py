@@ -2317,7 +2317,8 @@ class Coder:
 
         except ANY_GIT_ERROR as err:
             self.io.tool_error(str(err))
-            return edited
+            self.reflected_message = str(err)
+            return set()
         except Exception as err:
             self.io.tool_error("Exception while updating files:")
             self.io.tool_error(str(err), strip=False)

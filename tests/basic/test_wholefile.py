@@ -3,7 +3,7 @@ import shutil
 import tempfile
 import unittest
 from pathlib import Path
-from unittest.mock import MagicMock
+from unittest.mock import MagicMock, patch
 
 from aider.coders import Coder
 from aider.coders.wholefile_coder import WholeFileCoder
@@ -72,6 +72,67 @@ class TestWholeFileCoder(unittest.TestCase):
         with open(sample_file, "r") as f:
             updated_content = f.read()
         self.assertEqual(updated_content, "Updated content\n")
+
+    def test_failed_write_is_not_reported_as_an_applied_edit(self):
+        sample_file = Path("settings.py")
+        sample_file.write_text("VALUE = 1\n")
+        self.GPT35.extra_params = {"mock_response": "settings.py\n```\nVALUE = 2\n```\n"}
+        io = InputOutput(yes=True, pretty=False, fancy_input=False)
+        coder = Coder.create(
+            main_model=self.GPT35,
+            io=io,
+            fnames=[str(sample_file)],
+            edit_format="whole",
+            use_git=False,
+            stream=False,
+            map_tokens=0,
+            auto_lint=False,
+            suggest_shell_commands=False,
+        )
+        coder.max_reflections = 0
+
+        with patch.object(io, "write_text", side_effect=PermissionError("write denied")):
+            coder.run(with_message="Set VALUE to 2.")
+
+        self.assertEqual(sample_file.read_text(), "VALUE = 1\n")
+        self.assertEqual(coder.aider_edited_files, set())
+        self.assertIn("write denied", coder.reflected_message)
+        self.assertEqual(coder.num_malformed_responses, 0)
+        messages = coder.done_messages + coder.cur_messages
+        self.assertNotIn(
+            coder.gpt_prompts.files_content_gpt_edits_no_repo,
+            [message.get("content") for message in messages],
+        )
+
+    def test_failed_batch_keeps_written_content_without_claiming_batch_success(self):
+        first = Path("first.txt")
+        second = Path("second.txt")
+        first.write_text("first original\n")
+        second.write_text("second original\n")
+        io = InputOutput(yes=True, pretty=False, fancy_input=False)
+        coder = WholeFileCoder(
+            main_model=self.GPT35,
+            io=io,
+            fnames=[str(first), str(second)],
+            use_git=False,
+        )
+        coder.partial_response_content = (
+            "first.txt\n```\nfirst changed\n```\nsecond.txt\n```\nsecond changed\n```\n"
+        )
+        write_text = io.write_text
+
+        def fail_second_write(path, content):
+            if Path(path).name == second.name:
+                raise PermissionError("second write denied")
+            return write_text(path, content)
+
+        with patch.object(io, "write_text", side_effect=fail_second_write):
+            edited_files = coder.apply_updates()
+
+        self.assertEqual(first.read_text(), "first changed\n")
+        self.assertEqual(second.read_text(), "second original\n")
+        self.assertEqual(edited_files, set())
+        self.assertIn("second write denied", coder.reflected_message)
 
     def test_update_files_live_diff(self):
         # Create a sample file in the temporary directory
