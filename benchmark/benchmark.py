@@ -22,6 +22,7 @@ import pandas as pd
 import prompts
 import typer
 from dotenv import load_dotenv
+from enable_tests import enable_java_tests
 from plots import plot_refactoring
 from rich.console import Console
 
@@ -1019,7 +1020,7 @@ def run_unit_tests(original_dname, testdir, history_fname, test_files):
             test_file = testdir / file_path
             if test_file.exists():
                 content = test_file.read_text()
-                content = re.sub(r"@Disabled\([^)]*\)\s*\n", "", content)
+                content = enable_java_tests(content)
                 test_file.write_text(content)
 
     print(" ".join(command))
