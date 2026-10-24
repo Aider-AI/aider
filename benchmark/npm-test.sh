@@ -8,6 +8,6 @@ set -e
 [ ! -e package-lock.json ] && ln -s /npm-install/package-lock.json .
 
 
-sed -i 's/\bxtest(/test(/g' *.spec.js
+python /aider/benchmark/enable_tests.py *.spec.js
 npm run test
 
