@@ -1019,9 +1019,9 @@ def run_unit_tests(original_dname, testdir, history_fname, test_files):
         if file_path.endswith(".java"):
             test_file = testdir / file_path
             if test_file.exists():
-                content = test_file.read_text()
+                content = test_file.read_text(encoding="utf-8")
                 content = enable_java_tests(content)
-                test_file.write_text(content)
+                test_file.write_text(content, encoding="utf-8")
 
     print(" ".join(command))
 

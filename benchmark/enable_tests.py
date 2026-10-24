@@ -31,7 +31,7 @@ def enable_java_tests(content):
 
 
 def enable_tests(path):
-    content = path.read_text()
+    content = path.read_text(encoding="utf-8")
     if path.suffix == ".js":
         updated = enable_javascript_tests(content)
     elif path.suffix == ".java":
@@ -40,7 +40,7 @@ def enable_tests(path):
         raise ValueError(f"Unsupported test file: {path}")
 
     if updated != content:
-        path.write_text(updated)
+        path.write_text(updated, encoding="utf-8")
 
 
 def main():
