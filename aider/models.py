@@ -120,6 +120,11 @@ MODEL_ALIASES = {
     "gemini-exp": "gemini/gemini-2.5-pro-exp-03-25",
     "grok3": "xai/grok-3-beta",
     "optimus": "openrouter/openrouter/optimus-alpha",
+    # GLM models
+    "glm": "zai/glm-5.3",
+    "glm-flash": "zai/glm-5.3-flash",
+    "glm-5.3": "zai/glm-5.3",
+    "glm-5.3-flash": "zai/glm-5.3-flash",
 }
 # Model metadata loaded from resources and user's files.
 
@@ -764,12 +769,21 @@ class Model(ModelSettings):
                     if not res["missing_keys"]:
                         res["keys_in_environment"] = True
 
+        provider = self.info.get("litellm_provider", "").lower()
+
+        # ZAI (Zhipu AI) accepts any of several API key environment variables,
+        # so litellm's single-key validation can't be relied upon
+        if provider == "zai" or model.startswith("zai/"):
+            for var in ("ZAI_API_KEY", "BIGMODEL_API_KEY", "ZHIPUAI_API_KEY"):
+                if os.environ.get(var):
+                    return dict(keys_in_environment=True, missing_keys=[])
+            return dict(keys_in_environment=False, missing_keys=["ZAI_API_KEY"])
+
         if res["keys_in_environment"]:
             return res
         if res["missing_keys"]:
             return res
 
-        provider = self.info.get("litellm_provider", "").lower()
         if provider == "cohere_chat":
             return validate_variables(["COHERE_API_KEY"])
         if provider == "gemini":

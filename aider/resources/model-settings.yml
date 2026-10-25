@@ -3126,3 +3126,61 @@
   use_repo_map: true
   use_temperature: false
   accepts_settings: ["reasoning_effort"]
+
+- name: zai/glm-5.3
+  edit_format: diff
+  weak_model_name: zai/glm-5.3-flash
+  use_repo_map: true
+  reminder: sys
+  examples_as_sys_msg: true
+  extra_params:
+    max_tokens: 128000
+  caches_by_default: true
+
+- name: zai/GLM-5.3
+  edit_format: diff
+  weak_model_name: zai/glm-5.3-flash
+  use_repo_map: true
+  reminder: sys
+  examples_as_sys_msg: true
+  extra_params:
+    max_tokens: 128000
+  caches_by_default: true
+
+- name: zai/glm-5.3-flash
+  edit_format: diff
+  weak_model_name: zai/glm-5.3-flash
+  use_repo_map: true
+  reminder: sys
+  examples_as_sys_msg: true
+  extra_params:
+    max_tokens: 128000
+  caches_by_default: true
+
+- name: zai/GLM-5.3-Flash
+  edit_format: diff
+  weak_model_name: zai/glm-5.3-flash
+  use_repo_map: true
+  reminder: sys
+  examples_as_sys_msg: true
+  extra_params:
+    max_tokens: 128000
+  caches_by_default: true
+
+- name: zai/glm-5v-turbo
+  edit_format: diff
+  weak_model_name: zai/glm-5.3-flash
+  use_repo_map: true
+  reminder: sys
+  examples_as_sys_msg: true
+  extra_params:
+    max_tokens: 128000
+
+- name: zai/GLM-5V-Turbo
+  edit_format: diff
+  weak_model_name: zai/glm-5.3-flash
+  use_repo_map: true
+  reminder: sys
+  examples_as_sys_msg: true
+  extra_params:
+    max_tokens: 128000

@@ -1,8 +1,10 @@
+import os
 import unittest
 from unittest.mock import ANY, MagicMock, patch
 
 from aider.models import (
     ANTHROPIC_BETA_HEADER,
+    MODEL_ALIASES,
     Model,
     ModelInfoManager,
     register_models,
@@ -594,6 +596,57 @@ class TestModels(unittest.TestCase):
                 self.assertEqual(model.editor_model_name, editor_name)
                 self.assertEqual(model.editor_model.name, editor_name)
                 self.assertIn("reasoning_effort", model.accepts_settings)
+
+    def test_glm_5_3_model_settings(self):
+        model = Model("zai/glm-5.3")
+        self.assertEqual(model.edit_format, "diff")
+        self.assertEqual(model.weak_model_name, "zai/glm-5.3-flash")
+        self.assertTrue(model.use_repo_map)
+        self.assertEqual(model.reminder, "sys")
+        self.assertTrue(model.examples_as_sys_msg)
+        self.assertEqual(model.extra_params["max_tokens"], 128000)
+        self.assertTrue(model.caches_by_default)
+
+        model = Model("zai/glm-5.3-flash")
+        self.assertEqual(model.edit_format, "diff")
+        self.assertEqual(model.weak_model_name, "zai/glm-5.3-flash")
+        self.assertTrue(model.use_repo_map)
+        self.assertEqual(model.reminder, "sys")
+        self.assertTrue(model.examples_as_sys_msg)
+        self.assertEqual(model.extra_params["max_tokens"], 128000)
+        self.assertTrue(model.caches_by_default)
+
+    def test_glm_aliases(self):
+        self.assertEqual(MODEL_ALIASES["glm"], "zai/glm-5.3")
+        self.assertEqual(MODEL_ALIASES["glm-flash"], "zai/glm-5.3-flash")
+        self.assertEqual(MODEL_ALIASES["glm-5.3"], "zai/glm-5.3")
+        self.assertEqual(MODEL_ALIASES["glm-5.3-flash"], "zai/glm-5.3-flash")
+
+        # Aliases resolve to the canonical zai/ names when creating a Model
+        self.assertEqual(Model("glm").name, "zai/glm-5.3")
+        self.assertEqual(Model("glm-flash").name, "zai/glm-5.3-flash")
+        self.assertEqual(Model("glm-5.3").name, "zai/glm-5.3")
+        self.assertEqual(Model("glm-5.3-flash").name, "zai/glm-5.3-flash")
+
+    def test_zai_environment_validation(self):
+        zai_keys = ("ZAI_API_KEY", "BIGMODEL_API_KEY", "ZHIPUAI_API_KEY")
+        model = Model("zai/glm-5.3", weak_model=False)
+
+        # None of the keys set: validation fails and reports ZAI_API_KEY
+        with patch.dict(os.environ, {key: "" for key in zai_keys}, clear=True):
+            res = model.validate_environment()
+            self.assertFalse(res["keys_in_environment"])
+            self.assertIn("ZAI_API_KEY", res["missing_keys"])
+
+        # Any single one of the keys is sufficient
+        for key in zai_keys:
+            with self.subTest(key=key):
+                env = {k: "" for k in zai_keys}
+                env[key] = "test-key"
+                with patch.dict(os.environ, env, clear=True):
+                    res = model.validate_environment()
+                    self.assertTrue(res["keys_in_environment"])
+                    self.assertEqual(res["missing_keys"], [])
 
 
 if __name__ == "__main__":
