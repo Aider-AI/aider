@@ -546,10 +546,36 @@ class PatchCoder(Coder):
         action = PatchAction(type=ActionType.ADD, path="", new_content="\n".join(added_lines))
         return action, index
 
+    def prepare_to_edit(self, edits):
+        self._prepared_add_paths = set()
+        add_paths = set()
+        for _path, action in edits:
+            if action.type != ActionType.ADD:
+                continue
+            path = pathlib.Path(self.abs_root_path(action.path))
+            if path.exists():
+                raise DiffError(f"ADD Error: File already exists: {action.path}")
+            add_paths.add(path)
+
+        edits = super().prepare_to_edit(edits)
+        # Only approved ADDs may use empty placeholders created during preparation.
+        self._prepared_add_paths = {
+            path
+            for _path, action in edits
+            if action.type == ActionType.ADD
+            and (path := pathlib.Path(self.abs_root_path(action.path))) in add_paths
+            and path.is_file()
+            and path.stat().st_size == 0
+        }
+        return edits
+
     def apply_edits(self, edits: List[PatchAction]):
         """
         Applies the parsed PatchActions to the corresponding files.
         """
+        # Consume the batch's permission up front, including on an application error.
+        prepared_add_paths = getattr(self, "_prepared_add_paths", set())
+        self._prepared_add_paths = set()
         if not edits:
             return
 
@@ -564,20 +590,24 @@ class PatchCoder(Coder):
 
             try:
                 if action.type == ActionType.ADD:
-                    # Check existence *before* writing
-                    if path_obj.exists():
+                    is_placeholder = path_obj in prepared_add_paths
+                    prepared_add_paths.discard(path_obj)
+                    if path_obj.exists() and not (
+                        is_placeholder and path_obj.is_file() and path_obj.stat().st_size == 0
+                    ):
                         raise DiffError(f"ADD Error: File already exists: {action.path}")
                     if action.new_content is None:
                         # Parser should ensure this doesn't happen
                         raise DiffError(f"ADD change for {action.path} has no content")
 
                     self.io.tool_output(f"Adding {action.path}")
-                    path_obj.parent.mkdir(parents=True, exist_ok=True)
                     # Ensure single trailing newline, matching reference behavior
                     content_to_write = action.new_content
                     if not content_to_write.endswith("\n"):
                         content_to_write += "\n"
-                    self.io.write_text(full_path, content_to_write)
+                    if not self.dry_run:
+                        path_obj.parent.mkdir(parents=True, exist_ok=True)
+                        self.io.write_text(full_path, content_to_write)
 
                 elif action.type == ActionType.DELETE:
                     self.io.tool_output(f"Deleting {action.path}")
