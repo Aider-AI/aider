@@ -574,6 +574,11 @@ class TestMain(TestCase):
                 self.assertEqual(kwargs["main_model"].name, "gpt-3.5-turbo")
                 self.assertEqual(kwargs["map_tokens"], 1024)
 
+    def test_directory_in_default_config_path_is_ignored(self):
+        (Path(self.homedir_obj.name) / ".aider.conf.yml").mkdir()
+
+        main(["--no-git", "--exit", "--yes"], input=DummyInput(), output=DummyOutput())
+
     def test_map_tokens_option(self):
         with GitTemporaryDirectory():
             with patch("aider.coders.base_coder.RepoMap") as MockRepoMap:

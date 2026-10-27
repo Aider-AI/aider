@@ -474,7 +474,9 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
         if git_conf not in default_config_files:
             default_config_files.append(git_conf)
     default_config_files.append(Path.home() / conf_fname)  # homedir
-    default_config_files = list(map(str, default_config_files))
+    default_config_files = [
+        str(config_file) for config_file in default_config_files if Path(config_file).is_file()
+    ]
 
     parser = get_parser(default_config_files, git_root)
     try:
