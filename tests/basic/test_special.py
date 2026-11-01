@@ -5,6 +5,20 @@ import pytest
 from aider.special import filter_important_files, is_important
 
 
+def test_filter_workflow_extensions():
+    workflows = [
+        os.path.join(".github", "workflows", "test.yml"),
+        os.path.join(".github", "workflows", "deploy.yaml"),
+    ]
+    unrelated = [
+        os.path.join(".github", "workflows", "notes.txt"),
+        os.path.join(".github", "workflows", "deploy.yaml.bak"),
+        os.path.join("config", "deploy.yaml"),
+        os.path.join(".github", "workflows", "nested", "deploy.yaml"),
+    ]
+    assert filter_important_files(workflows + unrelated) == workflows
+
+
 def test_is_important():
     # Test common important files
     assert is_important("README.md")
