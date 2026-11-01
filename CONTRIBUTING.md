@@ -208,7 +208,7 @@ If you need to mock or create test data, consider adding it to the test files or
 The project uses `pytest` as the testing framework, which is installed as a development dependency. To install the development dependencies, run the following command:
 
 ```
-pip install -r requirements-dev.txt
+pip install -r requirements/requirements-dev.txt
 ```
 
 ### Managing Dependencies
