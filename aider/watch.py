@@ -95,7 +95,7 @@ class FileWatcher:
         if not path_abs.is_relative_to(self.root.absolute()):
             return False
 
-        rel_path = path_abs.relative_to(self.root)
+        rel_path = path_abs.relative_to(self.root.absolute())
         if self.verbose:
             print("Changed", rel_path)
 
