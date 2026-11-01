@@ -338,6 +338,60 @@ class TestMain(TestCase):
 
         os.remove(message_file_path)
 
+    def test_message_file_read_failure_exits_without_running_coder(self):
+        Path("a_directory").mkdir()
+        Path("invalid.txt").write_bytes(b"\xff")
+
+        for message_file in ("missing.txt", "a_directory", "invalid.txt"):
+            with self.subTest(message_file=message_file):
+                with (
+                    patch("aider.coders.Coder.create") as MockCoder,
+                    patch("aider.io.InputOutput.tool_error") as mock_error,
+                ):
+                    result = main(
+                        [
+                            "--yes",
+                            "--no-git",
+                            "--encoding",
+                            "utf-8",
+                            "--message-file",
+                            message_file,
+                        ],
+                        input=DummyInput(),
+                        output=DummyOutput(),
+                    )
+                    self.assertEqual(result, 1)
+                    MockCoder.return_value.run.assert_not_called()
+                    self.assertTrue(mock_error.called)
+
+    def test_message_file_empty_exits_without_running_coder(self):
+        Path("empty.txt").write_text("", encoding="utf-8")
+        with (
+            patch("aider.coders.Coder.create") as MockCoder,
+            patch("aider.io.InputOutput.tool_error") as mock_error,
+        ):
+            result = main(
+                ["--yes", "--no-git", "--message-file", "empty.txt"],
+                input=DummyInput(),
+                output=DummyOutput(),
+            )
+            self.assertEqual(result, 1)
+            MockCoder.return_value.run.assert_not_called()
+            mock_error.assert_called_once_with("Message file is empty: empty.txt")
+
+    def test_message_file_preserves_nonempty_content(self):
+        for content in ("  \n", "Describe 文件.py\n"):
+            with self.subTest(content=content):
+                Path("message.txt").write_text(content, encoding="utf-8")
+                with patch("aider.coders.Coder.create") as MockCoder:
+                    result = main(
+                        ["--yes", "--no-git", "--message-file", "message.txt"],
+                        input=DummyInput(),
+                        output=DummyOutput(),
+                    )
+                    self.assertIsNone(result)
+                    MockCoder.return_value.run.assert_called_once_with(with_message=content)
+
     def test_encodings_arg(self):
         fname = "foo.py"
 

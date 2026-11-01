@@ -1136,6 +1136,13 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
     if args.message_file:
         try:
             message_from_file = io.read_text(args.message_file)
+            if message_from_file is None:
+                analytics.event("exit", reason="Message file IO error")
+                return 1
+            if not message_from_file:
+                io.tool_error(f"Message file is empty: {args.message_file}")
+                analytics.event("exit", reason="Empty message file")
+                return 1
             io.tool_output()
             coder.run(with_message=message_from_file)
         except FileNotFoundError:
