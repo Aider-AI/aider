@@ -114,7 +114,7 @@ class Scraper:
 
         # Check if the content is HTML based on MIME type or content
         if (mime_type and mime_type.startswith("text/html")) or (
-            mime_type is None and self.looks_like_html(content)
+            not mime_type and self.looks_like_html(content)
         ):
             self.try_pandoc()
             content = self.html_to_markdown(content)
