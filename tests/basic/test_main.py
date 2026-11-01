@@ -338,6 +338,20 @@ class TestMain(TestCase):
 
         os.remove(message_file_path)
 
+    def test_message_file_unreadable(self):
+        with IgnorantTemporaryDirectory() as tmp_dir:
+            missing_path = os.path.join(tmp_dir, "missing.txt")
+            for message_file_path in [missing_path, tmp_dir]:
+                with patch("aider.coders.Coder.create") as MockCoder:
+                    MockCoder.return_value.run = MagicMock()
+                    result = main(
+                        ["--yes", "--message-file", message_file_path],
+                        input=DummyInput(),
+                        output=DummyOutput(),
+                    )
+                    self.assertEqual(result, 1)
+                    MockCoder.return_value.run.assert_not_called()
+
     def test_encodings_arg(self):
         fname = "foo.py"
 
