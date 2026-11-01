@@ -3,9 +3,8 @@ import sys
 import time
 from pathlib import Path
 
-import packaging.version
-
 import aider
+import packaging.version
 from aider import utils
 from aider.dump import dump  # noqa: F401
 
@@ -91,8 +90,12 @@ def check_version(io, just_check=False, verbose=False):
         io.tool_error(f"Error checking pypi for new version: {err}")
         return False
     finally:
-        VERSION_CHECK_FNAME.parent.mkdir(parents=True, exist_ok=True)
-        VERSION_CHECK_FNAME.touch()
+        try:
+            VERSION_CHECK_FNAME.parent.mkdir(parents=True, exist_ok=True)
+            VERSION_CHECK_FNAME.touch()
+        except OSError:
+            # The cache is best-effort; an unwritable home directory must not crash startup.
+            pass
 
     ###
     # is_update_available = True
