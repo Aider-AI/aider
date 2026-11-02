@@ -266,7 +266,7 @@ def find_common_root(abs_fnames):
             return safe_abs_path(os.path.dirname(list(abs_fnames)[0]))
         elif abs_fnames:
             return safe_abs_path(os.path.commonpath(list(abs_fnames)))
-    except OSError:
+    except (OSError, ValueError):
         pass
 
     try:
