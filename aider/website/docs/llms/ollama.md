@@ -52,7 +52,7 @@ setx   OLLAMA_API_KEY <api-key> # Windows, restart shell after setx
 
 ## Setting the context window size
 
-[Ollama uses a 2k context window by default](https://github.com/ollama/ollama/blob/main/docs/faq.md#how-can-i-specify-the-context-window-size),
+[Ollama uses a 2k context window by default](https://docs.ollama.com/faq#how-can-i-specify-the-context-window-size),
 which is very small for working with aider.
 It also **silently** discards context that exceeds the window. 
 This is especially dangerous because many users don't even realize that most of their data
