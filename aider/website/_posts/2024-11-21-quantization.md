@@ -151,7 +151,7 @@ document.getElementById('quantSearchInput').addEventListener('keyup', function()
 
 ## Setting Ollama's context window size
 
-[Ollama uses a 2k context window by default](https://github.com/ollama/ollama/blob/main/docs/faq.md#how-can-i-specify-the-context-window-size),
+[Ollama uses a 2k context window by default](https://docs.ollama.com/faq#how-can-i-specify-the-context-window-size),
 which is very small for working with aider.
 Unlike most other LLM servers, Ollama does not throw an error if you submit
 a request that exceeds the context window.
