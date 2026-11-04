@@ -102,3 +102,38 @@ def test_openrouter_error():
     assert "OpenRouter" in ex_info.description
     assert "overloaded" in ex_info.description
     assert "rate" in ex_info.description
+
+
+def test_new_litellm_error_does_not_break_startup(monkeypatch):
+    """A new exception type shipped by litellm must not crash LiteLLMExceptions() (issue #5944)"""
+    import litellm
+    import pytest
+
+    class BrandNewProviderError(Exception):
+        pass
+
+    monkeypatch.setattr(litellm, "BrandNewProviderError", BrandNewProviderError, raising=False)
+
+    with pytest.warns(UserWarning, match="BrandNewProviderError is in litellm"):
+        ex = LiteLLMExceptions()
+
+    # unmapped errors stay out of the catch tuple: registering them would widen it to
+    # re-exported third-party errors too (pydantic's ValidationError among them)
+    assert BrandNewProviderError not in ex.exceptions_tuple()
+
+
+def test_strict_load_still_enforces_mapping(monkeypatch):
+    """strict=True keeps the loud completeness check for development and CI"""
+    import litellm
+    import pytest
+
+    class StrictCheckError(Exception):
+        pass
+
+    monkeypatch.setattr(litellm, "StrictCheckError", StrictCheckError, raising=False)
+
+    with pytest.raises(ValueError, match="is in litellm but not in aider"):
+        LiteLLMExceptions()._load(strict=True)
+
+    # the strict run must not register anything
+    assert StrictCheckError not in LiteLLMExceptions().exceptions

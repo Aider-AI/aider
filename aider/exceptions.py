@@ -1,3 +1,4 @@
+import warnings
 from dataclasses import dataclass
 
 from aider.dump import dump  # noqa: F401
@@ -72,8 +73,18 @@ class LiteLLMExceptions:
             # `litellm.ErrorEventError` is an example of a regular class which just happens to end
             # with `Error`.
             if var.endswith("Error") and issubclass(getattr(litellm, var), BaseException):
-                if var not in self.exception_info:
-                    raise ValueError(f"{var} is in litellm but not in aider's exceptions list")
+                if var in self.exception_info:
+                    continue
+                # litellm can add new exception types in any release, and dir(litellm) also
+                # surfaces re-exported third-party errors (pydantic's ValidationError, for
+                # example). Aider ships a mapping only for the errors it handles specially,
+                # so an unmapped one must not break startup: warn and move on, leaving it to
+                # the unmapped-exception path in get_ex_info. strict=True keeps the loud
+                # completeness check for development and CI.
+                message = f"{var} is in litellm but not in aider's exceptions list"
+                if strict:
+                    raise ValueError(message)
+                warnings.warn(message)
 
         for var in self.exception_info:
             ex = getattr(litellm, var)
