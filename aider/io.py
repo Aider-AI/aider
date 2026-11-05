@@ -1009,7 +1009,20 @@ class InputOutput:
             style["reverse"] = bold
 
         style = RichStyle(**style)
-        self.console.print(*messages, style=style)
+        try:
+            self.console.print(*messages, style=style)
+        except UnicodeEncodeError:
+            # Fallback to ASCII-safe output (see assistant_output): repo-map
+            # decorations like U+22EE crash legacy Windows consoles (#5953).
+            messages = [
+                Text(
+                    str(m.plain if isinstance(m, Text) else m)
+                    .encode("ascii", errors="replace")
+                    .decode("ascii")
+                )
+                for m in messages
+            ]
+            self.console.print(*messages, style=style)
 
     def get_assistant_mdstream(self):
         mdargs = dict(
@@ -1038,7 +1051,15 @@ class InputOutput:
         else:
             show_resp = Text(message or "(empty response)")
 
-        self.console.print(show_resp)
+        try:
+            self.console.print(show_resp)
+        except UnicodeEncodeError:
+            # Fallback to ASCII-safe output: legacy Windows consoles (cp1252
+            # and friends) cannot encode every character a model may emit,
+            # and rich's legacy Windows renderer raises instead of replacing
+            # (see issue #5951). Mirrors the fallback in _tool_message.
+            text = str(message).encode("ascii", errors="replace").decode("ascii")
+            self.console.print(Text(text))
 
     def set_placeholder(self, placeholder):
         """Set a one-time placeholder text for the next input prompt."""
