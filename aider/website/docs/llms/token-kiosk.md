@@ -5,7 +5,7 @@ nav_order: 750
 
 # Token Kiosk
 
-Aider can connect to frontier and open-source models through [Token Kiosk](https://token-kiosk.gaib.ai), GAIB's multi-provider AI model routing gateway (`https://agent-router.gaib.ai/v1`).
+Aider can connect to frontier and open-source models through [Token Kiosk](https://token-kiosk.gaib.ai), GAIB's multi-provider AI model routing gateway (`https://api-token-kiosk.gaib.ai/v1`).
 
 First, install aider:
 
@@ -15,11 +15,11 @@ Then configure your Token Kiosk API key and endpoint:
 
 ```bash
 # Mac/Linux:
-export OPENAI_API_BASE=https://agent-router.gaib.ai/v1
+export OPENAI_API_BASE=https://api-token-kiosk.gaib.ai/v1
 export OPENAI_API_KEY=<your-token-kiosk-api-key>
 
 # Windows:
-setx OPENAI_API_BASE https://agent-router.gaib.ai/v1
+setx OPENAI_API_BASE https://api-token-kiosk.gaib.ai/v1
 setx OPENAI_API_KEY <your-token-kiosk-api-key>
 # ... restart shell after setx commands
 ```
