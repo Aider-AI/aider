@@ -1038,7 +1038,15 @@ class InputOutput:
         else:
             show_resp = Text(message or "(empty response)")
 
-        self.console.print(show_resp)
+        try:
+            self.console.print(show_resp)
+        except UnicodeEncodeError:
+            # Fallback to ASCII-safe output: legacy Windows consoles (cp1252
+            # and friends) cannot encode every character a model may emit,
+            # and rich's legacy Windows renderer raises instead of replacing
+            # (see issue #5951). Mirrors the fallback in _tool_message.
+            text = str(message).encode("ascii", errors="replace").decode("ascii")
+            self.console.print(Text(text))
 
     def set_placeholder(self, placeholder):
         """Set a one-time placeholder text for the next input prompt."""

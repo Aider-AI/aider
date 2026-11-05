@@ -360,6 +360,39 @@ class TestInputOutputMultilineMode(unittest.TestCase):
         self.io.toggle_multiline_mode()
         self.assertFalse(self.io.multiline_mode)
 
+    def test_assistant_output_unicode_fallback(self):
+        """Legacy Windows consoles crash rich on chars like U+25BA; the
+        assistant output must survive via the ASCII fallback (issue #5951)"""
+        io = InputOutput(pretty=False, fancy_input=False)
+
+        with patch.object(io.console, "print") as mock_print:
+            mock_print.side_effect = [
+                UnicodeEncodeError("cp1252", "", 0, 1, "character maps to <undefined>"),
+                None,
+            ]
+
+            io.assistant_output("Decision: ► proceed")
+
+            self.assertEqual(mock_print.call_count, 2)
+            args, _ = mock_print.call_args
+            self.assertEqual(str(args[0]), "Decision: ? proceed")
+
+    def test_assistant_output_markdown_unicode_fallback(self):
+        """The pretty (Markdown) path falls back to ASCII text as well"""
+        io = InputOutput(pretty=True, fancy_input=False)
+
+        with patch.object(io.console, "print") as mock_print:
+            mock_print.side_effect = [
+                UnicodeEncodeError("cp1252", "", 0, 1, "character maps to <undefined>"),
+                None,
+            ]
+
+            io.assistant_output("Decision: ► proceed", pretty=True)
+
+            self.assertEqual(mock_print.call_count, 2)
+            args, _ = mock_print.call_args
+            self.assertEqual(str(args[0]), "Decision: ? proceed")
+
     def test_tool_message_unicode_fallback(self):
         """Test that Unicode messages are properly converted to ASCII with replacement"""
         io = InputOutput(pretty=False, fancy_input=False)
