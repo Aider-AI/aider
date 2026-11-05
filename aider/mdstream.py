@@ -8,7 +8,7 @@ from rich.console import Console
 from rich.live import Live
 from rich.markdown import CodeBlock, Heading, Markdown
 from rich.panel import Panel
-from rich.syntax import Syntax
+from rich.syntax import RICH_SYNTAX_THEMES, PygmentsSyntaxTheme, Syntax
 from rich.text import Text
 
 from aider.dump import dump  # noqa: F401
@@ -47,6 +47,29 @@ _text_suffix = """
 The end.
 
 """  # noqa: E501
+
+
+class FallbackPygmentsSyntaxTheme(PygmentsSyntaxTheme):
+    """Pygments theme that styles unknown token types like their parent token.
+
+    rich returns an empty style when a Pygments style has no entry for a token
+    type (e.g. YAML's Token.Literal.Scalar.Plain), leaving the text with the
+    theme background but the terminal's default foreground.
+    """
+
+    def get_style_for_token(self, token_type):
+        while token_type.parent is not None and not self._pygments_style_class.styles_token(
+            token_type
+        ):
+            token_type = token_type.parent
+        return super().get_style_for_token(token_type)
+
+
+def get_code_theme(name):
+    """Return a code theme for rich, falling back to parent token styles."""
+    if name in RICH_SYNTAX_THEMES:
+        return name
+    return FallbackPygmentsSyntaxTheme(name)
 
 
 class NoInsetCodeBlock(CodeBlock):

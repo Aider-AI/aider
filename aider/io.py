@@ -33,7 +33,7 @@ from rich.markdown import Markdown
 from rich.style import Style as RichStyle
 from rich.text import Text
 
-from aider.mdstream import MarkdownStream
+from aider.mdstream import MarkdownStream, get_code_theme
 
 from .dump import dump  # noqa: F401
 from .editor import pipe_editor
@@ -1014,7 +1014,7 @@ class InputOutput:
     def get_assistant_mdstream(self):
         mdargs = dict(
             style=self.assistant_output_color,
-            code_theme=self.code_theme,
+            code_theme=get_code_theme(self.code_theme),
             inline_code_lexer="text",
         )
         mdStream = MarkdownStream(mdargs=mdargs)
@@ -1033,7 +1033,9 @@ class InputOutput:
 
         if pretty:
             show_resp = Markdown(
-                message, style=self.assistant_output_color, code_theme=self.code_theme
+                message,
+                style=self.assistant_output_color,
+                code_theme=get_code_theme(self.code_theme),
             )
         else:
             show_resp = Text(message or "(empty response)")
