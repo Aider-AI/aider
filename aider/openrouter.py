@@ -90,7 +90,7 @@ class OpenRouterModelManager:
 
     def _ensure_content(self) -> None:
         self._load_cache()
-        if not self.content:
+        if self.content is None:
             self._update_cache()
 
     def _load_cache(self) -> None:
@@ -102,7 +102,9 @@ class OpenRouterModelManager:
                 cache_age = time.time() - self.cache_file.stat().st_mtime
                 if cache_age < self.CACHE_TTL:
                     try:
-                        self.content = json.loads(self.cache_file.read_text())
+                        # Treat an empty cache (eg written by an older aider after
+                        # a failed fetch) as missing, so the data gets refetched
+                        self.content = json.loads(self.cache_file.read_text()) or None
                     except json.JSONDecodeError:
                         self.content = None
         except OSError:
@@ -122,7 +124,7 @@ class OpenRouterModelManager:
                     pass  # Non-fatal if we can’t write the cache
         except Exception as ex:  # noqa: BLE001
             print(f"Failed to fetch OpenRouter model list: {ex}")
-            try:
-                self.cache_file.write_text("{}")
-            except OSError:
-                pass
+            # Negative-cache the failure in memory only: an empty dict stops
+            # refetching on every lookup, and must not overwrite an existing
+            # (possibly stale but still valid) cache file
+            self.content = self.content or {}

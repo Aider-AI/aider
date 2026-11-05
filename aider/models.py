@@ -191,7 +191,9 @@ class ModelInfoManager:
                 cache_age = time.time() - self.cache_file.stat().st_mtime
                 if cache_age < self.CACHE_TTL:
                     try:
-                        self.content = json.loads(self.cache_file.read_text())
+                        # Treat an empty cache (eg written by an older aider after
+                        # a failed fetch) as missing, so the data gets refetched
+                        self.content = json.loads(self.cache_file.read_text()) or None
                     except json.JSONDecodeError:
                         # If the cache file is corrupted, treat it as missing
                         self.content = None
@@ -214,11 +216,10 @@ class ModelInfoManager:
                     pass
         except Exception as ex:
             print(str(ex))
-            try:
-                # Save empty dict to cache file on failure
-                self.cache_file.write_text("{}")
-            except OSError:
-                pass
+            # Negative-cache the failure in memory only: an empty dict stops
+            # refetching on every lookup, and must not overwrite an existing
+            # (possibly stale but still valid) cache file
+            self.content = self.content or {}
 
     def get_model_from_cached_json_db(self, model):
         data = self.local_model_metadata.get(model)
@@ -228,7 +229,7 @@ class ModelInfoManager:
         # Ensure cache is loaded before checking content
         self._load_cache()
 
-        if not self.content:
+        if self.content is None:
             self._update_cache()
 
         if not self.content:

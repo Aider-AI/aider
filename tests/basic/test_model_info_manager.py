@@ -1,8 +1,12 @@
+import json
 import os
 import tempfile
+import time
 from pathlib import Path
 from unittest import TestCase
 from unittest.mock import MagicMock, patch
+
+import requests
 
 from aider.models import ModelInfoManager
 
@@ -78,3 +82,29 @@ class TestModelInfoManager(TestCase):
 
             # Verify _update_cache was called with verify=False
             mock_get.assert_called_with(self.manager.MODEL_INFO_URL, timeout=5, verify=False)
+
+    @patch("requests.get")
+    def test_failed_fetch_preserves_valid_cache_file(self, mock_get):
+        # A valid, but stale, cache file exists on disk
+        valid_cache = {"test_model": {"max_tokens": 4096}}
+        self.manager.cache_file.write_text(json.dumps(valid_cache))
+        expired = time.time() - self.manager.CACHE_TTL - 10
+        os.utime(self.manager.cache_file, (expired, expired))
+
+        mock_get.side_effect = requests.exceptions.ConnectionError("network down")
+
+        self.manager._update_cache()
+
+        # The failed fetch must not overwrite the valid cache with "{}"
+        self.assertEqual(json.loads(self.manager.cache_file.read_text()), valid_cache)
+
+    @patch("requests.get")
+    def test_failed_fetch_is_negative_cached_per_process(self, mock_get):
+        mock_get.side_effect = requests.exceptions.ConnectionError("network down")
+
+        # Multiple lookups during one process must not refetch (and stall) per lookup
+        self.manager.get_model_from_cached_json_db("unknown_model_one")
+        self.manager.get_model_from_cached_json_db("unknown_model_two")
+
+        self.assertEqual(mock_get.call_count, 1)
+        self.assertEqual(self.manager.content, {})
