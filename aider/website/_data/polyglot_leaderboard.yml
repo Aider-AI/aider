@@ -1854,3 +1854,31 @@
   versions: 0.86.2.dev
   seconds_per_case: 104.0
   total_cost: 0.8756
+
+- dirname: 2026-11-04-03-45-00--kernax-glm-5-3-flash
+  test_cases: 225
+  model: Kernax (GLM-5.3-Flash)
+  edit_format: diff
+  commit_hash: 5dc9490
+  pass_rate_1: 37.8
+  pass_rate_2: 69.3
+  pass_num_1: 85
+  pass_num_2: 156
+  percent_cases_well_formed: 98.7
+  error_outputs: 5
+  num_malformed_responses: 3
+  num_with_malformed_responses: 3
+  user_asks: 48
+  lazy_comments: 0
+  syntax_errors: 0
+  indentation_errors: 0
+  exhausted_context_windows: 0
+  prompt_tokens: 2185400
+  completion_tokens: 492100
+  test_timeouts: 2
+  total_tests: 225
+  command: aider --model openrouter/z-ai/glm-5.3-flash
+  date: 2026-11-04
+  versions: 0.86.3.dev
+  seconds_per_case: 17.2
+  total_cost: 0.1049
