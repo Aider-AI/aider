@@ -1,4 +1,9 @@
+import json
+import os
+import time
 from pathlib import Path
+
+import requests
 
 from aider.models import ModelInfoManager
 from aider.openrouter import OpenRouterModelManager
@@ -71,3 +76,51 @@ def test_model_info_manager_uses_openrouter_manager(monkeypatch):
     info = mim.get_model_info("openrouter/fake/model")
 
     assert info == stub_info
+
+
+def test_openrouter_failed_fetch_preserves_valid_cache(monkeypatch, tmp_path):
+    """
+    A failed refresh must not overwrite a valid (possibly stale) cached
+    model list with "{}".
+    """
+    monkeypatch.setattr(Path, "home", staticmethod(lambda: tmp_path))
+
+    manager = OpenRouterModelManager()
+    manager.cache_dir.mkdir(parents=True, exist_ok=True)
+    valid_cache = {"data": [{"id": "provider/model", "context_length": 8}]}
+    manager.cache_file.write_text(json.dumps(valid_cache))
+    expired = time.time() - OpenRouterModelManager.CACHE_TTL - 10
+    os.utime(manager.cache_file, (expired, expired))
+
+    def boom(*args, **kwargs):
+        raise requests.exceptions.ConnectionError("network down")
+
+    monkeypatch.setattr("requests.get", boom)
+
+    manager._update_cache()
+
+    assert json.loads(manager.cache_file.read_text()) == valid_cache
+
+
+def test_openrouter_failed_fetch_is_negative_cached_per_process(monkeypatch, tmp_path):
+    """
+    After a failed refresh, subsequent lookups in the same process must not
+    trigger another (slow) network fetch.
+    """
+    monkeypatch.setattr(Path, "home", staticmethod(lambda: tmp_path))
+
+    calls = []
+
+    def boom(*args, **kwargs):
+        calls.append(1)
+        raise requests.exceptions.ConnectionError("network down")
+
+    monkeypatch.setattr("requests.get", boom)
+
+    manager = OpenRouterModelManager()
+    info_one = manager.get_model_info("openrouter/provider/model")
+    info_two = manager.get_model_info("openrouter/provider/other")
+
+    assert info_one == {}
+    assert info_two == {}
+    assert len(calls) == 1
