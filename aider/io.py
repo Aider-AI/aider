@@ -1009,7 +1009,20 @@ class InputOutput:
             style["reverse"] = bold
 
         style = RichStyle(**style)
-        self.console.print(*messages, style=style)
+        try:
+            self.console.print(*messages, style=style)
+        except UnicodeEncodeError:
+            # Fallback to ASCII-safe output (see assistant_output): repo-map
+            # decorations like U+22EE crash legacy Windows consoles (#5953).
+            messages = [
+                Text(
+                    str(m.plain if isinstance(m, Text) else m)
+                    .encode("ascii", errors="replace")
+                    .decode("ascii")
+                )
+                for m in messages
+            ]
+            self.console.print(*messages, style=style)
 
     def get_assistant_mdstream(self):
         mdargs = dict(

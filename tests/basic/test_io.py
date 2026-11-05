@@ -360,6 +360,22 @@ class TestInputOutputMultilineMode(unittest.TestCase):
         self.io.toggle_multiline_mode()
         self.assertFalse(self.io.multiline_mode)
 
+    def test_tool_output_unicode_fallback(self):
+        """Repo-map output with U+22EE must survive legacy consoles (#5953)"""
+        io = InputOutput(pretty=False, fancy_input=False)
+
+        with patch.object(io.console, "print") as mock_print:
+            mock_print.side_effect = [
+                UnicodeEncodeError("cp1252", "", 0, 1, "character maps to <undefined>"),
+                None,
+            ]
+
+            io.tool_output("map: a ⋮ b")
+
+            self.assertEqual(mock_print.call_count, 2)
+            args, _ = mock_print.call_args
+            self.assertEqual(str(args[0]), "map: a ? b")
+
     def test_assistant_output_unicode_fallback(self):
         """Legacy Windows consoles crash rich on chars like U+25BA; the
         assistant output must survive via the ASCII fallback (issue #5951)"""
