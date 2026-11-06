@@ -2204,7 +2204,7 @@ class Coder:
             return
 
         if not Path(full_path).exists():
-            if not self.io.confirm_ask("Create new file?", subject=path):
+            if not self.io.confirm_ask("Create new file?", subject=path, default="n"):
                 self.io.tool_output(f"Skipping edits to {path}")
                 return
 
@@ -2226,6 +2226,7 @@ class Coder:
         if not self.io.confirm_ask(
             "Allow edits to file that has not been added to the chat?",
             subject=path,
+            default="n",
         ):
             self.io.tool_output(f"Skipping edits to {path}")
             return
@@ -2456,6 +2457,7 @@ class Coder:
         if not self.io.confirm_ask(
             prompt,
             subject="\n".join(commands),
+            default="n",
             explicit_yes_required=True,
             group=group,
             allow_never=True,

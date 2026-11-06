@@ -882,12 +882,15 @@ class InputOutput:
                     else:
                         res = input(question)
                 except EOFError:
-                    # Treat EOF (Ctrl+D) as if the user pressed Enter
-                    res = default
+                    # EOF is not an affirmative answer. For effect-gating prompts
+                    # (explicit_yes_required), decline instead of applying default="y".
+                    # Otherwise treat EOF like Enter (use the prompt default).
+                    res = "n" if explicit_yes_required else default
                     break
 
                 if not res:
-                    res = default
+                    # Empty Enter: same rule — never treat blank as an explicit yes.
+                    res = "n" if explicit_yes_required else default
                     break
                 res = res.lower()
                 good = any(valid_response.startswith(res) for valid_response in valid_responses)
