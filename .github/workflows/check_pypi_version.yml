@@ -54,7 +54,7 @@ jobs:
         id: latest_tag
         run: |
           set -euo pipefail
-          git fetch --tags origin main
+          git fetch --force --tags https://github.com/Aider-AI/aider.git
           latest_tag="$(git tag --sort=-v:refname | grep -P '^v\d+\.\d+\.\d+$' | head -n 1 || true)"
           if [ -z "$latest_tag" ]; then
             echo "Error: Could not find a stable vX.Y.Z tag."
