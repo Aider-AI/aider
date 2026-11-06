@@ -59,7 +59,7 @@ jobs:
         id: latest_tag
         run: |
           $ErrorActionPreference = "Stop"
-          git fetch --tags origin main
+          git fetch --force --tags https://github.com/Aider-AI/aider.git
           if ($LASTEXITCODE -ne 0) {
             throw "Failed to fetch tags."
           }
