@@ -206,6 +206,36 @@ class TestInputOutput(unittest.TestCase):
         mock_input.assert_not_called()
 
     @patch("builtins.input")
+    def test_confirm_ask_eof_explicit_yes_required(self, mock_input):
+        """EOF/empty must not approve effect-gating prompts (issue #5955)."""
+        io = InputOutput(pretty=False, fancy_input=False)
+        io.yes = None
+
+        # EOF with explicit_yes_required=True and default="y" must decline
+        mock_input.side_effect = EOFError
+        result = io.confirm_ask("Run shell command?", default="y", explicit_yes_required=True)
+        self.assertFalse(result)
+        mock_input.assert_called_once()
+
+        mock_input.reset_mock()
+        mock_input.side_effect = EOFError
+        # Non-gating prompts still use the default on EOF
+        result = io.confirm_ask("Continue?", default="y", explicit_yes_required=False)
+        self.assertTrue(result)
+
+        mock_input.reset_mock()
+        mock_input.side_effect = None
+        mock_input.return_value = ""
+        # Empty Enter is also not an explicit yes
+        result = io.confirm_ask("Run shell command?", default="y", explicit_yes_required=True)
+        self.assertFalse(result)
+
+        mock_input.reset_mock()
+        mock_input.return_value = "y"
+        result = io.confirm_ask("Run shell command?", default="n", explicit_yes_required=True)
+        self.assertTrue(result)
+
+    @patch("builtins.input")
     def test_confirm_ask_with_group(self, mock_input):
         io = InputOutput(pretty=False, fancy_input=False)
         group = ConfirmGroup()
