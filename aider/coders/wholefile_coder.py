@@ -33,23 +33,43 @@ class WholeFileCoder(Coder):
         fname = None
         fname_source = None
         new_lines = []
+        nested_depth = 0  # Track nested code blocks inside file content
+        
         for i, line in enumerate(lines):
             if line.startswith(self.fence[0]) or line.startswith(self.fence[1]):
                 if fname is not None:
-                    # ending an existing block
-                    saw_fname = None
-
-                    full_path = self.abs_root_path(fname)
-
-                    if mode == "diff":
-                        output += self.do_live_diff(full_path, new_lines, True)
+                    # We're inside a file block
+                    # Check if this fence opens a nested block (has language tag or longer fence)
+                    stripped = line.strip()
+                    fence_len = len(self.fence[0])
+                    has_language_tag = len(stripped) > fence_len
+                    
+                    if has_language_tag:
+                        # This opens a nested block, don't close the file
+                        nested_depth += 1
+                        new_lines.append(line)
+                        continue
+                    elif nested_depth > 0:
+                        # This closes a nested block
+                        nested_depth -= 1
+                        new_lines.append(line)
+                        continue
                     else:
-                        edits.append((fname, fname_source, new_lines))
+                        # This closes the file block
+                        saw_fname = None
 
-                    fname = None
-                    fname_source = None
-                    new_lines = []
-                    continue
+                        full_path = self.abs_root_path(fname)
+
+                        if mode == "diff":
+                            output += self.do_live_diff(full_path, new_lines, True)
+                        else:
+                            edits.append((fname, fname_source, new_lines))
+
+                        fname = None
+                        fname_source = None
+                        new_lines = []
+                        nested_depth = 0
+                        continue
 
                 # fname==None ... starting a new block
                 if i > 0:

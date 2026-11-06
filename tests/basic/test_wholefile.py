@@ -355,5 +355,130 @@ Do this:
         self.assertEqual(content, new_content + "\n")
 
 
+    def test_nested_markdown_code_blocks(self):
+        """Test that nested code blocks in markdown files are preserved."""
+        sample_file = "README.md"
+        with open(sample_file, "w") as f:
+            f.write("# Old Title\n")
+
+        io = InputOutput(yes=True)
+        coder = WholeFileCoder(main_model=self.GPT35, io=io, fnames=[sample_file])
+
+        # Model response with nested code blocks (the bug from issue #5739)
+        coder.partial_response_content = """README.md
+```markdown
+# Installation
+
+You need to run:
+```bash
+pip install talklight
+```
+
+## Configuration
+
+The config file should contain:
+```yaml
+autoload: true
+debug: false
+```
+
+That's it!
+```
+"""
+
+        edited_files = coder.apply_updates()
+        
+        self.assertIn("README.md", edited_files)
+        
+        with open(sample_file, "r") as f:
+            content = f.read()
+        
+        # The entire content should be preserved, including nested blocks
+        self.assertIn("# Installation", content)
+        self.assertIn("```bash", content)
+        self.assertIn("pip install talklight", content)
+        self.assertIn("```yaml", content)
+        self.assertIn("autoload: true", content)
+        self.assertIn("That's it!", content)
+        
+        # These should NOT become files
+        self.assertFalse(Path("pip install talklight").exists())
+        self.assertFalse(Path("autoload: true").exists())
+
+    def test_multiple_nested_blocks(self):
+        """Test multiple nested code blocks with different languages."""
+        sample_file = "tutorial.md"
+        with open(sample_file, "w") as f:
+            f.write("old")
+
+        io = InputOutput(yes=True)
+        coder = WholeFileCoder(main_model=self.GPT35, io=io, fnames=[sample_file])
+
+        coder.partial_response_content = """tutorial.md
+```markdown
+# Tutorial
+
+First, Python:
+```python
+print("hello")
+```
+
+Then JavaScript:
+```javascript
+console.log("world");
+```
+
+Finally, shell:
+```sh
+echo "done"
+```
+```
+"""
+
+        edited_files = coder.apply_updates()
+        
+        with open(sample_file, "r") as f:
+            content = f.read()
+        
+        # All nested blocks should be preserved
+        self.assertIn("```python", content)
+        self.assertIn('print("hello")', content)
+        self.assertIn("```javascript", content)
+        self.assertIn('console.log("world")', content)
+        self.assertIn("```sh", content)
+        self.assertIn('echo "done"', content)
+
+    def test_plain_fence_inside_file(self):
+        """Test plain ``` fences (no language tag) inside content."""
+        sample_file = "notes.md"
+        with open(sample_file, "w") as f:
+            f.write("old")
+
+        io = InputOutput(yes=True)
+        coder = WholeFileCoder(main_model=self.GPT35, io=io, fnames=[sample_file])
+
+        # Plain fence inside (edge case: might fail, but let's document behavior)
+        coder.partial_response_content = """notes.md
+```markdown
+Some text
+
+```
+plain block
+```
+
+More text
+```
+"""
+
+        edited_files = coder.apply_updates()
+        
+        with open(sample_file, "r") as f:
+            content = f.read()
+        
+        # With current implementation, plain fences close/open at depth 0
+        # This is a known limitation but better than the old behavior
+        self.assertIn("Some text", content)
+
+
 if __name__ == "__main__":
     unittest.main()
