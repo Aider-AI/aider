@@ -7,6 +7,8 @@ from io import BytesIO
 import pexpect
 import psutil
 
+from aider.utils import AnsiStripper
+
 
 def run_cmd(command, verbose=False, error_print=None, cwd=None):
     try:
@@ -73,12 +75,15 @@ def run_cmd_subprocess(command, verbose=False, cwd=None, encoding=sys.stdout.enc
         )
 
         output = []
+        stripper = AnsiStripper()
         while True:
             chunk = process.stdout.read(1)
             if not chunk:
                 break
+            chunk = stripper.feed(chunk)
             print(chunk, end="", flush=True)  # Print the chunk in real-time
             output.append(chunk)  # Store the chunk for later use
+        stripper.flush()
 
         process.wait()
         return process.returncode, "".join(output)

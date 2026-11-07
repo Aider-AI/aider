@@ -37,7 +37,7 @@ from aider.mdstream import MarkdownStream
 
 from .dump import dump  # noqa: F401
 from .editor import pipe_editor
-from .utils import is_image_file
+from .utils import is_image_file, strip_ansi
 
 # Constants
 NOTIFICATION_MESSAGE = "Aider is waiting for your input"
@@ -972,6 +972,12 @@ class InputOutput:
                 hist = message.strip() if strip else message
                 self.append_chat_history(hist, linebreak=True, blockquote=True)
 
+        if isinstance(message, Text):
+            stripped = strip_ansi(message.plain)
+            if stripped != message.plain:
+                message = Text(stripped)
+        elif isinstance(message, str):
+            message = strip_ansi(message)
         if not isinstance(message, Text):
             message = Text(message)
         color = ensure_hash_prefix(color) if color else None
@@ -1025,6 +1031,8 @@ class InputOutput:
             self.tool_warning("Empty response received from LLM. Check your provider account?")
             return
 
+        if isinstance(message, str):
+            message = strip_ansi(message)
         show_resp = message
 
         # Coder will force pretty off if fence is not triple-backticks
