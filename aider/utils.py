@@ -1,5 +1,6 @@
 import os
 import platform
+import re
 import subprocess
 import sys
 import tempfile
@@ -11,6 +12,53 @@ from aider.dump import dump  # noqa: F401
 from aider.waiting import Spinner
 
 IMAGE_EXTENSIONS = {".png", ".jpg", ".jpeg", ".gif", ".bmp", ".tiff", ".webp", ".pdf"}
+
+_CSI_RE = re.compile(r"\x1b\[[0-?]*[ -/]*[@-~]")
+_OSC_RE = re.compile(r"\x1b\][^\x07\x1b]*(?:\x07|\x1b\\|$)")
+_OSC_TERMINATED_RE = re.compile(r"\x1b\][^\x07\x1b]*(?:\x07|\x1b\\)")
+_CSI_PREFIX_RE = re.compile(r"\x1b(\[([0-?]*[ -/]*)?)?$")
+_OSC_PREFIX_RE = re.compile(r"\x1b\][^\x07\x1b]*(\x1b)?$")
+
+
+def strip_ansi(text):
+    # Escape bytes in displayed text can spoof terminal prompts; aider colors
+    # use Rich style arguments, not embedded bytes, so stripping text is safe.
+    return _OSC_RE.sub("", _CSI_RE.sub("", text))
+
+
+class AnsiStripper:
+    # Same sequences as strip_ansi, split across reads: an escape sequence
+    # must not reach the terminal just because it straddled a chunk boundary.
+    def __init__(self):
+        self._pending = ""
+
+    def feed(self, chunk):
+        text = self._pending + chunk
+        self._pending = ""
+        out = []
+        i = 0
+        while i < len(text):
+            esc = text.find("\x1b", i)
+            if esc == -1:
+                out.append(text[i:])
+                break
+            out.append(text[i:esc])
+            rest = text[esc:]
+            match = _CSI_RE.match(rest) or _OSC_TERMINATED_RE.match(rest)
+            if match:
+                i = esc + match.end()
+                continue
+            if _CSI_PREFIX_RE.fullmatch(rest) or _OSC_PREFIX_RE.fullmatch(rest):
+                self._pending = rest
+                break
+            out.append("\x1b")
+            i = esc + 1
+        return "".join(out)
+
+    def flush(self):
+        # An unterminated sequence at end of output is dropped, not printed.
+        self._pending = ""
+        return ""
 
 
 class IgnorantTemporaryDirectory:
