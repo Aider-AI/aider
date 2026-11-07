@@ -39,6 +39,10 @@ aider --model openai/deepseek-v4.1-flash
 aider --model openai/deepseek-v4.1-flash --weak-model openai/glm-5.3-flash
 ```
 
+Aider uses the `whole` edit format for models it doesn't know.
+Add `--edit-format diff` to have it send search/replace edits instead
+of whole files.
+
 List the available model ids (no API key needed):
 
 ```bash
@@ -57,7 +61,7 @@ file, using the limits from the models endpoint above:
 ```
 {
     "openai/deepseek-v4.1-flash": {
-        "max_input_tokens": 1048576,
+        "max_input_tokens": 1048569,
         "max_output_tokens": 65536,
         "litellm_provider": "openai",
         "mode": "chat"
@@ -65,5 +69,6 @@ file, using the limits from the models endpoint above:
 }
 ```
 
+This sets context limits only, so aider won't estimate costs.
 See [Advanced model settings](/docs/config/adv-model-settings.html#context-window-size-and-token-costs)
-for where to put this file.
+for where to put this file and how to add token prices.
