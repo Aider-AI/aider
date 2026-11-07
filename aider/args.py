@@ -260,6 +260,15 @@ def get_parser(default_config_files, git_root):
         ),
     )
     group.add_argument(
+        "--files-delta",
+        action="store_true",
+        default=False,
+        help=(
+            "Send only what changed in chat files: an 'unchanged' marker or a diff"
+            " instead of full contents (default: False)"
+        ),
+    )
+    group.add_argument(
         "--map-multiplier-no-files",
         type=float,
         default=2,

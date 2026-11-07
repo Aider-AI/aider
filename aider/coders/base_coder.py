@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 
 import base64
+import difflib
 import hashlib
 import json
 import locale
@@ -51,6 +52,9 @@ from aider.waiting import WaitingSpinner
 
 from ..dump import dump  # noqa: F401
 from .chat_chunks import ChatChunks
+
+
+FILES_DELTA_KEEP = 64 * 1024
 
 
 class UnknownEditFormat(ValueError):
@@ -328,6 +332,7 @@ class Coder:
         map_refresh="auto",
         cache_prompts=False,
         num_cache_warming_pings=0,
+        files_delta=False,
         suggest_shell_commands=True,
         chat_language=None,
         commit_language=None,
@@ -388,6 +393,9 @@ class Coder:
         self.message_tokens_received = 0
 
         self.verbose = verbose
+        self.files_delta = files_delta
+        # abs_fname -> {"hash", "content"} of what the model last received
+        self._sent_files = {}
         self.abs_fnames = set()
         self.abs_read_only_fnames = set()
         self.add_gitignore_files = add_gitignore_files
@@ -561,6 +569,7 @@ class Coder:
         abs_fname = self.abs_root_path(fname)
         if abs_fname in self.abs_fnames:
             self.abs_fnames.remove(abs_fname)
+            self._sent_files.pop(abs_fname, None)
             return True
 
     def abs_root_path(self, path):
@@ -634,6 +643,34 @@ class Coder:
 
         return
 
+    def files_entry(self, relative_fname, fname, content):
+        if not self.files_delta:
+            return f"{relative_fname}\n{self.fence[0]}\n{content}{self.fence[1]}\n"
+
+        digest = hashlib.sha256(content.encode("utf-8", "replace")).hexdigest()
+        prev = self._sent_files.get(fname)
+        self._sent_files[fname] = {
+            "hash": digest,
+            "content": content if len(content) <= FILES_DELTA_KEEP else None,
+        }
+        if prev and prev["hash"] == digest:
+            return f"{relative_fname}\n<unchanged since it was last sent>\n"
+        previous = prev.get("content") if prev else None
+        if previous:
+            diff = "\n".join(
+                difflib.unified_diff(
+                    previous.splitlines(),
+                    content.splitlines(),
+                    fromfile="before",
+                    tofile="after",
+                    n=2,
+                    lineterm="",
+                )
+            )
+            if diff and len(diff) < len(content):
+                return f"{relative_fname}\n<changed since it was last sent; unified diff vs the sent version>\n{diff}\n"
+        return f"{relative_fname}\n{self.fence[0]}\n{content}{self.fence[1]}\n"
+
     def get_files_content(self, fnames=None):
         if not fnames:
             fnames = self.abs_fnames
@@ -641,18 +678,8 @@ class Coder:
         prompt = ""
         for fname, content in self.get_abs_fnames_content():
             if not is_image_file(fname):
-                relative_fname = self.get_rel_fname(fname)
                 prompt += "\n"
-                prompt += relative_fname
-                prompt += f"\n{self.fence[0]}\n"
-
-                prompt += content
-
-                # lines = content.splitlines(keepends=True)
-                # lines = [f"{i+1:03}:{line}" for i, line in enumerate(lines)]
-                # prompt += "".join(lines)
-
-                prompt += f"{self.fence[1]}\n"
+                prompt += self.files_entry(self.get_rel_fname(fname), fname, content)
 
         return prompt
 
@@ -661,12 +688,8 @@ class Coder:
         for fname in self.abs_read_only_fnames:
             content = self.io.read_text(fname)
             if content is not None and not is_image_file(fname):
-                relative_fname = self.get_rel_fname(fname)
                 prompt += "\n"
-                prompt += relative_fname
-                prompt += f"\n{self.fence[0]}\n"
-                prompt += content
-                prompt += f"{self.fence[1]}\n"
+                prompt += self.files_entry(self.get_rel_fname(fname), fname, content)
         return prompt
 
     def get_cur_message_text(self):
@@ -1030,6 +1053,8 @@ class Coder:
 
         if self.summarizing_messages == self.done_messages:
             self.done_messages = self.summarized_done_messages
+            # the older full file copies just left context; delta markers would point at nothing
+            self._sent_files = {}
         self.summarizing_messages = None
         self.summarized_done_messages = []
 
