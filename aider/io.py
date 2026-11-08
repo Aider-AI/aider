@@ -882,8 +882,11 @@ class InputOutput:
                     else:
                         res = input(question)
                 except EOFError:
-                    # Treat EOF (Ctrl+D) as if the user pressed Enter
-                    res = default
+                    if explicit_yes_required:
+                        res = "n"
+                    else:
+                        # Treat EOF (Ctrl+D) as if the user pressed Enter
+                        res = default
                     break
 
                 if not res:
