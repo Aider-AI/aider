@@ -280,6 +280,12 @@ def match_but_for_leading_whitespace(whole_lines, part_lines):
     if not all(whole_lines[i].lstrip() == part_lines[i].lstrip() for i in range(num)):
         return
 
+    # a whole line shorter than its part line means the part is *more*
+    # indented than the whole, so there is no leading whitespace to add back;
+    # the slice below would go negative and fabricate a bogus prefix
+    if any(len(whole_lines[i]) < len(part_lines[i]) for i in range(num)):
+        return
+
     # are they all offset the same?
     add = set(
         whole_lines[i][: len(whole_lines[i]) - len(part_lines[i])]
