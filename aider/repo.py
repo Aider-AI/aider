@@ -488,6 +488,7 @@ class GitRepo:
         return res
 
     def normalize_path(self, path):
+        path = str(path)
         orig_path = path
         res = self.normalized_path.get(orig_path)
         if res:

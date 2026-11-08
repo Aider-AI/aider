@@ -714,3 +714,31 @@ class TestRepo(unittest.TestCase):
                 system_msg_content.startswith(prefix),
                 "system_prompt_prefix should be prepended to the system prompt",
             )
+
+    def test_normalize_path_with_pathlib(self):
+        with GitTemporaryDirectory():
+            git_repo = GitRepo(InputOutput(), None, ".")
+            file_path = Path("subdir") / "test.txt"
+
+            # Should not raise AttributeError when passed a Path/PosixPath
+            res = git_repo.normalize_path(file_path)
+            self.assertEqual(res, "subdir/test.txt")
+            self.assertIsInstance(res, str)
+
+            # Test cache hit with Path object
+            res2 = git_repo.normalize_path(file_path)
+            self.assertEqual(res2, "subdir/test.txt")
+
+            # Test cache hit with str
+            res3 = git_repo.normalize_path(str(file_path))
+            self.assertEqual(res3, "subdir/test.txt")
+
+            # Test path_in_repo with Path object
+            file_path.parent.mkdir(parents=True, exist_ok=True)
+            file_path.touch()
+            raw_repo = git.Repo()
+            raw_repo.git.add(str(file_path))
+            raw_repo.git.commit("-m", "add test file")
+
+            self.assertTrue(git_repo.path_in_repo(file_path))
+            self.assertTrue(git_repo.path_in_repo(str(file_path)))

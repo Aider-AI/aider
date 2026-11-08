@@ -205,6 +205,22 @@ class TestInputOutput(unittest.TestCase):
         self.assertTrue(result)
         mock_input.assert_not_called()
 
+        # Test case 5: explicit_yes_required=True, EOFError raised -> fail-closed (False)
+        io.yes = None
+        mock_input.reset_mock()
+        mock_input.side_effect = EOFError
+        result = io.confirm_ask("Are you sure?", explicit_yes_required=True)
+        self.assertFalse(result)
+        mock_input.assert_called_once()
+
+        # Test case 6: explicit_yes_required=False, EOFError raised -> defaults to yes (True)
+        io.yes = None
+        mock_input.reset_mock()
+        mock_input.side_effect = EOFError
+        result = io.confirm_ask("Are you sure?", default="y", explicit_yes_required=False)
+        self.assertTrue(result)
+        mock_input.assert_called_once()
+
     @patch("builtins.input")
     def test_confirm_ask_with_group(self, mock_input):
         io = InputOutput(pretty=False, fancy_input=False)
