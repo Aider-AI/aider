@@ -320,6 +320,31 @@ These changes replace the `subprocess.run` patches with `subprocess.check_output
         result = eb.replace_most_similar_chunk(whole, part, replace)
         self.assertEqual(result, expected_output)
 
+    def test_replace_part_with_overindented_search_does_not_corrupt(self):
+        """
+        When every SEARCH line is *more* indented than the matching file line,
+        there is no leading whitespace to add back. The flexible matcher used
+        to slice with a negative length, fabricating a garbage prefix out of
+        the end of the file line and silently corrupting the replacement.
+        Such a block must not match at all, so the edit fails cleanly and
+        triggers the normal "SEARCH failed to match" reflection.
+        """
+        # Single line: "abc" vs SEARCH "  abc", REPLACE "xyz"
+        whole = "abc\n"
+        part = "  abc\n"
+        replace = "xyz\n"
+        result = eb.replace_most_similar_chunk(whole, part, replace)
+        self.assertIsNone(result)
+        self.assertNotIn("abxyz", result or "")
+
+        # Realistic case: file has 4-space indent, SEARCH has 8, REPLACE has 0
+        whole = "    x = 1\n"
+        part = "        x = 1\n"
+        replace = "x = 2\n"
+        result = eb.replace_most_similar_chunk(whole, part, replace)
+        self.assertIsNone(result)
+        self.assertNotIn("    x x = 2", result or "")
+
     def test_create_new_file_with_other_file_in_chat(self):
         # https://github.com/Aider-AI/aider/issues/2258
         with ChdirTemporaryDirectory():
