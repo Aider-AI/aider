@@ -1417,8 +1417,15 @@ class TestMain(TestCase):
             self.assertNotIn("not_in_git.txt", str(coder.abs_fnames))
             self.assertFalse(coder.allowed_to_edit("not_in_git.txt"))
 
+    def _use_fake_home(self):
+        # expanduser() reads HOME on POSIX and USERPROFILE on Windows.
+        home = self.homedir_obj.name
+        os.environ["HOME"] = home
+        os.environ["USERPROFILE"] = home
+        return Path(home)
+
     def test_generate_search_path_list_expands_tilde(self):
-        home = Path(self.homedir_obj.name)
+        home = self._use_fake_home()
         target = home / "custom-model-metadata.json"
         target.write_text("{}")
 
@@ -1434,7 +1441,7 @@ class TestMain(TestCase):
         self.assertNotIn(literal_tilde, files)
 
     def test_load_dotenv_files_expands_tilde(self):
-        home = Path(self.homedir_obj.name)
+        home = self._use_fake_home()
         env_file = home / "custom.env"
         env_file.write_text("AIDER_TILDE_DOTENV_SENTINEL=loaded\n")
         os.environ.pop("AIDER_TILDE_DOTENV_SENTINEL", None)
