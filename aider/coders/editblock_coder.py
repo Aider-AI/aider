@@ -45,10 +45,17 @@ class EditBlockCoder(Coder):
 
         for edit in edits:
             path, original, updated = edit
+            safe = self._check_path_safety(path)
+            if not safe and not dry_run:
+                # Never reached via prepare_to_edit; refuse without reading or reporting.
+                self.io.tool_warning(f"Refusing to edit {path}: resolves outside the repo.")
+                continue
             full_path = self.abs_root_path(path)
             new_content = None
 
-            if Path(full_path).exists():
+            # Dry run: unsafe path still gets the chat-file fallback below, then
+            # prepare_to_edit -> allowed_to_edit issues the single warning.
+            if safe and Path(full_path).exists():
                 content = self.io.read_text(full_path)
                 new_content = do_replace(full_path, content, original, updated, self.fence)
 
