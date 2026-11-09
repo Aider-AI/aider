@@ -85,6 +85,9 @@ class UnifiedDiffCoder(Coder):
 
         errors = []
         for path, hunk in uniq:
+            if not self._check_path_safety(path):
+                errors.append(f"Refusing to edit {path}: resolves outside the repo.")
+                continue
             full_path = self.abs_root_path(path)
             content = self.io.read_text(full_path)
 

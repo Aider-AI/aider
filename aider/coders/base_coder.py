@@ -573,6 +573,18 @@ class Coder:
         self.abs_root_path_cache[key] = res
         return res
 
+    def _check_path_safety(self, fname):
+        # Model-driven writes only: keep abs_root_path permissive for /add.
+        # Files the user named explicitly (CLI args, /add) are trusted.
+        full_path = self.abs_root_path(fname)
+        if full_path in self.abs_fnames:
+            return True
+        try:
+            Path(full_path).resolve().relative_to(Path(self.root).resolve())
+            return True
+        except ValueError:
+            return False
+
     fences = all_fences
     fence = fences[0]
 
@@ -2190,6 +2202,9 @@ class Coder:
 
     def allowed_to_edit(self, path):
         full_path = self.abs_root_path(path)
+        if not self._check_path_safety(path):
+            self.io.tool_warning(f"Refusing to edit {path}: resolves outside the repo.")
+            return False
         if self.repo:
             need_to_add = not self.repo.path_in_repo(path)
         else:

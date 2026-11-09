@@ -257,6 +257,8 @@ class PatchCoder(Coder):
         needed_paths = identify_files_needed(content)
         current_files: Dict[str, str] = {}
         for rel_path in needed_paths:
+            if not self._check_path_safety(rel_path):
+                raise DiffError(f"Refusing to edit {rel_path}: resolves outside the repo.")
             abs_path = self.abs_root_path(rel_path)
             try:
                 # Use io.read_text to handle potential errors/encodings
@@ -563,6 +565,10 @@ class PatchCoder(Coder):
             path_obj = pathlib.Path(full_path)
 
             try:
+                if not self._check_path_safety(action.path) or (
+                    action.move_path and not self._check_path_safety(action.move_path)
+                ):
+                    raise DiffError(f"Refusing to edit {action.path}: resolves outside the repo.")
                 if action.type == ActionType.ADD:
                     # Check existence *before* writing
                     if path_obj.exists():

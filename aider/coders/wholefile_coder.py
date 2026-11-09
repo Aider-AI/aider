@@ -123,6 +123,9 @@ class WholeFileCoder(Coder):
 
     def apply_edits(self, edits):
         for path, fname_source, new_lines in edits:
+            if not self._check_path_safety(path):
+                self.io.tool_warning(f"Refusing to edit {path}: resolves outside the repo.")
+                continue
             full_path = self.abs_root_path(path)
             new_lines = "".join(new_lines)
             self.io.write_text(full_path, new_lines)

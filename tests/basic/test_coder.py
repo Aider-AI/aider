@@ -51,6 +51,28 @@ class TestCoder(unittest.TestCase):
 
             self.assertFalse(coder.need_commit_before_edits)
 
+    def test_model_edit_rejects_path_traversal(self):
+        with GitTemporaryDirectory():
+            repo = git.Repo()
+            fname = Path("repo.txt")
+            fname.touch()
+            repo.git.add(str(fname))
+            repo.git.commit("-m", "init")
+
+            io = MagicMock()
+            io.confirm_ask = MagicMock(return_value=True)
+            coder = Coder.create(self.GPT35, None, io, fnames=["repo.txt"])
+
+            self.assertFalse(coder._check_path_safety("../../escape.txt"))
+            self.assertFalse(coder.allowed_to_edit("../../escape.txt"))
+            self.assertTrue(coder._check_path_safety("sub/inside.txt"))
+            self.assertTrue(coder.allowed_to_edit("sub/inside.txt"))
+
+            # A file the user explicitly added (CLI arg or /add) outside the repo is trusted.
+            coder.abs_fnames.add(coder.abs_root_path("../explicit.txt"))
+            self.assertTrue(coder._check_path_safety("../explicit.txt"))
+            self.assertTrue(coder.allowed_to_edit("../explicit.txt"))
+
     def test_allowed_to_edit_no(self):
         with GitTemporaryDirectory():
             repo = git.Repo()
