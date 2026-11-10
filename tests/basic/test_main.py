@@ -14,7 +14,13 @@ from prompt_toolkit.output import DummyOutput
 from aider.coders import Coder
 from aider.dump import dump  # noqa: F401
 from aider.io import InputOutput
-from aider.main import check_gitignore, load_dotenv_files, main, setup_git
+from aider.main import (
+    check_gitignore,
+    generate_search_path_list,
+    load_dotenv_files,
+    main,
+    setup_git,
+)
 from aider.utils import GitTemporaryDirectory, IgnorantTemporaryDirectory, make_repo
 
 
@@ -1410,6 +1416,40 @@ class TestMain(TestCase):
             )
             self.assertNotIn("not_in_git.txt", str(coder.abs_fnames))
             self.assertFalse(coder.allowed_to_edit("not_in_git.txt"))
+
+    def _use_fake_home(self):
+        # expanduser() reads HOME on POSIX and USERPROFILE on Windows.
+        home = self.homedir_obj.name
+        os.environ["HOME"] = home
+        os.environ["USERPROFILE"] = home
+        return Path(home)
+
+    def test_generate_search_path_list_expands_tilde(self):
+        home = self._use_fake_home()
+        target = home / "custom-model-metadata.json"
+        target.write_text("{}")
+
+        files = generate_search_path_list(
+            ".aider.model.metadata.json",
+            None,
+            "~/custom-model-metadata.json",
+        )
+
+        resolved_target = str(target.resolve())
+        literal_tilde = str((Path(self.tempdir) / "~" / "custom-model-metadata.json").resolve())
+        self.assertIn(resolved_target, files)
+        self.assertNotIn(literal_tilde, files)
+
+    def test_load_dotenv_files_expands_tilde(self):
+        home = self._use_fake_home()
+        env_file = home / "custom.env"
+        env_file.write_text("AIDER_TILDE_DOTENV_SENTINEL=loaded\n")
+        os.environ.pop("AIDER_TILDE_DOTENV_SENTINEL", None)
+
+        loaded_files = load_dotenv_files(None, "~/custom.env")
+
+        self.assertIn(str(env_file.resolve()), loaded_files)
+        self.assertEqual(os.environ.get("AIDER_TILDE_DOTENV_SENTINEL"), "loaded")
 
     def test_load_dotenv_files_override(self):
         with GitTemporaryDirectory() as git_dir:
