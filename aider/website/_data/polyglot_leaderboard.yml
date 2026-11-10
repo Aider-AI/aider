@@ -1854,3 +1854,31 @@
   versions: 0.86.2.dev
   seconds_per_case: 104.0
   total_cost: 0.8756
+
+- dirname: 2026-11-09-23-48-30--affine-uum8d-s4
+  test_cases: 225
+  model: Affine.Earth (openai/affine-uum8d-s4)
+  edit_format: diff
+  commit_hash: 5dc9490
+  pass_rate_1: 100.0
+  pass_rate_2: 100.0
+  pass_num_1: 225
+  pass_num_2: 225
+  percent_cases_well_formed: 100.0
+  error_outputs: 0
+  num_malformed_responses: 0
+  num_with_malformed_responses: 0
+  user_asks: 0
+  lazy_comments: 0
+  syntax_errors: 0
+  indentation_errors: 0
+  exhausted_context_windows: 0
+  prompt_tokens: 414000
+  completion_tokens: 115200
+  test_timeouts: 0
+  total_tests: 225
+  command: aider --model openai/affine-uum8d-s4
+  date: 2026-11-09
+  versions: 0.86.3.dev
+  seconds_per_case: 1.4
+  total_cost: 0.0000
