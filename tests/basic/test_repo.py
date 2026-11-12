@@ -19,6 +19,22 @@ class TestRepo(unittest.TestCase):
     def setUp(self):
         self.GPT35 = Model("gpt-3.5-turbo")
 
+    def test_removed_and_restored_aiderignore(self):
+        with GitTemporaryDirectory():
+            ignore = Path(".aiderignore")
+            ignore.write_text("ignored.txt\n")
+            repo = GitRepo(InputOutput(), None, ".", aider_ignore_file=ignore)
+            with patch("aider.repo.time.time", return_value=100):
+                self.assertTrue(repo.ignored_file("ignored.txt"))
+
+            saved = ignore.rename(".saved-ignore")
+            with patch("aider.repo.time.time", return_value=102):
+                self.assertFalse(repo.ignored_file("ignored.txt"))
+
+            saved.rename(ignore)
+            with patch("aider.repo.time.time", return_value=104):
+                self.assertTrue(repo.ignored_file("ignored.txt"))
+
     def test_diffs_empty_repo(self):
         with GitTemporaryDirectory():
             repo = git.Repo()

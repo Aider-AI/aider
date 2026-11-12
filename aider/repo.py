@@ -53,7 +53,7 @@ class GitRepo:
     repo = None
     aider_ignore_file = None
     aider_ignore_spec = None
-    aider_ignore_ts = 0
+    aider_ignore_ts = None
     aider_ignore_last_check = 0
     subtree_only = False
     ignore_file_cache = {}
@@ -508,17 +508,23 @@ class GitRepo:
         self.aider_ignore_last_check = current_time
 
         if not self.aider_ignore_file.is_file():
+            if self.aider_ignore_spec is not None:
+                self.aider_ignore_ts = None
+                self.aider_ignore_spec = None
+                self.ignore_file_cache.clear()
             return
 
-        mtime = self.aider_ignore_file.stat().st_mtime
-        if mtime != self.aider_ignore_ts:
-            self.aider_ignore_ts = mtime
-            self.ignore_file_cache = {}
-            lines = self.aider_ignore_file.read_text().splitlines()
-            self.aider_ignore_spec = pathspec.PathSpec.from_lines(
-                pathspec.patterns.GitWildMatchPattern,
-                lines,
-            )
+        mtime = self.aider_ignore_file.stat().st_mtime_ns
+        if mtime == self.aider_ignore_ts:
+            return
+
+        lines = self.aider_ignore_file.read_text().splitlines()
+        self.aider_ignore_spec = pathspec.PathSpec.from_lines(
+            pathspec.patterns.GitWildMatchPattern,
+            lines,
+        )
+        self.aider_ignore_ts = mtime
+        self.ignore_file_cache.clear()
 
     def git_ignored_file(self, path):
         if not self.repo:
@@ -554,7 +560,7 @@ class GitRepo:
             if cwd_path not in fname_path.parents and fname_path != cwd_path:
                 return True
 
-        if not self.aider_ignore_file or not self.aider_ignore_file.is_file():
+        if self.aider_ignore_spec is None:
             return False
 
         try:
