@@ -699,8 +699,4 @@ class PatchCoder(Coder):
         # Add any remaining lines from the original file after the last chunk
         dest_lines.extend(orig_lines[current_orig_line_idx:])
 
-        # Join lines and ensure a single trailing newline
-        result = "\n".join(dest_lines)
-        if result or orig_lines:  # Add newline unless result is empty and original was empty
-            result += "\n"
-        return result
+        return "\n".join(dest_lines) + "\n" if dest_lines else ""
