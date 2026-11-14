@@ -288,21 +288,28 @@ class GitRepo:
         else:
             cmd += ["-a"]
 
-        original_user_name = self.repo.git.config("--get", "user.name")
+        # git exits 1 when user.name is unset, which is legitimate: identities can
+        # come from GIT_AUTHOR_NAME / GIT_COMMITTER_NAME instead of the config.
+        # Never let that lookup escape as an uncaught GitCommandError.
+        try:
+            original_user_name = self.repo.git.config("--get", "user.name")
+        except ANY_GIT_ERROR:
+            original_user_name = None
+
         original_committer_name_env = os.environ.get("GIT_COMMITTER_NAME")
         original_author_name_env = os.environ.get("GIT_AUTHOR_NAME")
-        committer_name = f"{original_user_name} (aider)"
+        committer_name = f"{original_user_name} (aider)" if original_user_name else None
 
         try:
             # Use context managers to handle environment variables
             with contextlib.ExitStack() as stack:
-                if use_attribute_committer:
+                if use_attribute_committer and committer_name:
                     stack.enter_context(
                         set_git_env(
                             "GIT_COMMITTER_NAME", committer_name, original_committer_name_env
                         )
                     )
-                if use_attribute_author:
+                if use_attribute_author and committer_name:
                     stack.enter_context(
                         set_git_env("GIT_AUTHOR_NAME", committer_name, original_author_name_env)
                     )
