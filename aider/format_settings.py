@@ -1,11 +1,51 @@
+# Environment variable names that hold credentials rather than plain config
+SECRET_ENV_SUFFIXES = ("_API_KEY", "_KEY", "_TOKEN", "_SECRET", "_PASSWORD")
+
+
+def is_secret_env_name(name):
+    """Return True if an environment variable name looks like it holds a credential."""
+    name = (name or "").strip().upper()
+    if not name:
+        return False
+    return name.endswith(SECRET_ENV_SUFFIXES) or "TOKEN" in name or "SECRET" in name
+
+
+def get_sensitive_values(args):
+    """Collect the credentials that may show up in logged text.
+
+    Covers the dedicated --openai-api-key / --anthropic-api-key switches as well
+    as the generic --api-key provider=<key> switch and --set-env VAR=<value>
+    assignments for credential-looking variables.
+    """
+    values = []
+
+    for attr in ("openai_api_key", "anthropic_api_key"):
+        value = getattr(args, attr, None)
+        if value:
+            values.append(value)
+
+    for setting in getattr(args, "api_key", None) or []:
+        _, _, value = str(setting).partition("=")
+        if value.strip():
+            values.append(value.strip())
+
+    for setting in getattr(args, "set_env", None) or []:
+        name, _, value = str(setting).partition("=")
+        if is_secret_env_name(name) and value.strip():
+            values.append(value.strip())
+
+    # Replace the longest values first so overlapping secrets are fully redacted
+    return sorted(set(values), key=len, reverse=True)
+
+
 def scrub_sensitive_info(args, text):
     # Replace sensitive information with last 4 characters
-    if text and args.openai_api_key:
-        last_4 = args.openai_api_key[-4:]
-        text = text.replace(args.openai_api_key, f"...{last_4}")
-    if text and args.anthropic_api_key:
-        last_4 = args.anthropic_api_key[-4:]
-        text = text.replace(args.anthropic_api_key, f"...{last_4}")
+    if not text:
+        return text
+
+    for value in get_sensitive_values(args):
+        text = text.replace(value, f"...{value[-4:]}")
+
     return text
 
 
