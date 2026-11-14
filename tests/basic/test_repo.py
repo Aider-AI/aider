@@ -714,3 +714,40 @@ class TestRepo(unittest.TestCase):
                 system_msg_content.startswith(prefix),
                 "system_prompt_prefix should be prepended to the system prompt",
             )
+
+    def test_commit_without_git_user_name(self):
+        """Committing works when git has no user.name and the identity comes from env vars."""
+        with GitTemporaryDirectory() as dname:
+            raw_repo = git.Repo()
+            fname = Path("file.txt")
+            fname.write_text("original\n")
+            raw_repo.git.add(str(fname))
+            raw_repo.git.commit("-m", "initial commit")
+
+            # Pretend user.name was never configured: hide the user/system git config
+            # and rely on the GIT_*_NAME environment variables instead.
+            empty_global_config = Path(dname) / "empty-gitconfig"
+            empty_global_config.write_text("")
+            raw_repo.git.config("--unset", "user.name")
+
+            env = dict(
+                GIT_CONFIG_GLOBAL=str(empty_global_config),
+                GIT_CONFIG_NOSYSTEM="1",
+                GIT_AUTHOR_NAME="CI Bot",
+                GIT_AUTHOR_EMAIL="ci@example.com",
+                GIT_COMMITTER_NAME="CI Bot",
+                GIT_COMMITTER_EMAIL="ci@example.com",
+            )
+            fname.write_text("edited by aider\n")
+
+            with patch.dict(os.environ, env):
+                git_repo = GitRepo(InputOutput(), None, None)
+                commit_result = git_repo.commit(
+                    fnames=[str(fname)], message="aider edit", aider_edits=True
+                )
+
+            self.assertIsNotNone(commit_result)
+            self.assertEqual(raw_repo.head.commit.message.strip(), "aider edit")
+            # No attribution is possible without a configured user.name
+            self.assertEqual(raw_repo.head.commit.committer.name, "CI Bot")
+            self.assertEqual(raw_repo.head.commit.author.name, "CI Bot")
