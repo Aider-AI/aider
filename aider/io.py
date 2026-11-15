@@ -57,12 +57,21 @@ def ensure_hash_prefix(color):
 
 _ANSI_ESCAPE_RE = re.compile(r"\x1b(?:[@-Z\\-_]|\[[0-?]*[ -/]*[@-~])")
 _CONTROL_CHARS_RE = re.compile(r"[\x00-\x08\x0b-\x1f\x7f]")
+_BIDI_OVERRIDE_RE = re.compile(r"[\u061c\u200e\u200f\u202a-\u202e\u2066-\u2069]")
 
 
 def strip_ansi_and_control_chars(text):
-    """Remove ANSI escape sequences and other control chars that could spoof terminal output."""
+    """Remove ANSI escape sequences and other chars that could spoof terminal output.
+
+    Besides C0 control bytes, this also strips Unicode bidi control characters
+    (RLO/LRO/RLI/etc). Those are ordinary printable codepoints, not control
+    bytes, so they survive _CONTROL_CHARS_RE untouched, but a terminal still
+    honors them to reverse the visual order of the text that follows -- which
+    can make a shell command read as something other than what it will run.
+    """
     text = _ANSI_ESCAPE_RE.sub("", text)
     text = _CONTROL_CHARS_RE.sub("", text)
+    text = _BIDI_OVERRIDE_RE.sub("", text)
     return text
 
 
