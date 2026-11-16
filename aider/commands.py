@@ -1343,8 +1343,8 @@ class Commands:
         for pattern in filenames:
             expanded_pattern = expanduser(pattern)
             path_obj = Path(expanded_pattern)
-            is_abs = path_obj.is_absolute()
-            if not is_abs:
+            is_anchored = bool(path_obj.drive or path_obj.root)
+            if not is_anchored:
                 path_obj = Path(self.coder.root) / path_obj
 
             matches = []
@@ -1353,8 +1353,9 @@ class Commands:
                 matches = [path_obj]
             else:
                 # If literal path doesn't exist, try globbing
-                if is_abs:
-                    # For absolute paths, glob it
+                if is_anchored:
+                    # Windows treats rooted and drive-relative paths as non-absolute,
+                    # but Path.glob rejects them because they are not relative.
                     matches = [Path(p) for p in glob.glob(expanded_pattern)]
                 else:
                     # For relative paths and globs, use glob from the root directory
