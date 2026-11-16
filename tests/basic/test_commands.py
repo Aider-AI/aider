@@ -6,7 +6,7 @@ import sys
 import tempfile
 from io import StringIO
 from pathlib import Path
-from unittest import TestCase, mock
+from unittest import TestCase, mock, skipUnless
 
 import git
 import pyperclip
@@ -1033,6 +1033,24 @@ class TestCommands(TestCase):
 
             # Ensure no files were added to abs_read_only_fnames
             self.assertEqual(len(coder.abs_read_only_fnames), 0)
+
+    @skipUnless(os.name == "nt", "Windows rooted path semantics")
+    def test_cmd_read_only_with_rooted_glob(self):
+        with GitTemporaryDirectory() as repo_dir:
+            io = InputOutput(pretty=False, fancy_input=False, yes=False)
+            coder = Coder.create(self.GPT35, None, io)
+            commands = Commands(io, coder)
+
+            test_file = Path(repo_dir) / "rooted_file.txt"
+            test_file.write_text("Rooted file content")
+            rooted_pattern = "\\" + str(Path(repo_dir) / "rooted_*.txt")[3:]
+
+            commands.cmd_read_only(rooted_pattern)
+
+            self.assertEqual(len(coder.abs_read_only_fnames), 1)
+            self.assertTrue(
+                any(os.path.samefile(str(test_file), fname) for fname in coder.abs_read_only_fnames)
+            )
 
     def test_cmd_add_unicode_error(self):
         # Initialize the Commands and InputOutput objects
