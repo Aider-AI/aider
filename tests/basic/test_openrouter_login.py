@@ -127,6 +127,7 @@ def test_auth_url_carries_required_parameters():
 
 def test_callback_with_wrong_state_is_rejected_and_login_continues():
     statuses = []
+    deliveries = []
 
     def open_browser(url):
         params = _auth_params(url)
@@ -135,9 +136,10 @@ def test_callback_with_wrong_state_is_rejected_and_login_continues():
             statuses.append(_get(f"{params['callback_url']}?code=forged&state=wrong"))
             statuses.append(_get(f"{params['callback_url']}?code=ok&state={params['state']}"))
 
-        _in_thread(deliver)
+        deliveries.append(_in_thread(deliver))
 
     key = login(open_browser, _blocking_paste, post_json=_ok_post([]), timeout=5)
+    deliveries[0].join(timeout=5)  # login returns on success, before the 200 is recorded
 
     assert statuses == [400, 200]
     assert key == "sk-or-test-key"
@@ -279,3 +281,77 @@ def test_login_and_store_saves_oauth_credential(tmp_path):
 
     assert key == "sk-or-test-key"
     assert store.get("openrouter") == {"type": "oauth", "key": "sk-or-test-key"}
+
+
+def test_is_headless_detects_ssh_and_missing_linux_display(monkeypatch):
+    monkeypatch.setattr(ol.sys, "platform", "linux")
+    assert ol.is_headless({"SSH_CONNECTION": "10.0.0.2 22 10.0.0.1 5000"}) is True
+    assert ol.is_headless({}) is True
+    assert ol.is_headless({"DISPLAY": ":0"}) is False
+    assert ol.is_headless({"WAYLAND_DISPLAY": "wayland-0"}) is False
+
+
+def test_is_headless_is_false_on_windows_and_macos_without_ssh(monkeypatch):
+    for platform in ("win32", "darwin"):
+        monkeypatch.setattr(ol.sys, "platform", platform)
+        assert ol.is_headless({}) is False
+
+
+def test_paste_only_uses_pasted_code_and_sends_no_callback():
+    shown = []
+    payloads = []
+
+    def read_paste(cancel):
+        return "pasted-code"
+
+    key = ol.login_paste_only(read_paste, on_url=shown.append, post_json=_ok_post(payloads))
+
+    assert key == "sk-or-test-key"
+    assert payloads[0]["code"] == "pasted-code"
+    assert "callback_url" not in shown[0]
+    assert "state=" not in shown[0]
+    assert "code_challenge_method=S256" in shown[0]
+
+
+def test_paste_only_cancel_raises():
+    with pytest.raises(LoginError, match="cancelled"):
+        ol.login_paste_only(lambda cancel: None, on_url=lambda url: None, post_json=_ok_post([]))
+
+
+def test_run_login_headless_stores_pasted_key(tmp_path):
+    store = CredentialStore(tmp_path / "auth.json")
+    key = ol.run_login(
+        store,
+        {"SSH_CONNECTION": "x"},
+        open_browser=lambda url: None,
+        read_paste=lambda cancel: "pasted",
+        on_url=lambda url: None,
+        post_json=_ok_post([]),
+    )
+    assert key == "sk-or-test-key"
+    assert store.get("openrouter") == {"type": "oauth", "key": "sk-or-test-key"}
+
+
+def test_run_login_local_uses_callback_and_never_reads_paste(tmp_path, monkeypatch):
+    monkeypatch.setattr(ol.sys, "platform", "win32")
+    store = CredentialStore(tmp_path / "auth.json")
+    paste_calls = []
+
+    def open_browser(url):
+        params = _auth_params(url)
+        _in_thread(lambda: _get(f"{params['callback_url']}?code=c&state={params['state']}"))
+
+    def read_paste(cancel):
+        paste_calls.append(True)
+        return None
+
+    key = ol.run_login(
+        store,
+        {},
+        open_browser=open_browser,
+        read_paste=read_paste,
+        on_url=lambda url: None,
+        post_json=_ok_post([]),
+    )
+    assert key == "sk-or-test-key"
+    assert paste_calls == []

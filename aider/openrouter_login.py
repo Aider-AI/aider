@@ -29,13 +29,12 @@ import base64
 import hashlib
 import json
 import secrets
+import sys
 import threading
 import urllib.error
 import urllib.parse
 import urllib.request
 from http.server import BaseHTTPRequestHandler, HTTPServer
-
-from aider.credential_store import CredentialStore
 
 AUTHORIZE_URL = "https://openrouter.ai/auth"
 TOKEN_URL = "https://openrouter.ai/api/v1/auth/keys"
@@ -329,5 +328,49 @@ def login_and_store(store, open_browser, read_paste, **kwargs):
     return key
 
 
-def default_store():
-    return CredentialStore()
+def is_headless(environ):
+    """True when a browser on this machine cannot reach a loopback callback.
+
+    Remote shells (SSH) and Linux sessions with no display are treated as
+    headless. macOS and Windows are treated as local.
+    """
+    if any(environ.get(name) for name in ("SSH_CONNECTION", "SSH_CLIENT", "SSH_TTY")):
+        return True
+    on_linux = sys.platform.startswith("linux")
+    return on_linux and not (environ.get("DISPLAY") or environ.get("WAYLAND_DISPLAY"))
+
+
+def login_paste_only(read_paste, on_url=print, post_json=_post_json):
+    """Headless sign-in: show the URL, then wait for the pasted code.
+
+    No callback server runs, so there is no race with other input. The code
+    is single-use and expires after 10 minutes (OpenRouter docs).
+    """
+    verifier, challenge = generate_pkce()
+    query = urllib.parse.urlencode({"code_challenge": challenge, "code_challenge_method": "S256"})
+    on_url(f"{AUTHORIZE_URL}?{query}")
+    text = read_paste(threading.Event())
+    if text is None:
+        raise LoginError("Sign-in cancelled.")
+    code, _ = parse_pasted(text)
+    return exchange_code(code, verifier, post_json)
+
+
+def run_login(store, environ, open_browser, read_paste, on_url=print, post_json=_post_json):
+    """Sign in with the mode that fits this machine, then store the key.
+
+    Local: the browser callback is the only path. Pasting is off, because a
+    blocked terminal read cannot be cancelled and would take the next input line.
+    Headless: pasting is the only path.
+    """
+    if is_headless(environ):
+        key = login_paste_only(read_paste, on_url=on_url, post_json=post_json)
+    else:
+        key = login(
+            open_browser,
+            lambda cancel: None,
+            on_url=on_url,
+            post_json=post_json,
+        )
+    store.set(PROVIDER, "oauth", key)
+    return key

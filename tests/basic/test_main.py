@@ -1113,12 +1113,24 @@ class TestMain(TestCase):
             self.assertIn("gemini", coder.main_model.name.lower())
             del os.environ["GEMINI_API_KEY"]
 
-            # Test no API keys - should offer OpenRouter OAuth
-            with patch("aider.onboarding.offer_openrouter_oauth") as mock_offer_oauth:
-                mock_offer_oauth.return_value = None  # Simulate user declining or failure
-                result = main(["--exit", "--yes"], input=DummyInput(), output=DummyOutput())
-                self.assertEqual(result, 1)  # Expect failure since no model could be selected
-                mock_offer_oauth.assert_called_once()
+            # Test no API keys - no automatic sign-in; the user is pointed to --login
+            result = main(["--exit", "--yes"], input=DummyInput(), output=DummyOutput())
+            self.assertEqual(result, 1)  # Expect failure since no model could be selected
+
+    def test_login_flag_runs_login_and_exits(self):
+        with GitTemporaryDirectory():
+            with patch("aider.main.run_login") as mock_run_login:
+                result = main(["--login", "openrouter"], input=DummyInput(), output=DummyOutput())
+                self.assertEqual(result, 0)
+                mock_run_login.assert_called_once()
+
+    def test_login_flag_reports_failure_with_exit_code_1(self):
+        from aider.openrouter_login import LoginError
+
+        with GitTemporaryDirectory():
+            with patch("aider.main.run_login", side_effect=LoginError("timed out")):
+                result = main(["--login", "openrouter"], input=DummyInput(), output=DummyOutput())
+                self.assertEqual(result, 1)
 
     def test_model_precedence(self):
         with GitTemporaryDirectory():

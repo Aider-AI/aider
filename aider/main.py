@@ -36,7 +36,8 @@ from aider.history import ChatSummary
 from aider.io import InputOutput
 from aider.llm import litellm  # noqa: F401; properly init litellm on launch
 from aider.models import ModelSettings
-from aider.onboarding import offer_openrouter_oauth, select_default_model
+from aider.openrouter_login import LoginError, run_login
+from aider.onboarding import select_default_model
 from aider.repo import ANY_GIT_ERROR, GitRepo
 from aider.report import report_uncaught_exceptions
 from aider.versioncheck import check_version, install_from_main_branch, install_upgrade
@@ -453,6 +454,31 @@ def sanity_check_repo(repo, io):
     return False
 
 
+def run_login_command(provider):
+    """Sign in from the terminal, store the key, and return an exit code."""
+    store = CredentialStore()
+
+    def read_paste(cancel):
+        try:
+            return input("Paste the authorization code or redirect URL: ")
+        except (EOFError, KeyboardInterrupt):
+            return None
+
+    try:
+        run_login(
+            store,
+            os.environ,
+            open_browser=webbrowser.open,
+            read_paste=read_paste,
+            on_url=lambda url: print(f"Open this URL to sign in to {provider}:\n{url}"),
+        )
+    except LoginError as error:
+        print(f"Sign-in failed: {error}", file=sys.stderr)
+        return 1
+    print(f"Signed in to {provider}. The key is stored in {store.path}.")
+    return 0
+
+
 def main(argv=None, input=None, output=None, force_git_root=None, return_coder=False):
     report_uncaught_exceptions()
 
@@ -510,6 +536,9 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
         apply_stored_credentials(CredentialStore(), os.environ)
     except CredentialStoreError as error:
         print(f"Warning: {error}", file=sys.stderr)
+
+    if args.login:
+        return run_login_command(args.login)
 
     # Parse again to include any arguments that might have been defined in .env
     args = parser.parse_args(argv)
@@ -799,36 +828,12 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
             f"The specified model '{args.model}' requires an OpenRouter API key, which was not"
             " found."
         )
-        # Attempt OAuth flow because the specific model needs it
-        if offer_openrouter_oauth(io, analytics):
-            # OAuth succeeded, the key should now be in os.environ.
-            # Check if the key is now present after the flow.
-            if os.environ.get("OPENROUTER_API_KEY"):
-                io.tool_output(
-                    "OpenRouter successfully connected."
-                )  # Inform user connection worked
-            else:
-                # This case should ideally not happen if offer_openrouter_oauth succeeded
-                # but check defensively.
-                io.tool_error(
-                    "OpenRouter authentication seemed successful, but the key is still missing."
-                )
-                analytics.event(
-                    "exit",
-                    reason="OpenRouter key missing after successful OAuth for specified model",
-                )
-                return 1
-        else:
-            # OAuth failed or was declined by the user
-            io.tool_error(
-                f"Unable to proceed without an OpenRouter API key for model '{args.model}'."
-            )
-            io.offer_url(urls.models_and_keys, "Open documentation URL for more info?")
-            analytics.event(
-                "exit",
-                reason="OpenRouter key missing for specified model and OAuth failed/declined",
-            )
-            return 1
+        io.tool_error(
+            f"Unable to proceed without an OpenRouter API key for model '{args.model}'."
+            " Run `aider --login openrouter` to sign in."
+        )
+        analytics.event("exit", reason="OpenRouter key missing for specified model")
+        return 1
 
     main_model = models.Model(
         args.model,

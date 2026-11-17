@@ -627,6 +627,12 @@ def get_parser(default_config_files, git_root):
         default=False,
     )
     group.add_argument(
+        "--login",
+        metavar="PROVIDER",
+        choices=["openrouter"],
+        help="Sign in to PROVIDER, store the key in ~/.aider/auth.json, then exit",
+    )
+    group.add_argument(
         "--version",
         action="version",
         version=f"%(prog)s {__version__}",
