@@ -146,7 +146,8 @@ def test_callback_with_wrong_state_is_rejected_and_login_continues():
 def test_denied_callback_ends_login_at_once():
     def open_browser(url):
         params = _auth_params(url)
-        _in_thread(lambda: _get(f"{params['callback_url']}?error=access_denied&state={params['state']}"))
+        denied = f"{params['callback_url']}?error=access_denied&state={params['state']}"
+        _in_thread(lambda: _get(denied))
 
     started = time.monotonic()
     with pytest.raises(LoginError, match="denied"):
