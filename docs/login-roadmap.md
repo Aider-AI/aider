@@ -11,6 +11,25 @@ Fora do escopo:
 - Alterações em `.env`, variáveis de ambiente e `--api-key`. Esses caminhos não mudam.
 - Ports diretos do código TypeScript do FineCode. O desenho é portado para Python.
 
+## Fatos verificados na documentação oficial
+
+Fonte: https://openrouter.ai/docs/use-cases/oauth-pkce, lida em 2026-11-17 (página em Markdown, via `curl`).
+
+- **Autorização:** `https://openrouter.ai/auth` com `callback_url`, `code_challenge` e `code_challenge_method=S256`. Os dois últimos são obrigatórios.
+- **`state`:** suportado. É devolvido sem alteração no callback. Não é devolvido em negação de acesso nem no modo headless.
+- **Localhost:** "supported on **any port**". A documentação não restringe o caminho do callback. Testar o caminho aleatório na prática.
+- **Headless:** omitir `callback_url`. A página mostra o código na tela. O código é de uso único e expira em 10 minutos.
+- **Troca:** `POST https://openrouter.ai/api/v1/auth/keys` com JSON `{code, code_verifier, code_challenge_method: "S256"}`. Resposta contém `key`.
+- **Erros documentados:** 400 (`code_challenge_method` inválido), 403 (código ou verifier inválidos), 403 (código expirado), 405 (método ou protocolo errado). O formato do corpo de erro não é documentado.
+- **Armazenamento:** a documentação recomenda cofre criptografado ou chaveiro do SO. Não define regras para arquivo local.
+- **Opcionais úteis:** `key_label` (nome da chave criada, para rastreio) e `expiration`.
+
+## Decisões confirmadas
+
+- **D0 Portabilidade:** reimplementar em Python com a biblioteca padrão, sem dependência nova. O desenho do FineCode e do msal serve de especificação. Nenhum código é copiado.
+- **D4 `state` no callback:** validar `state` no caminho de callback local, porque o OpenRouter o devolve. No caminho de colagem manual, `state` não existe, então a proteção é o PKCE.
+- **D5 Caminho aleatório:** manter, como segunda camada. Não substitui `state`.
+
 ## Premissas verificadas no código
 
 - `aider/onboarding.py` tem o fluxo OAuth: porta fixa entre 8484 e 8584, caminho fixo `/callback/aider`, sem `state`, sem colagem manual.
@@ -48,6 +67,7 @@ Fora do escopo:
 ## Fase 4: Callback local
 
 - Porta livre do sistema, caminho aleatório por login, `127.0.0.1`.
+- Enviar `state` aleatório no `/auth` e rejeitar callback cujo `state` não bata (D4).
 - Um código por callback; segundo acesso recebe 409.
 - Prazo de 5 minutos; Ctrl-C libera o servidor.
 - Testes com cliente HTTP local e endpoint de troca simulado. Nenhum teste acessa a rede.
