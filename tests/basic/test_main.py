@@ -1433,38 +1433,38 @@ class TestMain(TestCase):
             cwd_subdir = git_dir / "subdir"
             cwd_subdir.mkdir()
             cwd_env = cwd_subdir / ".env"
-            cwd_env.write_text("CWD_VAR=cwd_val\nSHARED_VAR=cwd_shared\n")
+            cwd_env.write_text("CWD_VAR=cwd_val\nSHARED_VAR=cwd_shared\nSHELL_WINS=dotenv\n")
 
             # Change to subdir
             original_cwd = os.getcwd()
             os.chdir(cwd_subdir)
 
             # Clear relevant env vars before test
-            for var in ["OAUTH_VAR", "SHARED_VAR", "GIT_VAR", "CWD_VAR"]:
+            for var in ["OAUTH_VAR", "SHARED_VAR", "GIT_VAR", "CWD_VAR", "SHELL_WINS"]:
                 if var in os.environ:
                     del os.environ[var]
+            # A variable set in the shell must beat every .env file.
+            os.environ["SHELL_WINS"] = "shell"
 
             with patch("pathlib.Path.home", return_value=fake_home):
                 loaded_files = load_dotenv_files(str(git_dir), None)
 
                 # Assert files were loaded in expected order (oauth first)
-                self.assertIn(str(oauth_keys_file.resolve()), loaded_files)
+                # The OAuth keys file is no longer read (phase 7 removes the login).
+                self.assertNotIn(str(oauth_keys_file.resolve()), loaded_files)
                 self.assertIn(str(git_root_env.resolve()), loaded_files)
                 self.assertIn(str(cwd_env.resolve()), loaded_files)
-                self.assertLess(
-                    loaded_files.index(str(oauth_keys_file.resolve())),
-                    loaded_files.index(str(git_root_env.resolve())),
-                )
                 self.assertLess(
                     loaded_files.index(str(git_root_env.resolve())),
                     loaded_files.index(str(cwd_env.resolve())),
                 )
 
-                # Assert environment variables reflect the override order
-                self.assertEqual(os.environ.get("OAUTH_VAR"), "oauth_val")
+                # Assert environment variables reflect the precedence rules
+                self.assertIsNone(os.environ.get("OAUTH_VAR"))
+                self.assertEqual(os.environ.get("SHELL_WINS"), "shell")
                 self.assertEqual(os.environ.get("GIT_VAR"), "git_val")
                 self.assertEqual(os.environ.get("CWD_VAR"), "cwd_val")
-                # SHARED_VAR should be overridden by the last loaded file (cwd .env)
+                # Among .env files the last loaded one wins (cwd .env)
                 self.assertEqual(os.environ.get("SHARED_VAR"), "cwd_shared")
 
             # Restore CWD

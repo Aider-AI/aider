@@ -15,7 +15,7 @@ except ImportError:
 
 import importlib_resources
 import shtab
-from dotenv import load_dotenv
+from dotenv import dotenv_values
 from prompt_toolkit.enums import EditingMode
 
 from aider import __version__, models, urls, utils
@@ -25,6 +25,11 @@ from aider.coders import Coder
 from aider.coders.base_coder import UnknownEditFormat
 from aider.commands import Commands, SwitchCoder
 from aider.copypaste import ClipboardWatcher
+from aider.credential_store import (
+    CredentialStore,
+    CredentialStoreError,
+    apply_stored_credentials,
+)
 from aider.deprecated import handle_deprecated_model_args
 from aider.format_settings import format_settings, scrub_sensitive_info
 from aider.history import ChatSummary
@@ -366,24 +371,24 @@ def load_dotenv_files(git_root, dotenv_fname, encoding="utf-8"):
         dotenv_fname,
     )
 
-    # Explicitly add the OAuth keys file to the beginning of the list
-    oauth_keys_file = Path.home() / ".aider" / "oauth-keys.env"
-    if oauth_keys_file.exists():
-        # Insert at the beginning so it's loaded first (and potentially overridden)
-        dotenv_files.insert(0, str(oauth_keys_file.resolve()))
-        # Remove duplicates if it somehow got included by generate_search_path_list
-        dotenv_files = list(dict.fromkeys(dotenv_files))
-
+    # Shell variables set before aider starts win over every .env file (D1b).
+    # Among .env files the later one still wins, as documented in dotenv.md.
+    # Stored credentials are applied after this, in main(), and win over both.
+    shell_names = set(os.environ)
+    values = {}
     loaded = []
     for fname in dotenv_files:
         try:
             if Path(fname).exists():
-                load_dotenv(fname, override=True, encoding=encoding)
+                values.update(dotenv_values(fname, encoding=encoding))
                 loaded.append(fname)
         except OSError as e:
             print(f"OSError loading {fname}: {e}")
         except Exception as e:
             print(f"Error loading {fname}: {e}")
+    for name, value in values.items():
+        if name not in shell_names and value is not None:
+            os.environ[name] = value
     return loaded
 
 
@@ -499,6 +504,12 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
 
     # Load the .env file specified in the arguments
     loaded_dotenvs = load_dotenv_files(git_root, args.env_file, args.encoding)
+
+    # Stored credentials win over .env files and shell variables (D1).
+    try:
+        apply_stored_credentials(CredentialStore(), os.environ)
+    except CredentialStoreError as error:
+        print(f"Warning: {error}", file=sys.stderr)
 
     # Parse again to include any arguments that might have been defined in .env
     args = parser.parse_args(argv)

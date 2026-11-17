@@ -114,3 +114,26 @@ def test_default_path_is_under_home_aider(monkeypatch, tmp_path):
     monkeypatch.setattr(credential_store.Path, "home", classmethod(lambda cls: tmp_path))
     store = CredentialStore()
     assert store.path == tmp_path / ".aider" / "auth.json"
+
+
+def test_stored_key_replaces_env_and_dotenv_values(tmp_path):
+    store = CredentialStore(tmp_path / "auth.json")
+    store.set("openrouter", "oauth", "sk-or-stored")
+    environ = {"OPENROUTER_API_KEY": "sk-or-from-env", "OTHER": "kept"}
+
+    applied = credential_store.apply_stored_credentials(store, environ)
+
+    assert applied == ["OPENROUTER_API_KEY"]
+    assert environ["OPENROUTER_API_KEY"] == "sk-or-stored"
+    assert environ["OTHER"] == "kept"
+
+
+def test_no_stored_credentials_leaves_environ_alone(tmp_path):
+    store = CredentialStore(tmp_path / "auth.json")
+    environ = {"OPENROUTER_API_KEY": "sk-or-from-env"}
+    assert credential_store.apply_stored_credentials(store, environ) == []
+    assert environ == {"OPENROUTER_API_KEY": "sk-or-from-env"}
+
+
+def test_env_name_for_provider():
+    assert credential_store.env_name_for_provider("openrouter") == "OPENROUTER_API_KEY"

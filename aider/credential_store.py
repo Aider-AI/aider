@@ -112,3 +112,26 @@ class CredentialStore:
         """Provider names with stored entries. Never returns key values."""
         with self._lock:
             return sorted(self._load())
+
+
+def env_name_for_provider(provider):
+    """OpenRouter -> OPENROUTER_API_KEY, the variable aider already reads."""
+    return f"{provider.upper()}_API_KEY"
+
+
+def apply_stored_credentials(store, environ):
+    """Copy stored keys into environ, replacing any value already there.
+
+    Stored credentials win over .env files and shell variables (D1). Explicit
+    --api-key flags are applied later in main() and still win over this.
+    Returns the environment variable names that were set.
+    """
+    applied = []
+    for provider in store.providers():
+        entry = store.get(provider)
+        if not entry or not entry.get("key"):
+            continue
+        name = env_name_for_provider(provider)
+        environ[name] = entry["key"]
+        applied.append(name)
+    return applied
