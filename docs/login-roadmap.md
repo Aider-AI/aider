@@ -29,6 +29,21 @@ Fonte: https://openrouter.ai/docs/use-cases/oauth-pkce, lida em 2026-11-17 (pág
 - **D0 Portabilidade:** reimplementar em Python com a biblioteca padrão, sem dependência nova. O desenho do FineCode e do msal serve de especificação. Nenhum código é copiado.
 - **D4 `state` no callback:** validar `state` no caminho de callback local, porque o OpenRouter o devolve. No caminho de colagem manual, `state` não existe, então a proteção é o PKCE.
 - **D5 Caminho aleatório:** manter, como segunda camada. Não substitui `state`.
+- **D6 Escopo por fases:** a fase 1 cobre só OpenRouter. Os demais provedores do Pi entram um por vez, e só quando passarem pelos três gates abaixo.
+- **D7 Paridade de comportamento:** mesmo fluxo para o usuário, mesma precedência (credencial salva vence `.env` e shell), mesmo armazenamento `0600`, mesmos casos de teste. A arquitetura é Python própria, não espelho de classes do Pi.
+
+## Gates para cada provedor além do OpenRouter
+
+Um provedor só entra se atender aos três:
+
+1. **Documentação pública** do fluxo OAuth, sem endpoints privados.
+2. **Client ID próprio** do aider, ou autorização escrita do provedor para usar outro. Pelo código do FineCode, Anthropic, GitHub Copilot, Kimi, Meta e OpenAI usam IDs fixos de outros aplicativos (`anthropic.ts:14`, `github-copilot.ts:11`, `kimi-coding.ts:14`, `meta.ts:20`, `openai-chatgpt.ts:16`). Termos de uso a verificar por provedor.
+3. **Conta disponível para validação L3.** Sem conta, o provedor não é validado e não entra.
+
+## Fases por provedor
+
+- **Fase P1 (OpenRouter):** fases 0 a 9 deste roadmap.
+- **Fase P2+:** um provedor por vez, cada um com seu próprio roadmap curto, aprovado antes do início.
 
 ## Premissas verificadas no código
 
