@@ -26,7 +26,7 @@ from aider.coders import Coder
 from aider.coders.base_coder import UnknownEditFormat
 from aider.commands import Commands, SwitchCoder
 from aider.copypaste import ClipboardWatcher
-from aider import auth
+from aider import auth, login_cli
 from aider.credential_store import CredentialStore, CredentialStoreError
 from aider.deprecated import handle_deprecated_model_args
 from aider.format_settings import format_settings, scrub_sensitive_info
@@ -452,39 +452,30 @@ def sanity_check_repo(repo, io):
     return False
 
 
-class TerminalInteraction:
-    """The only link between the auth layer and the terminal (decision D3)."""
-
-    def notify(self, event):
-        if event.get("type") == "auth_url":
-            print(f"Open this URL to sign in:\n{event['url']}")
-        elif event.get("type") == "progress":
-            print(event["message"])
-
-    def prompt(self, message):
-        try:
-            return input(message)
-        except (EOFError, KeyboardInterrupt):
-            return None
-
-
-def _choose(question, options):
-    """Ask for one of options by number or name. Returns the chosen name."""
-    for number, option in enumerate(options, start=1):
-        print(f"  {number}. {option}")
-    answer = input(f"{question} ").strip()
-    if answer.isdigit() and 1 <= int(answer) <= len(options):
-        return options[int(answer) - 1]
-    if answer in options:
-        return answer
-    raise auth.AuthError(f"'{answer}' is not one of: {', '.join(options)}.")
+def run_login_command(provider=None, method=None):
+    """`aider --login`: sign in from the terminal, store the credential, return an exit code."""
+    store = CredentialStore()
+    try:
+        provider, method = login_cli.login_provider(
+            provider,
+            method,
+            store,
+            login_cli.TerminalInteraction(),
+            os.environ,
+            getpass.getpass,
+        )
+    except (auth.AuthError, LoginError) as error:
+        print(f"Sign-in failed: {error}", file=sys.stderr)
+        return 1
+    print(f"Signed in to {provider} with {method}. Stored in {store.path}.")
+    return 0
 
 
 def run_logout_command(provider):
     """Remove the stored credential for a provider. Environment variables stay as they are."""
     store = CredentialStore()
     try:
-        removed = auth.logout(provider, store)
+        removed = login_cli.logout_provider(provider, store)
     except auth.AuthError as error:
         print(str(error), file=sys.stderr)
         return 1
@@ -492,36 +483,6 @@ def run_logout_command(provider):
         print(f"No stored credential for {provider}. Environment variables are unchanged.")
         return 0
     print(f"Removed the stored credential for {provider}. Environment variables are unchanged.")
-    return 0
-
-
-def run_login_command(provider=None, method=None):
-    """Sign in to a provider by browser or API key, store it, and return an exit code.
-
-    Without a provider, the user picks one. When the provider offers more than
-    one method and none was given, the user picks the method.
-    """
-    store = CredentialStore()
-    try:
-        if provider is None:
-            provider = _choose("Provider to sign in to:", list(auth.PROVIDERS))
-        provider_auth = auth.get_provider(provider)
-        if method is None:
-            if len(provider_auth.methods) > 1:
-                method = _choose("Sign in with:", list(provider_auth.methods))
-            else:
-                method = provider_auth.methods[0]
-        if method == "browser":
-            auth.login_oauth(provider, store, TerminalInteraction(), os.environ)
-        elif method == "key":
-            key = getpass.getpass(f"API key for {provider_auth.name} (input is hidden): ")
-            auth.login_api_key(provider, store, key)
-        else:
-            raise auth.AuthError(f"Unknown method '{method}'. Use browser or key.")
-    except (auth.AuthError, LoginError) as error:
-        print(f"Sign-in failed: {error}", file=sys.stderr)
-        return 1
-    print(f"Signed in to {provider} with {method}. Stored in {store.path}.")
     return 0
 
 
