@@ -14,6 +14,23 @@ from aider.repomap import RepoMap
 from aider.utils import GitTemporaryDirectory, IgnorantTemporaryDirectory
 
 
+def test_shared_definitions_rank_above_less_referenced_symbol(tmp_path):
+    caller = tmp_path / "caller.py"
+    caller.write_text("shared()\n" * 16 + "other()\n" * 9)
+    files = []
+    for filename, symbol in [("a.py", "shared"), ("b.py", "shared"), ("c.py", "other")]:
+        path = tmp_path / filename
+        path.write_text(f"def {symbol}():\n    return helper()\n")
+        files.append(str(path))
+
+    repo_map = RepoMap(root=str(tmp_path), io=InputOutput())
+    try:
+        ranked = repo_map.get_ranked_tags([str(caller)], files, set(), set())
+        assert {tag.rel_fname for tag in ranked[:2]} == {"a.py", "b.py"}
+    finally:
+        repo_map.TAGS_CACHE.close()
+
+
 class TestRepoMap(unittest.TestCase):
     def setUp(self):
         self.GPT35 = Model("gpt-3.5-turbo")

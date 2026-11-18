@@ -499,6 +499,8 @@ class RepoMap:
                 mul *= 0.1
 
             for referencer, num_refs in Counter(references[ident]).items():
+                # Scale down frequent references once for all matching definitions.
+                ref_weight = math.sqrt(num_refs)
                 for definer in definers:
                     # dump(referencer, definer, num_refs, mul)
                     # if referencer == definer:
@@ -508,10 +510,7 @@ class RepoMap:
                     if referencer in chat_rel_fnames:
                         use_mul *= 50
 
-                    # scale down so high freq (low value) mentions don't dominate
-                    num_refs = math.sqrt(num_refs)
-
-                    G.add_edge(referencer, definer, weight=use_mul * num_refs, ident=ident)
+                    G.add_edge(referencer, definer, weight=use_mul * ref_weight, ident=ident)
 
         if not references:
             pass
