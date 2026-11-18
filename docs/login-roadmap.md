@@ -117,5 +117,17 @@ Fonte: https://openrouter.ai/docs/use-cases/oauth-pkce, lida em 2026-11-17.
 
 ## Estado atual (registro)
 
-- Commit `3cfa81d`: login atual do aider (flag `--login`, callback, colagem, `credential_store.py`, `openrouter_login.py`). É a base a ser editada. Parte fica, parte é reescrita, conforme D11.
-- Não há substituição integral. Cada fase diz o que é reaproveitado e o que é reescrito.
+| Fase | Estado | Onde |
+|---|---|---|
+| P0 Linha de base | Medida em `de3d1f5`; 3 falhas ainda sem causa por nome de teste | `aider-baseline` |
+| P1 Tipos e registro | Feito | `aider/auth.py` |
+| P2 Armazenamento | Feito: `read`, `list`, `modify`, `delete`, formato Pi | `aider/credential_store.py` |
+| P3 `resolve()` | Feito: credencial salva vence ambiente | `aider/auth.py` |
+| P4 OAuth do OpenRouter | Feito: navegador, colagem após 60 s, diagnóstico | `aider/openrouter_login.py` |
+| P5 Comando de login | Feito: `--login`, `--method`, `--logout`; `/login`, `/logout` no chat | `aider/login_cli.py`, `aider/commands.py` |
+| P6 Integração no início | Feito: credenciais salvas no ambiente antes do modelo | `aider/main.py` |
+| P7 Limpeza | Feito: APIs antigas removidas, funções sem uso removidas | — |
+| P8 Documentação | Feito: `config/api-keys.md`, `llms/openrouter.md` | `aider/website/docs` |
+| P9 Validação | Pendente no Windows: suíte completa, `flake8`, login real | — |
+
+Gates de outros provedores: Anthropic e OpenAI por navegador ficam bloqueados (client IDs de terceiros, sem programa público para Anthropic). Ambos seguem por API key.

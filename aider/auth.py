@@ -10,7 +10,6 @@ Explicit --api-key flags are applied later in main() and still win.
 
 from dataclasses import dataclass, field
 
-from aider.credential_store import env_name_for_provider
 from aider.openrouter_login import OpenRouterOAuth
 
 SOURCE_STORED = "stored"
@@ -124,10 +123,6 @@ def login_oauth(provider_id, store, interaction, environ):
     credential = provider.oauth.login(interaction, environ=environ)
     store.modify(provider.id, lambda current: credential)
     return provider.env_var
-
-
-def env_name(provider_id):
-    return env_name_for_provider(provider_id)
 
 
 def logout(provider_id, store):
