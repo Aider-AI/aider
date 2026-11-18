@@ -15,6 +15,34 @@ Aider lets you specify API keys in a few ways:
 
 ---
 
+## Sign in from the command line
+
+`aider --login` stores a credential so you do not need to set an environment variable.
+
+```bash
+aider --login                          # choose a provider, then a method
+aider --login openrouter               # browser sign-in (default for OpenRouter)
+aider --login openai --method key      # paste an API key (input is hidden)
+aider --logout openrouter              # remove the stored credential
+```
+
+- Browser sign-in is available for OpenRouter. It opens your browser on the
+  provider's sign-in page, and aider waits for the callback on `127.0.0.1`.
+- If no callback arrives within 60 seconds, aider asks you to paste the redirect
+  URL from the browser's address bar. Pressing Enter keeps waiting. The sign-in
+  times out after 5 minutes.
+- On an SSH session or a Linux machine with no display, aider skips the browser
+  and asks for the code shown on the provider's page.
+- Credentials are stored in `~/.aider/auth.json`, with file mode `0600`. Each
+  provider has one entry.
+
+**Precedence.** A stored credential wins over environment variables and `.env`
+files. Environment variables are used only when nothing is stored for that
+provider. An explicit `--api-key` flag still wins over both.
+
+**Removing a credential.** `aider --logout PROVIDER` removes only the stored
+entry. Environment variables and `.env` files are not changed.
+
 ## OpenAI and Anthropic
 
 Aider has special support for providing

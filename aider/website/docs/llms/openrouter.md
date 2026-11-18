@@ -12,7 +12,14 @@ First, install aider:
 
 {% include install.md %}
 
-Then configure your API keys:
+Then sign in. This opens OpenRouter in your browser and stores the key:
+
+```
+aider --login openrouter
+```
+
+Or configure your API key yourself:
+
 
 ```
 export OPENROUTER_API_KEY=<key> # Mac/Linux
