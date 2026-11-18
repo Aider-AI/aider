@@ -1,140 +1,116 @@
-# Roadmap: substituir o login do aider
+# Roadmap: migrar a autenticação do aider para o padrão do Pi
 
-Status: rascunho para aprovação. Escopo: fork sem usuários. Não há migração de credenciais.
+Status: em execução. Escopo: fork sem usuários, sem migração de credenciais antigas.
 
-## Objetivo e limites
+## Objetivo
 
-Substituir o login OAuth atual do aider (`aider/onboarding.py`) por um fluxo que funcione em máquina local e em SSH, com armazenamento seguro e precedência clara entre credenciais.
+O aider passa a usar a arquitetura de autenticação do Pi (`packages/ai/src/auth/` no FineCode), reescrita em Python. O objetivo não é consertar o login atual do aider. O login atual é substituído por essa arquitetura.
+
+Padrão do Pi que deve estar presente no aider:
+
+1. **Credencial por provedor.** Cada provedor declara `apiKey` e/ou `oauth`.
+2. **Armazenamento como interface.** `read`, `list`, `modify` (leitura e escrita serializadas por provedor) e `delete`.
+3. **Resolução no uso.** `resolve()` decide a credencial. Uma credencial salva é dona do provedor. Variável de ambiente só é consultada se nada estiver salvo.
+4. **OAuth como objeto.** `login(interaction)`, `refresh(credential)` e `to_auth(credential)`.
+5. **Interação de login por eventos.** Um objeto recebe `notify` (URL, progresso, informação) e `prompt` (código manual).
+6. **Comando de login com seleção de provedor.**
 
 Fora do escopo:
-- Migração de `~/.aider/oauth-keys.env`. Não há usuários a migrar. O arquivo, se existir, fica sem uso.
-- Alterações em `.env`, variáveis de ambiente e `--api-key`. Esses caminhos não mudam.
-- Ports diretos do código TypeScript do FineCode. O desenho é portado para Python.
+- Copiar código TypeScript. Só o desenho é portado.
+- Provedores além do OpenRouter, até passarem pelos gates abaixo.
 
-## Fatos verificados na documentação oficial
+## Decisões
 
-Fonte: https://openrouter.ai/docs/use-cases/oauth-pkce, lida em 2026-11-17 (página em Markdown, via `curl`).
-
-- **Autorização:** `https://openrouter.ai/auth` com `callback_url`, `code_challenge` e `code_challenge_method=S256`. Os dois últimos são obrigatórios.
-- **`state`:** suportado. É devolvido sem alteração no callback. Não é devolvido em negação de acesso nem no modo headless.
-- **Localhost:** "supported on **any port**". A documentação não restringe o caminho do callback. Testar o caminho aleatório na prática.
-- **Headless:** omitir `callback_url`. A página mostra o código na tela. O código é de uso único e expira em 10 minutos.
-- **Troca:** `POST https://openrouter.ai/api/v1/auth/keys` com JSON `{code, code_verifier, code_challenge_method: "S256"}`. Resposta contém `key`.
-- **Erros documentados:** 400 (`code_challenge_method` inválido), 403 (código ou verifier inválidos), 403 (código expirado), 405 (método ou protocolo errado). O formato do corpo de erro não é documentado.
-- **Armazenamento:** a documentação recomenda cofre criptografado ou chaveiro do SO. Não define regras para arquivo local.
-- **Opcionais úteis:** `key_label` (nome da chave criada, para rastreio) e `expiration`.
-
-## Decisões confirmadas
-
-- **D0 Portabilidade:** reimplementar em Python com a biblioteca padrão, sem dependência nova. O desenho do FineCode e do msal serve de especificação. Nenhum código é copiado.
-- **D4 `state` no callback:** validar `state` no caminho de callback local, porque o OpenRouter o devolve. No caminho de colagem manual, `state` não existe, então a proteção é o PKCE.
-- **D5 Caminho aleatório:** manter, como segunda camada. Não substitui `state`.
-- **D6 Escopo por fases:** a fase 1 cobre só OpenRouter. Os demais provedores do Pi entram um por vez, e só quando passarem pelos três gates abaixo.
-- **D7 Paridade de comportamento:** mesmo fluxo para o usuário, mesma precedência (credencial salva vence `.env` e shell), mesmo armazenamento `0600`, mesmos casos de teste. A arquitetura é Python própria, não espelho de classes do Pi.
+- **D0 Portabilidade:** Python, biblioteca padrão, sem dependência nova. Nada copiado do FineCode.
+- **D1 Precedência (regra do Pi):** credencial salva vence `.env` e shell. Variável de ambiente só vale quando nada estiver salvo. Explícitos (`--api-key`) continuam vencendo, como hoje.
+- **D2 Armazenamento:** `CredentialStore` com `modify` serializado. Arquivo único, modo `0600`, escrita atômica. Formato do Pi: `{"type": "oauth", "access": ...}` ou `{"type": "api_key", "key": ...}`.
+- **D3 Interação:** objeto com `notify(event)` e `prompt_manual_code(message)`. A camada OAuth não conhece o terminal.
+- **D4 `state`:** validado no callback local. Na colagem manual, não há `state`, e a proteção é o PKCE.
+- **D5 Caminho aleatório:** segunda camada, além do `state`.
+- **D6 Escopo por fases:** OpenRouter primeiro. Outros provedores entram um por vez, pelos gates.
+- **D7 Arquitetura do Pi:** a estrutura de camadas do Pi é o alvo, não só o comportamento. Substitui a decisão anterior de "arquitetura própria".
+- **D8 Nomes e caminhos (a confirmar):** mantemos `~/.aider/auth.json` e `--login [PROVIDER]`, porque o produto é o aider. O Pi usa `~/.pi/agent/auth.json` e `login`. Se você preferir os nomes do Pi, muda-se só a constante.
+- **D9 Entrega ao litellm (adaptação):** o litellm do aider lê chaves de variáveis de ambiente. Por isso `resolve()` escreve a chave resolvida em `os.environ` no início da execução, em vez de passar a chave a cada chamada. Essa é a única diferença estrutural em relação ao Pi, e fica registrada.
+- **D10 Colagem manual só no modo headless:** o Pi corre callback e colagem em paralelo. No aider isso não é seguro, porque a leitura do terminal não pode ser cancelada e roubaria a próxima linha digitada. Localmente, só o callback. Em SSH ou sem display, só a colagem. Desvio consciente.
 
 ## Gates para cada provedor além do OpenRouter
 
-Um provedor só entra se atender aos três:
-
 1. **Documentação pública** do fluxo OAuth, sem endpoints privados.
-2. **Client ID próprio** do aider, ou autorização escrita do provedor para usar outro. Pelo código do FineCode, Anthropic, GitHub Copilot, Kimi, Meta e OpenAI usam IDs fixos de outros aplicativos (`anthropic.ts:14`, `github-copilot.ts:11`, `kimi-coding.ts:14`, `meta.ts:20`, `openai-chatgpt.ts:16`). Termos de uso a verificar por provedor.
-3. **Conta disponível para validação L3.** Sem conta, o provedor não é validado e não entra.
+2. **Client ID próprio** do aider, ou autorização escrita. Pelo código do FineCode, Anthropic, GitHub Copilot, Kimi, Meta e OpenAI usam IDs fixos de outros aplicativos (`anthropic.ts:14`, `github-copilot.ts:11`, `kimi-coding.ts:14`, `meta.ts:20`, `openai-chatgpt.ts:16`). Termos a verificar.
+3. **Conta disponível para validação L3.**
 
-## Fases por provedor
+## Fatos verificados na documentação oficial
 
-- **Fase P1 (OpenRouter):** fases 0 a 9 deste roadmap.
-- **Fase P2+:** um provedor por vez, cada um com seu próprio roadmap curto, aprovado antes do início.
+Fonte: https://openrouter.ai/docs/use-cases/oauth-pkce, lida em 2026-11-17.
 
-## Premissas verificadas no código
+- `https://openrouter.ai/auth` com `callback_url`, `code_challenge`, `code_challenge_method=S256` e `state` (opcional, devolvido no callback).
+- Localhost em qualquer porta. Caminho do callback não restrito pela documentação.
+- Headless: omitir `callback_url`. Código de uso único, expira em 10 minutos.
+- Troca: `POST https://openrouter.ai/api/v1/auth/keys` com `{code, code_verifier, code_challenge_method: "S256"}`. Resposta com `key`.
+- Erros documentados: 400, 403 (código/verifier inválido), 403 (expirado), 405. Formato do corpo de erro não documentado.
 
-- `aider/onboarding.py` tem o fluxo OAuth: porta fixa entre 8484 e 8584, caminho fixo `/callback/aider`, sem `state`, sem colagem manual.
-- `aider/main.py:381` carrega `.env` com `override=True`. Um `.env` do projeto sobrescreve variável do shell e a chave do login.
-- `aider/onboarding.py:366` grava em `~/.aider/oauth-keys.env` em modo append, sem `chmod`.
-- `aider/onboarding.py` tem `print()` direto (linha 313).
-- `tests/basic/test_onboarding.py` (25 casos) e `tests/basic/test_main.py:1414` cobrem o comportamento atual.
+## Fases
 
-## Fase 0: Linha de base
+### P0 Linha de base
+- `pytest` completo no ambiente do projeto, antes das mudanças (`de3d1f5`).
+- Estado: 11 falhas, 5 erros, 472 aprovados, 5 pulados. Causas classificadas por mensagem: ambiente (extras e rede) para 12 ocorrências, Windows para 1, pendente para 3 (`sonnet` e `None != '3'`).
+- Saída: classificação fechada com nome de teste.
 
-- Obter ambiente com acesso ao PyPI. Neste container `pypi.org` não resolve.
-- Rodar `pytest` completo e registrar: número de testes, falhas, tempo. Comando e código de saída incluídos.
-- **Saída:** baseline registrado.
+### P1 Tipos e registro de provedores
+- `aider/auth.py`: `ProviderAuth`, `OAuthAuth`, `ApiKeyAuth`, interação, registro.
+- Testes: registro do OpenRouter com `oauth` e `apiKey`.
 
-## Fase 1: Decisões
+### P2 Armazenamento no formato do Pi (novo módulo, substitui `credential_store.py`)
+- Novo `CredentialStore` com `read`, `list`, `modify`, `delete`. Serialização por provedor.
+- O `credential_store.py` atual é removido, junto com `get`, `set` e `providers`. Não é adaptado.
+- Formato OAuth e API key do Pi (D2).
+- Testes: round trip, `modify` atômico, falha no meio não corrompe, formato.
 
-- **D1 Precedência:** credencial salva vence `.env` e variável do shell. Muda o comportamento de `main.py:381`. Precisa de aprovação.
-- **D2 Armazenamento:** arquivo único, modo `0600`, escrita atômica (arquivo temporário e `rename`), uma linha por provedor.
-- **D3 Sem navegador:** colar código ou URL é obrigatório.
-- **Saída:** D1 a D3 aprovadas.
+### P3 `resolve()`
+- Regra D1: salvo vence; senão variável de ambiente; senão nada.
+- Testes: salvo com `.env` diferente; sem salvo com variável; nada.
 
-## Fase 2: Armazenamento
+### P4 OpenRouter como `OAuthAuth` (novo módulo, substitui `openrouter_login.py`)
+- `login(interaction)`: local → callback; headless → colagem (D10).
+- `refresh`: credencial permanente, devolve a mesma.
+- `to_auth`: `{"apiKey": access}`.
+- O PKCE, o callback e a troca são reescritos dentro do módulo novo. O `openrouter_login.py` atual é removido, não é reaproveitado como estão as funções.
+- Testes novos, escritos para a interface nova. Os testes atuais só servem como referência de casos.
 
-- Módulo com leitura, escrita atômica e `0600`. Sem append.
-- Testes: permissão do arquivo; escrita interrompida não corrompe o conteúdo; duas escritas seguidas deixam uma linha por provedor.
-- **Saída:** L0 a L2 verdes.
+### P5 Comando de login (substitui `run_login_command` e a flag atual)
+- `--login` sem argumento: lista provedores com OAuth e pede a escolha.
+- `--login openrouter`: vai direto.
+- Testes: seleção, provedor inválido, falha de login.
 
-## Fase 3: Precedência
+### P6 Integração no início da execução
+- `resolve()` antes de escolher o modelo; escreve em `os.environ` (D9).
+- `--api-key` continua vencendo.
+- Testes: `test_main` sem chaves, com credencial salva, com `--api-key`.
 
-- Aplicar D1 em `load_dotenv_files`.
-- Substituir `test_main.py:1414`.
-- Teste novo: `.env` com chave antiga não derruba a credencial salva. Este teste deve falhar no código atual.
-- **Saída:** teste de regressão que falha antes e passa depois.
+### P7 Limpeza
+- `grep` por `get(`, `set(`, `providers()` antigos e por `apply_stored_credentials` sem uso.
+- Remover resíduos do fluxo antigo.
 
-## Fase 4: Callback local
+### P8 Documentação
+- `aider/website/docs/llms/openrouter.md`, `docs/config/api-keys.md`.
+- `AGENTS.md`: atualizar "Known gaps".
 
-- Porta livre do sistema, caminho aleatório por login, `127.0.0.1`.
-- Enviar `state` aleatório no `/auth` e rejeitar callback cujo `state` não bata (D4).
-- Um código por callback; segundo acesso recebe 409.
-- Prazo de 5 minutos; Ctrl-C libera o servidor.
-- Testes com cliente HTTP local e endpoint de troca simulado. Nenhum teste acessa a rede.
-
-## Fase 5: Colagem manual em corrida com o callback
-
-- Quem chegar primeiro vence: callback ou código colado.
-- Aceita código puro ou URL de redirecionamento.
-- Testes: colagem vazia, código inválido, cancelamento, callback durante a colagem.
-
-## Fase 6: Interface
-
-- Mover URL e mensagens de `print()` para `io`.
-- Mostrar a fonte da chave em uso e o modelo escolhido, sem imprimir a chave.
-
-## Fase 7: Exclusão
-
-Só depois das fases 2 a 6 verdes:
-- Remover de `onboarding.py`: `start_openrouter_oauth_flow`, `exchange_code_for_key`, `find_available_port`, `generate_pkce_codes`.
-- Remover de `main.py` o carregamento de `oauth-keys.env` e as chamadas de `offer_openrouter_oauth`.
-- Manter `try_to_select_default_model`. Revisar o fallback de tier, que cai em "free" em caso de erro.
-- Remover os testes de OAuth em `tests/basic/test_onboarding.py`.
-- **Saída:** `grep` por `oauth-keys`, `offer_openrouter_oauth` e `start_openrouter_oauth_flow` retorna zero.
-
-## Fase 8: Documentação
-
-- Página de login em `aider/website/docs/llms/openrouter.md` e `docs/config/api-keys.md`.
-- Atualizar "Known gaps" em `AGENTS.md` conforme cada item for resolvido.
-
-## Fase 9: Validação operacional (L3)
-
-1. `HOME` temporário, sem chave: `aider` abre o login e conclui pelo callback. Registrar comando, saída e código de saída.
-2. Mesmo teste colando a URL de redirecionamento (simula SSH).
-3. `.env` com chave antiga presente: a credencial salva é a que vale.
-4. Fluxo interativo com `pexpect`, que já é dependência do aider.
-5. Build Docker.
-
-## Fase 10: Reversão
-
-- `git revert` do commit da fase 7. As fases 2 a 6 continuam válidas.
+### P9 Validação operacional (L3)
+1. Local, Windows: `aider --login openrouter` conclui pelo callback. Confirmar se o OpenRouter aceita `127.0.0.1`.
+2. SSH ou sem display: colagem concluída.
+3. Credencial salva vence `.env`.
+4. Suíte completa e `flake8` sem aviso novo em relação a `de3d1f5`.
 
 ## Riscos
 
 | Risco | Detecção | Mitigação |
 |---|---|---|
-| Mudança de precedência surpreende quem usa `.env` | Teste da fase 3 | Documentar na fase 8 |
-| Colagem manual aceita entrada inválida | Testes da fase 5 | Validar formato antes da troca |
-| Porta ocupada | Teste de porta em uso | Porta livre do sistema |
-| Build quebrado após exclusão | Fase 9, item 5 | Exclusão só depois da fase 6 |
+| Migração vira reforma do aider | Revisão do roteiro a cada fase | Cada fase cita o padrão do Pi que implementa |
+| `resolve()` em `os.environ` vaza para subprocessos | Teste de P6 | Documentar em D9 |
+| Colagem local rouba entrada do chat | Desligada localmente (D10) | — |
+| `127.0.0.1` rejeitado pelo OpenRouter | P9 item 1 | Trocar para `localhost` |
 
-## Estimativa
+## Estado atual (registro)
 
-- Fases 2 a 6: 1 a 2 dias com testes.
-- Fase 7 e 8: meio dia.
-- Fase 9: depende de ambiente com PyPI e Docker.
+- Commit `3cfa81d`: login atual do aider (flag `--login`, callback, colagem, `credential_store.py` antigo). Esse código é descartável: será substituído pelas fases P1 a P6, não ajustado.
+- Não há mais edição do login atual como objetivo. Qualquer alteração nesses arquivos é só para remover ou para não quebrar a suíte até a substituição.
