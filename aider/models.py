@@ -19,6 +19,14 @@ from PIL import Image
 from aider import __version__
 from aider.dump import dump  # noqa: F401
 from aider.llm import litellm
+from aider.oauth_runtime import (
+    anthropic_oauth_adjustments,
+    chatgpt_completion_model,
+    is_anthropic_oauth_call,
+    is_chatgpt_call,
+    prepare_chatgpt_auth,
+    sync_chatgpt_auth,
+)
 from aider.openrouter import OpenRouterModelManager
 from aider.sendchat import ensure_alternating_roles, sanity_check_messages
 from aider.utils import check_pip_install_extra
@@ -334,6 +342,13 @@ class Model(ModelSettings):
         model = MODEL_ALIASES.get(model, model)
 
         self.name = model
+
+        # Model resolution in litellm can start a device-code login for chatgpt/ models,
+        # so the auth file must be in place before anything else runs.
+        if is_chatgpt_call(self.name):
+            from aider.credential_store import CredentialStore
+
+            prepare_chatgpt_auth(CredentialStore(), os.environ)
         self.verbose = verbose
 
         self.max_chat_history_tokens = 1024
@@ -1021,6 +1036,20 @@ class Model(ModelSettings):
             kwargs["timeout"] = request_timeout
         if self.verbose:
             dump(kwargs)
+
+        # Browser sign-ins (FineCode model): Claude Code identity for Anthropic OAuth tokens,
+        # and the ChatGPT auth file for chatgpt/ models.
+        if is_anthropic_oauth_call(self.name, os.environ):
+            messages, kwargs["extra_headers"] = anthropic_oauth_adjustments(
+                messages, kwargs.get("extra_headers")
+            )
+        chatgpt_store = None
+        if is_chatgpt_call(self.name):
+            from aider.credential_store import CredentialStore
+
+            kwargs["model"] = chatgpt_completion_model(self.name)
+            chatgpt_store = CredentialStore()
+            prepare_chatgpt_auth(chatgpt_store, os.environ)
         kwargs["messages"] = messages
 
         # Are we using github copilot?
@@ -1033,7 +1062,11 @@ class Model(ModelSettings):
 
             self.github_copilot_token_to_open_ai_key(kwargs["extra_headers"])
 
-        res = litellm.completion(**kwargs)
+        try:
+            res = litellm.completion(**kwargs)
+        finally:
+            if chatgpt_store is not None:
+                sync_chatgpt_auth(chatgpt_store, os.environ)
         return hash_object, res
 
     def simple_send_with_retries(self, messages):

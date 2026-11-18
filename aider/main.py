@@ -845,13 +845,18 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
         analytics.event("exit", reason="OpenRouter key missing for specified model")
         return 1
 
-    main_model = models.Model(
-        args.model,
-        weak_model=args.weak_model,
-        editor_model=args.editor_model,
-        editor_edit_format=args.editor_edit_format,
-        verbose=args.verbose,
-    )
+    try:
+        main_model = models.Model(
+            args.model,
+            weak_model=args.weak_model,
+            editor_model=args.editor_model,
+            editor_edit_format=args.editor_edit_format,
+            verbose=args.verbose,
+        )
+    except auth.AuthError as error:
+        io.tool_error(str(error))
+        analytics.event("exit", reason="ChatGPT sign-in missing for specified model")
+        return 1
 
     # Check if deprecated remove_reasoning is set
     if main_model.remove_reasoning is not None:

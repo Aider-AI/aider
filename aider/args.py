@@ -645,7 +645,7 @@ def get_parser(default_config_files, git_root):
     group.add_argument(
         "--method",
         choices=["browser", "key"],
-        help="With --login: sign in by browser or by API key, instead of asking",
+        help="With --login: sign in by browser (default when supported) or by API key",
     )
     group.add_argument(
         "--version",

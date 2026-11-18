@@ -8,10 +8,14 @@ os.environ, because that is how aider already passes keys (decision D9).
 Explicit --api-key flags are applied later in main() and still win.
 """
 
+import time
 from dataclasses import dataclass, field
 
-from aider.openrouter_login import OpenRouterOAuth
+from aider.anthropic_login import AnthropicOAuth
+from aider.openai_login import OpenAICodexOAuth
+from aider.openrouter_login import LoginError, OpenRouterOAuth
 
+RENEW_MARGIN_MS = 5 * 60 * 1000  # renew this long before expiry, so litellm never needs to
 SOURCE_STORED = "stored"
 SOURCE_ENV = "env"
 
@@ -37,15 +41,23 @@ class ProviderAuth:
     methods: tuple = field(default=("key",))
 
 
+OAUTH_PROVIDERS = {
+    "openrouter": OpenRouterOAuth,
+    "anthropic": AnthropicOAuth,
+    "openai": OpenAICodexOAuth,
+}
+
+
 def _build_providers():
     providers = {}
     for provider_id, env_var in API_KEY_PROVIDERS.items():
+        oauth_class = OAUTH_PROVIDERS.get(provider_id)
         providers[provider_id] = ProviderAuth(
             id=provider_id,
             name=provider_id,
             env_var=env_var,
-            oauth=OpenRouterOAuth() if provider_id == "openrouter" else None,
-            methods=("browser", "key") if provider_id == "openrouter" else ("key",),
+            oauth=oauth_class() if oauth_class else None,
+            methods=("browser", "key") if oauth_class else ("key",),
         )
     return providers
 
@@ -76,6 +88,7 @@ def resolve(provider_id, store, environ):
     stored = store.read(provider_id)
     if stored:
         if stored.get("type") == "oauth" and provider.oauth is not None:
+            stored = _renewed(provider, store, stored)
             key = provider.oauth.to_auth(stored).get("apiKey")
         else:
             key = stored.get("key")
@@ -85,6 +98,27 @@ def resolve(provider_id, store, environ):
     if value:
         return Resolved(api_key=value, source=SOURCE_ENV)
     return None
+
+
+def _renewed(provider, store, credential):
+    """Refresh an expired OAuth credential and store the new one (Pi rule).
+
+    A credential without a refresh token (OpenRouter keys) is returned as is.
+    """
+    expires = credential.get("expires")
+    if not credential.get("refresh") or not isinstance(expires, (int, float)):
+        return credential
+    if expires > time.time() * 1000 + RENEW_MARGIN_MS:
+        return credential
+    try:
+        renewed = provider.oauth.refresh(credential)
+    except LoginError:
+        raise AuthError(
+            f"Saved {provider.name} sign-in expired and could not be renewed."
+            f" Run aider --login {provider.id} again."
+        ) from None
+    store.modify(provider.id, lambda current: renewed)
+    return renewed
 
 
 def apply_stored_keys(store, environ):
@@ -97,7 +131,13 @@ def apply_stored_keys(store, environ):
     for provider_id in store.list():
         if provider_id not in PROVIDERS:
             continue
-        resolved = resolve(provider_id, store, environ)
+        stored = store.read(provider_id)
+        if provider_id == "openai" and stored and stored.get("type") == "oauth":
+            continue  # A ChatGPT token is not an OpenAI API key; models.py uses the auth file.
+        try:
+            resolved = resolve(provider_id, store, environ)
+        except AuthError:
+            continue  # Startup must not fail; the model step asks for a new login.
         if resolved and resolved.source == SOURCE_STORED:
             name = PROVIDERS[provider_id].env_var
             environ[name] = resolved.api_key

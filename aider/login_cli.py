@@ -3,8 +3,6 @@
 Both entry points call the same functions, so the flow and the messages match.
 """
 
-import os
-
 from aider import auth
 from aider.credential_store import CredentialStore
 
@@ -50,17 +48,15 @@ def login_provider(
 ):
     """Sign in to a provider and store the credential. Returns (provider, method).
 
-    With no provider, the user picks one. With several methods and none given,
-    the user picks one. Raises AuthError or LoginError on failure.
+    With no provider, the user picks one. With no method, the browser is used when
+    the provider supports it (the default sign-in); otherwise the API key. Pass
+    method="key" to type a key instead. Raises AuthError or LoginError on failure.
     """
     if provider is None:
         provider = choose("Provider to sign in to:", list(auth.PROVIDERS), ask, output)
     provider_auth = auth.get_provider(provider)
     if method is None:
-        if len(provider_auth.methods) > 1:
-            method = choose("Sign in with:", list(provider_auth.methods), ask, output)
-        else:
-            method = provider_auth.methods[0]
+        method = "browser" if "browser" in provider_auth.methods else provider_auth.methods[0]
     if method == "browser":
         auth.login_oauth(provider, store, interaction, environ)
     elif method == "key":

@@ -38,7 +38,9 @@ class _Interaction:
 
 def test_registry_declares_methods_per_provider():
     assert auth.get_provider("openrouter").methods == ("browser", "key")
-    assert auth.get_provider("openai").methods == ("key",)
+    assert auth.get_provider("openai").methods == ("browser", "key")
+    assert auth.get_provider("anthropic").methods == ("browser", "key")
+    assert auth.get_provider("deepseek").methods == ("key",)
     assert auth.get_provider("openrouter").env_var == "OPENROUTER_API_KEY"
 
 
@@ -110,7 +112,7 @@ def test_login_oauth_stores_credential_from_provider(tmp_path, monkeypatch):
 
 def test_login_oauth_refuses_providers_without_browser_sign_in(tmp_path):
     with pytest.raises(auth.AuthError, match="does not support browser"):
-        auth.login_oauth("openai", _store(tmp_path), _Interaction(), {})
+        auth.login_oauth("deepseek", _store(tmp_path), _Interaction(), {})
 
 
 def test_logout_removes_only_the_stored_credential(tmp_path):

@@ -130,4 +130,13 @@ Fonte: https://openrouter.ai/docs/use-cases/oauth-pkce, lida em 2026-11-17.
 | P8 Documentação | Feito: `config/api-keys.md`, `llms/openrouter.md` | `aider/website/docs` |
 | P9 Validação | Pendente no Windows: suíte completa, `flake8`, login real | — |
 
-Gates de outros provedores: Anthropic e OpenAI por navegador ficam bloqueados (client IDs de terceiros, sem programa público para Anthropic). Ambos seguem por API key.
+Gates de outros provedores: Anthropic e OpenAI por navegador foram implementados por pedido explícito do dono do projeto, com os client IDs do FineCode (`9d1c250a-...` do Claude Code e `app_EMoam...` do Codex CLI). Risco aceito: os termos dos provedores podem proibir ou bloquear esse uso. Arquivos: `aider/anthropic_login.py`, `aider/openai_login.py` e o fluxo comum em `aider/oauth_flow.py`.
+
+Operação (ver `aider/oauth_runtime.py`):
+- Anthropic: o token `sk-ant-oat...` vai como Bearer com o beta OAuth (litellm) e com a identidade Claude Code, o beta `claude-code-20250219` e o User-Agent `claude-cli` (igual ao FineCode). Verificado contra um stub HTTP local com litellm 1.82.3 (o pinado): cabeçalhos e corpo conferem.
+- OpenAI: modelos `chatgpt/<modelo>` viram `chatgpt/responses/<modelo>` (o backend do Codex só aceita Responses). O aider grava o arquivo de token do litellm a partir do cofre antes de cada chamada, e copia de volta o token renovado pelo litellm. Verificado com stub local: rota `/responses`, `Bearer`, `chatgpt-account-id`, e resposta SSE convertida.
+- Sem sign-in do navegador, `chatgpt/` falha com instrução de `aider --login openai`, em vez de abrir o device code do litellm.
+- Ainda não validado em L3: nenhuma chamada real aos servidores da Anthropic ou da OpenAI (sem conta aqui). Os testes usam stub local.
+- Diferenças do FineCode: o originator do Codex é o padrão do litellm (`codex_cli_rs`), não `pi`. O device code da OpenAI não foi portado.
+- Diferenças do FineCode no login: modo local usa só o callback, e a colagem entra depois de 60 s (D10). Headless: Anthropic usa o fluxo de código copiado, OpenAI usa a colagem da URL de redirecionamento.
+- Quando a renovação falha na inicialização, `apply_stored_keys` pula o provedor, e o modelo pede um novo `aider --login`.

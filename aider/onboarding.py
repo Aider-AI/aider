@@ -2,7 +2,10 @@ import os
 
 import requests
 
-LOGIN_HINT = "Run `aider --login openrouter` to sign in, or set an API key for your provider."
+LOGIN_HINT = (
+    "Run `aider --login openrouter` (or another provider) to sign in with your browser,"
+    " or set an API key."
+)
 
 
 def check_openrouter_tier(api_key):
