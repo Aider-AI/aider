@@ -751,6 +751,40 @@ class TestCommands(TestCase):
             # Clean up
             Path(session_file).unlink()
 
+    def test_cmd_save_and_load_with_spaces(self):
+        external_file = Path(self.tempdir) / "external reference 世界.md"
+        external_file.write_text("External context", encoding="utf-8")
+
+        with GitTemporaryDirectory():
+            io = InputOutput(pretty=False, fancy_input=False, yes=True)
+            coder = Coder.create(self.GPT35, None, io)
+            commands = Commands(io, coder)
+
+            editable = Path("source files") / "hello 世界.py"
+            editable.parent.mkdir()
+            editable.write_text("print('hello')", encoding="utf-8")
+            read_only = Path("reference notes.md")
+            read_only.write_text("Local context", encoding="utf-8")
+            commands.cmd_add(f'"{editable}"')
+            commands.cmd_read_only(f'"{read_only}" "{external_file}"')
+
+            expected_editable = set(coder.abs_fnames)
+            expected_read_only = set(coder.abs_read_only_fnames)
+            self.assertEqual(expected_editable, {str(editable.resolve())})
+            self.assertEqual(
+                expected_read_only, {str(read_only.resolve()), str(external_file.resolve())}
+            )
+            commands.cmd_save("session.txt")
+            files_before = {path for path in Path.cwd().rglob("*") if path.is_file()}
+            commands.cmd_drop("")
+            commands.cmd_load("session.txt")
+
+            self.assertEqual(coder.abs_fnames, expected_editable)
+            self.assertEqual(coder.abs_read_only_fnames, expected_read_only)
+            self.assertEqual(
+                {path for path in Path.cwd().rglob("*") if path.is_file()}, files_before
+            )
+
     def test_cmd_save_and_load_with_external_file(self):
         with tempfile.NamedTemporaryFile(mode="w", delete=False) as external_file:
             external_file.write("External file content")
