@@ -191,8 +191,8 @@ class ModelInfoManager:
                 cache_age = time.time() - self.cache_file.stat().st_mtime
                 if cache_age < self.CACHE_TTL:
                     try:
-                        self.content = json.loads(self.cache_file.read_text())
-                    except json.JSONDecodeError:
+                        self.content = json.loads(self.cache_file.read_text(encoding="utf-8"))
+                    except (json.JSONDecodeError, UnicodeDecodeError):
                         # If the cache file is corrupted, treat it as missing
                         self.content = None
         except OSError:
@@ -209,14 +209,14 @@ class ModelInfoManager:
             if response.status_code == 200:
                 self.content = response.json()
                 try:
-                    self.cache_file.write_text(json.dumps(self.content, indent=4))
+                    self.cache_file.write_text(json.dumps(self.content, indent=4), encoding="utf-8")
                 except OSError:
                     pass
         except Exception as ex:
             print(str(ex))
             try:
                 # Save empty dict to cache file on failure
-                self.cache_file.write_text("{}")
+                self.cache_file.write_text("{}", encoding="utf-8")
             except OSError:
                 pass
 

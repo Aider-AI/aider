@@ -102,8 +102,8 @@ class OpenRouterModelManager:
                 cache_age = time.time() - self.cache_file.stat().st_mtime
                 if cache_age < self.CACHE_TTL:
                     try:
-                        self.content = json.loads(self.cache_file.read_text())
-                    except json.JSONDecodeError:
+                        self.content = json.loads(self.cache_file.read_text(encoding="utf-8"))
+                    except (json.JSONDecodeError, UnicodeDecodeError):
                         self.content = None
         except OSError:
             # Cache directory might be unwritable; ignore.
@@ -117,12 +117,12 @@ class OpenRouterModelManager:
             if response.status_code == 200:
                 self.content = response.json()
                 try:
-                    self.cache_file.write_text(json.dumps(self.content, indent=2))
+                    self.cache_file.write_text(json.dumps(self.content, indent=2), encoding="utf-8")
                 except OSError:
                     pass  # Non-fatal if we can’t write the cache
         except Exception as ex:  # noqa: BLE001
             print(f"Failed to fetch OpenRouter model list: {ex}")
             try:
-                self.cache_file.write_text("{}")
+                self.cache_file.write_text("{}", encoding="utf-8")
             except OSError:
                 pass
