@@ -1506,16 +1506,16 @@ class Commands:
                 # Write commands to add editable files
                 for fname in sorted(self.coder.abs_fnames):
                     rel_fname = self.coder.get_rel_fname(fname)
-                    f.write(f"/add       {rel_fname}\n")
+                    f.write(f"/add       {self.quote_fname(rel_fname)}\n")
 
                 # Write commands to add read-only files
                 for fname in sorted(self.coder.abs_read_only_fnames):
                     # Use absolute path for files outside repo root, relative path for files inside
                     if Path(fname).is_relative_to(self.coder.root):
                         rel_fname = self.coder.get_rel_fname(fname)
-                        f.write(f"/read-only {rel_fname}\n")
+                        f.write(f"/read-only {self.quote_fname(rel_fname)}\n")
                     else:
-                        f.write(f"/read-only {fname}\n")
+                        f.write(f"/read-only {self.quote_fname(fname)}\n")
 
             self.io.tool_output(f"Saved commands to {args.strip()}")
         except Exception as e:
