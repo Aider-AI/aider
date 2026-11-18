@@ -23,17 +23,23 @@ Rules:
 
 Dependencies are standard library only (decision D0). Network and browser
 access are injected, so the flow can be tested without the internet.
+
+The public surface is OpenRouterOAuth: login(interaction), refresh and to_auth,
+the same shape as Pi's OAuthAuth. The interaction object is the only link to
+the terminal (notify for events, prompt for pasted input).
 """
 
 import base64
 import hashlib
 import json
+import os
 import secrets
 import sys
 import threading
 import urllib.error
 import urllib.parse
 import urllib.request
+import webbrowser
 from http.server import BaseHTTPRequestHandler, HTTPServer
 
 AUTHORIZE_URL = "https://openrouter.ai/auth"
@@ -321,13 +327,6 @@ def login(
         server.server_close()
 
 
-def login_and_store(store, open_browser, read_paste, **kwargs):
-    """Run the sign-in and save the key as the OpenRouter credential."""
-    key = login(open_browser, read_paste, **kwargs)
-    store.set(PROVIDER, "oauth", key)
-    return key
-
-
 def is_headless(environ):
     """True when a browser on this machine cannot reach a loopback callback.
 
@@ -356,21 +355,41 @@ def login_paste_only(read_paste, on_url=print, post_json=_post_json):
     return exchange_code(code, verifier, post_json)
 
 
-def run_login(store, environ, open_browser, read_paste, on_url=print, post_json=_post_json):
-    """Sign in with the mode that fits this machine, then store the key.
+class OpenRouterOAuth:
+    """OpenRouter as a Pi-style OAuth provider.
 
-    Local: the browser callback is the only path. Pasting is off, because a
-    blocked terminal read cannot be cancelled and would take the next input line.
-    Headless: pasting is the only path.
+    login(interaction): browser callback on a local machine, pasted code when
+    headless (D10). Returns an oauth credential in the Pi shape.
     """
-    if is_headless(environ):
-        key = login_paste_only(read_paste, on_url=on_url, post_json=post_json)
-    else:
-        key = login(
-            open_browser,
-            lambda cancel: None,
-            on_url=on_url,
-            post_json=post_json,
-        )
-    store.set(PROVIDER, "oauth", key)
-    return key
+
+    name = "OpenRouter OAuth"
+
+    def login(self, interaction, environ=None, open_browser=webbrowser.open, post_json=_post_json):
+        environ = os.environ if environ is None else environ
+        if is_headless(environ):
+            key = login_paste_only(
+                read_paste=lambda cancel: interaction.prompt("Paste the code or redirect URL: "),
+                on_url=lambda url: interaction.notify({"type": "auth_url", "url": url}),
+                post_json=post_json,
+            )
+        else:
+            key = login(
+                open_browser=open_browser,
+                read_paste=lambda cancel: None,  # local: callback only (D10)
+                on_url=lambda url: interaction.notify({"type": "auth_url", "url": url}),
+                post_json=post_json,
+            )
+        return credential_from_key(key)
+
+    def refresh(self, credential):
+        # OpenRouter keys do not expire on their own, so there is nothing to refresh.
+        return credential
+
+    def to_auth(self, credential):
+        return {"apiKey": credential["access"]}
+
+
+def credential_from_key(key):
+    """Pi credential shape for an OpenRouter key. The key never expires by itself."""
+    return {"type": "oauth", "access": key, "refresh": "", "expires": 9007199254740991}
+

@@ -1119,17 +1119,31 @@ class TestMain(TestCase):
 
     def test_login_flag_runs_login_and_exits(self):
         with GitTemporaryDirectory():
-            with patch("aider.main.run_login") as mock_run_login:
+            with patch("aider.main.run_login_command", return_value=0) as mock_login:
                 result = main(["--login", "openrouter"], input=DummyInput(), output=DummyOutput())
                 self.assertEqual(result, 0)
-                mock_run_login.assert_called_once()
+                mock_login.assert_called_once_with("openrouter", None)
 
-    def test_login_flag_reports_failure_with_exit_code_1(self):
-        from aider.openrouter_login import LoginError
+    def test_login_flag_passes_method(self):
+        with GitTemporaryDirectory():
+            with patch("aider.main.run_login_command", return_value=0) as mock_login:
+                main(
+                    ["--login", "openrouter", "--method", "key"],
+                    input=DummyInput(),
+                    output=DummyOutput(),
+                )
+                mock_login.assert_called_once_with("openrouter", "key")
+
+    def test_login_failure_exits_with_code_1(self):
+        from aider import auth
 
         with GitTemporaryDirectory():
-            with patch("aider.main.run_login", side_effect=LoginError("timed out")):
-                result = main(["--login", "openrouter"], input=DummyInput(), output=DummyOutput())
+            with patch("aider.main.auth.login_oauth", side_effect=auth.AuthError("timed out")):
+                result = main(
+                    ["--login", "openrouter", "--method", "browser"],
+                    input=DummyInput(),
+                    output=DummyOutput(),
+                )
                 self.assertEqual(result, 1)
 
     def test_model_precedence(self):

@@ -1,8 +1,9 @@
 """Persistent provider credentials for aider.
 
-One JSON file holds one entry per provider:
+One JSON file holds one credential per provider, in the Pi format:
 
-    {"openrouter": {"type": "oauth", "key": "..."}}
+    {"openrouter": {"type": "oauth", "access": "...", "refresh": "", "expires": 9007199254740991},
+     "openai": {"type": "api_key", "key": "..."}}
 
 Guarantees (see docs/login-roadmap.md, D2):
 
@@ -13,6 +14,7 @@ Guarantees (see docs/login-roadmap.md, D2):
 - A corrupt file is never overwritten. Reading it raises CredentialStoreError,
   so a damaged file cannot silently erase stored keys.
 - Writing a provider replaces its entry. Repeated logins do not add entries.
+- `modify` is the only write path, so a read-modify-write cannot interleave.
 - Key values are never included in error messages.
 
 Limits:
@@ -85,53 +87,38 @@ class CredentialStore:
                 pass
             raise
 
-    def get(self, provider):
-        """Return the stored entry for a provider, or None."""
+    def read(self, provider):
+        """Return the stored credential for a provider, or None."""
         with self._lock:
             return self._load().get(provider)
 
-    def set(self, provider, credential_type, key):
-        """Store or replace the entry for a provider."""
-        if not provider or not key:
-            raise ValueError("provider and key are required")
-        with self._lock:
-            data = self._load()
-            data[provider] = {"type": credential_type, "key": key}
-            self._save(data)
-
-    def delete(self, provider):
-        """Remove a provider entry. Missing entries are ignored."""
-        with self._lock:
-            data = self._load()
-            if provider not in data:
-                return
-            del data[provider]
-            self._save(data)
-
-    def providers(self):
-        """Provider names with stored entries. Never returns key values."""
+    def list(self):
+        """Provider names with stored credentials. Never returns secrets."""
         with self._lock:
             return sorted(self._load())
+
+    def modify(self, provider, fn):
+        """Read-modify-write one provider under the lock.
+
+        fn receives the current credential (or None) and returns the new one,
+        or None to remove the entry. Returns the credential that is stored
+        afterwards. If fn raises, nothing is written.
+        """
+        with self._lock:
+            data = self._load()
+            updated = fn(data.get(provider))
+            if updated is None:
+                data.pop(provider, None)
+            else:
+                data[provider] = updated
+            self._save(data)
+            return updated
+
+    def delete(self, provider):
+        """Remove a provider credential. Missing entries are ignored."""
+        self.modify(provider, lambda current: None)
 
 
 def env_name_for_provider(provider):
     """OpenRouter -> OPENROUTER_API_KEY, the variable aider already reads."""
     return f"{provider.upper()}_API_KEY"
-
-
-def apply_stored_credentials(store, environ):
-    """Copy stored keys into environ, replacing any value already there.
-
-    Stored credentials win over .env files and shell variables (D1). Explicit
-    --api-key flags are applied later in main() and still win over this.
-    Returns the environment variable names that were set.
-    """
-    applied = []
-    for provider in store.providers():
-        entry = store.get(provider)
-        if not entry or not entry.get("key"):
-            continue
-        name = env_name_for_provider(provider)
-        environ[name] = entry["key"]
-        applied.append(name)
-    return applied

@@ -628,9 +628,18 @@ def get_parser(default_config_files, git_root):
     )
     group.add_argument(
         "--login",
+        nargs="?",
+        const="",
         metavar="PROVIDER",
-        choices=["openrouter"],
-        help="Sign in to PROVIDER, store the key in ~/.aider/auth.json, then exit",
+        help=(
+            "Sign in to a provider (browser or API key) and store the credential in"
+            " ~/.aider/auth.json, then exit. Without PROVIDER, you choose one."
+        ),
+    )
+    group.add_argument(
+        "--method",
+        choices=["browser", "key"],
+        help="With --login: sign in by browser or by API key, instead of asking",
     )
     group.add_argument(
         "--version",

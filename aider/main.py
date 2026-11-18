@@ -1,3 +1,4 @@
+import getpass
 import json
 import os
 import re
@@ -25,18 +26,15 @@ from aider.coders import Coder
 from aider.coders.base_coder import UnknownEditFormat
 from aider.commands import Commands, SwitchCoder
 from aider.copypaste import ClipboardWatcher
-from aider.credential_store import (
-    CredentialStore,
-    CredentialStoreError,
-    apply_stored_credentials,
-)
+from aider import auth
+from aider.credential_store import CredentialStore, CredentialStoreError
 from aider.deprecated import handle_deprecated_model_args
 from aider.format_settings import format_settings, scrub_sensitive_info
 from aider.history import ChatSummary
 from aider.io import InputOutput
 from aider.llm import litellm  # noqa: F401; properly init litellm on launch
 from aider.models import ModelSettings
-from aider.openrouter_login import LoginError, run_login
+from aider.openrouter_login import LoginError
 from aider.onboarding import select_default_model
 from aider.repo import ANY_GIT_ERROR, GitRepo
 from aider.report import report_uncaught_exceptions
@@ -454,28 +452,59 @@ def sanity_check_repo(repo, io):
     return False
 
 
-def run_login_command(provider):
-    """Sign in from the terminal, store the key, and return an exit code."""
-    store = CredentialStore()
+class TerminalInteraction:
+    """The only link between the auth layer and the terminal (decision D3)."""
 
-    def read_paste(cancel):
+    def notify(self, event):
+        if event.get("type") == "auth_url":
+            print(f"Open this URL to sign in:\n{event['url']}")
+
+    def prompt(self, message):
         try:
-            return input("Paste the authorization code or redirect URL: ")
+            return input(message)
         except (EOFError, KeyboardInterrupt):
             return None
 
+
+def _choose(question, options):
+    """Ask for one of options by number or name. Returns the chosen name."""
+    for number, option in enumerate(options, start=1):
+        print(f"  {number}. {option}")
+    answer = input(f"{question} ").strip()
+    if answer.isdigit() and 1 <= int(answer) <= len(options):
+        return options[int(answer) - 1]
+    if answer in options:
+        return answer
+    raise auth.AuthError(f"'{answer}' is not one of: {', '.join(options)}.")
+
+
+def run_login_command(provider=None, method=None):
+    """Sign in to a provider by browser or API key, store it, and return an exit code.
+
+    Without a provider, the user picks one. When the provider offers more than
+    one method and none was given, the user picks the method.
+    """
+    store = CredentialStore()
     try:
-        run_login(
-            store,
-            os.environ,
-            open_browser=webbrowser.open,
-            read_paste=read_paste,
-            on_url=lambda url: print(f"Open this URL to sign in to {provider}:\n{url}"),
-        )
-    except LoginError as error:
+        if provider is None:
+            provider = _choose("Provider to sign in to:", list(auth.PROVIDERS))
+        provider_auth = auth.get_provider(provider)
+        if method is None:
+            if len(provider_auth.methods) > 1:
+                method = _choose("Sign in with:", list(provider_auth.methods))
+            else:
+                method = provider_auth.methods[0]
+        if method == "browser":
+            auth.login_oauth(provider, store, TerminalInteraction(), os.environ)
+        elif method == "key":
+            key = getpass.getpass(f"API key for {provider_auth.name} (input is hidden): ")
+            auth.login_api_key(provider, store, key)
+        else:
+            raise auth.AuthError(f"Unknown method '{method}'. Use browser or key.")
+    except (auth.AuthError, LoginError) as error:
         print(f"Sign-in failed: {error}", file=sys.stderr)
         return 1
-    print(f"Signed in to {provider}. The key is stored in {store.path}.")
+    print(f"Signed in to {provider} with {method}. Stored in {store.path}.")
     return 0
 
 
@@ -533,12 +562,12 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
 
     # Stored credentials win over .env files and shell variables (D1).
     try:
-        apply_stored_credentials(CredentialStore(), os.environ)
+        auth.apply_stored_keys(CredentialStore(), os.environ)
     except CredentialStoreError as error:
         print(f"Warning: {error}", file=sys.stderr)
 
-    if args.login:
-        return run_login_command(args.login)
+    if args.login is not None:
+        return run_login_command(args.login or None, args.method)
 
     # Parse again to include any arguments that might have been defined in .env
     args = parser.parse_args(argv)

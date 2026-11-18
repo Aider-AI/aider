@@ -17,7 +17,6 @@ from aider.openrouter_login import (
     exchange_code,
     generate_pkce,
     login,
-    login_and_store,
     parse_pasted,
 )
 
@@ -270,19 +269,6 @@ def test_exchange_error_does_not_leak_code_or_verifier():
     assert "secret-verifier-456" not in str(info.value)
 
 
-def test_login_and_store_saves_oauth_credential(tmp_path):
-    store = CredentialStore(tmp_path / "auth.json")
-
-    def open_browser(url):
-        params = _auth_params(url)
-        _in_thread(lambda: _get(f"{params['callback_url']}?code=c&state={params['state']}"))
-
-    key = login_and_store(store, open_browser, _blocking_paste, post_json=_ok_post([]), timeout=5)
-
-    assert key == "sk-or-test-key"
-    assert store.get("openrouter") == {"type": "oauth", "key": "sk-or-test-key"}
-
-
 def test_is_headless_detects_ssh_and_missing_linux_display(monkeypatch):
     monkeypatch.setattr(ol.sys, "platform", "linux")
     assert ol.is_headless({"SSH_CONNECTION": "10.0.0.2 22 10.0.0.1 5000"}) is True
@@ -318,40 +304,54 @@ def test_paste_only_cancel_raises():
         ol.login_paste_only(lambda cancel: None, on_url=lambda url: None, post_json=_ok_post([]))
 
 
-def test_run_login_headless_stores_pasted_key(tmp_path):
-    store = CredentialStore(tmp_path / "auth.json")
-    key = ol.run_login(
-        store,
-        {"SSH_CONNECTION": "x"},
-        open_browser=lambda url: None,
-        read_paste=lambda cancel: "pasted",
-        on_url=lambda url: None,
-        post_json=_ok_post([]),
+class _Interaction:
+    def __init__(self, paste_answer=None):
+        self.events = []
+        self.paste_answer = paste_answer
+        self.prompts = []
+
+    def notify(self, event):
+        self.events.append(event)
+
+    def prompt(self, message):
+        self.prompts.append(message)
+        return self.paste_answer
+
+
+def test_openrouter_oauth_headless_pastes_code_and_returns_pi_credential():
+    interaction = _Interaction(paste_answer="pasted-code")
+    payloads = []
+    credential = ol.OpenRouterOAuth().login(
+        interaction, environ={"SSH_CONNECTION": "x"}, post_json=_ok_post(payloads)
     )
-    assert key == "sk-or-test-key"
-    assert store.get("openrouter") == {"type": "oauth", "key": "sk-or-test-key"}
+    assert credential == {
+        "type": "oauth",
+        "access": "sk-or-test-key",
+        "refresh": "",
+        "expires": 9007199254740991,
+    }
+    assert payloads[0]["code"] == "pasted-code"
+    assert interaction.events[0]["type"] == "auth_url"
+    assert "callback_url" not in interaction.events[0]["url"]
 
 
-def test_run_login_local_uses_callback_and_never_reads_paste(tmp_path, monkeypatch):
+def test_openrouter_oauth_local_uses_callback_and_never_prompts(monkeypatch):
     monkeypatch.setattr(ol.sys, "platform", "win32")
-    store = CredentialStore(tmp_path / "auth.json")
-    paste_calls = []
+    interaction = _Interaction()
 
     def open_browser(url):
         params = _auth_params(url)
         _in_thread(lambda: _get(f"{params['callback_url']}?code=c&state={params['state']}"))
 
-    def read_paste(cancel):
-        paste_calls.append(True)
-        return None
-
-    key = ol.run_login(
-        store,
-        {},
-        open_browser=open_browser,
-        read_paste=read_paste,
-        on_url=lambda url: None,
-        post_json=_ok_post([]),
+    credential = ol.OpenRouterOAuth().login(
+        interaction, environ={}, open_browser=open_browser, post_json=_ok_post([])
     )
-    assert key == "sk-or-test-key"
-    assert paste_calls == []
+    assert credential["access"] == "sk-or-test-key"
+    assert interaction.prompts == []
+
+
+def test_openrouter_oauth_refresh_and_to_auth_follow_pi_contract():
+    oauth = ol.OpenRouterOAuth()
+    credential = ol.credential_from_key("sk-or-x")
+    assert oauth.refresh(credential) == credential
+    assert oauth.to_auth(credential) == {"apiKey": "sk-or-x"}
