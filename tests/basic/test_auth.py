@@ -111,3 +111,21 @@ def test_login_oauth_stores_credential_from_provider(tmp_path, monkeypatch):
 def test_login_oauth_refuses_providers_without_browser_sign_in(tmp_path):
     with pytest.raises(auth.AuthError, match="does not support browser"):
         auth.login_oauth("openai", _store(tmp_path), _Interaction(), {})
+
+
+def test_logout_removes_only_the_stored_credential(tmp_path):
+    store = _store(tmp_path)
+    store.modify("openai", lambda current: {"type": "api_key", "key": "sk-stored"})
+    environ = {"OPENAI_API_KEY": "sk-env"}
+    assert auth.logout("openai", store) is True
+    assert store.read("openai") is None
+    assert auth.resolve("openai", store, environ).source == auth.SOURCE_ENV
+
+
+def test_logout_without_stored_credential_returns_false(tmp_path):
+    assert auth.logout("openai", _store(tmp_path)) is False
+
+
+def test_logout_unknown_provider_is_an_auth_error(tmp_path):
+    with pytest.raises(auth.AuthError):
+        auth.logout("nope", _store(tmp_path))

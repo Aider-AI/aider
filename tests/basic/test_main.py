@@ -1124,6 +1124,13 @@ class TestMain(TestCase):
                 self.assertEqual(result, 0)
                 mock_login.assert_called_once_with("openrouter", None)
 
+    def test_logout_flag_runs_logout_and_exits(self):
+        with GitTemporaryDirectory():
+            with patch("aider.main.run_logout_command", return_value=0) as mock_logout:
+                result = main(["--logout", "openai"], input=DummyInput(), output=DummyOutput())
+                self.assertEqual(result, 0)
+                mock_logout.assert_called_once_with("openai")
+
     def test_login_flag_passes_method(self):
         with GitTemporaryDirectory():
             with patch("aider.main.run_login_command", return_value=0) as mock_login:

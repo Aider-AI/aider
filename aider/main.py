@@ -480,6 +480,21 @@ def _choose(question, options):
     raise auth.AuthError(f"'{answer}' is not one of: {', '.join(options)}.")
 
 
+def run_logout_command(provider):
+    """Remove the stored credential for a provider. Environment variables stay as they are."""
+    store = CredentialStore()
+    try:
+        removed = auth.logout(provider, store)
+    except auth.AuthError as error:
+        print(str(error), file=sys.stderr)
+        return 1
+    if not removed:
+        print(f"No stored credential for {provider}. Environment variables are unchanged.")
+        return 0
+    print(f"Removed the stored credential for {provider}. Environment variables are unchanged.")
+    return 0
+
+
 def run_login_command(provider=None, method=None):
     """Sign in to a provider by browser or API key, store it, and return an exit code.
 
@@ -570,6 +585,9 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
 
     if args.login is not None:
         return run_login_command(args.login or None, args.method)
+
+    if args.logout is not None:
+        return run_logout_command(args.logout)
 
     # Parse again to include any arguments that might have been defined in .env
     args = parser.parse_args(argv)

@@ -128,3 +128,12 @@ def login_oauth(provider_id, store, interaction, environ):
 
 def env_name(provider_id):
     return env_name_for_provider(provider_id)
+
+
+def logout(provider_id, store):
+    """Remove the stored credential only. Environment variables are not touched (Pi rule)."""
+    get_provider(provider_id)
+    if store.read(provider_id) is None:
+        return False
+    store.delete(provider_id)
+    return True

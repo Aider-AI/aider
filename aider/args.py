@@ -637,6 +637,12 @@ def get_parser(default_config_files, git_root):
         ),
     )
     group.add_argument(
+        "--logout",
+        metavar="PROVIDER",
+        choices=["openrouter", "openai", "anthropic", "deepseek", "gemini"],
+        help="Remove the credential stored by --login for PROVIDER, then exit",
+    )
+    group.add_argument(
         "--method",
         choices=["browser", "key"],
         help="With --login: sign in by browser or by API key, instead of asking",
