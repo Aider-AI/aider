@@ -1,10 +1,10 @@
-# Roadmap: migrar a autenticação do aider para o padrão do Pi
+# Roadmap: editar o login do aider para o padrão do Pi
 
 Status: em execução. Escopo: fork sem usuários, sem migração de credenciais antigas.
 
 ## Objetivo
 
-O aider passa a usar a arquitetura de autenticação do Pi (`packages/ai/src/auth/` no FineCode), reescrita em Python. O objetivo não é consertar o login atual do aider. O login atual é substituído por essa arquitetura.
+O login atual do aider é editado para incorporar o modo de login do Pi (`packages/ai/src/auth/` e `packages/coding-agent` no FineCode), em Python. Parte do código atual é aproveitada. A maior parte é reescrita para o modelo do Pi. Os dois modos de login do Pi entram: pelo navegador (OAuth) e por API key.
 
 Padrão do Pi que deve estar presente no aider:
 
@@ -12,8 +12,9 @@ Padrão do Pi que deve estar presente no aider:
 2. **Armazenamento como interface.** `read`, `list`, `modify` (leitura e escrita serializadas por provedor) e `delete`.
 3. **Resolução no uso.** `resolve()` decide a credencial. Uma credencial salva é dona do provedor. Variável de ambiente só é consultada se nada estiver salvo.
 4. **OAuth como objeto.** `login(interaction)`, `refresh(credential)` e `to_auth(credential)`.
-5. **Interação de login por eventos.** Um objeto recebe `notify` (URL, progresso, informação) e `prompt` (código manual).
-6. **Comando de login com seleção de provedor.**
+5. **Interação de login por eventos.** Um objeto recebe `notify` (URL, progresso, informação) e `prompt` (código manual ou API key).
+6. **Dois métodos de login por provedor:** pelo navegador (quando o provedor tem OAuth) e por API key digitada.
+7. **Comando de login com seleção de provedor e de método.**
 
 Fora do escopo:
 - Copiar código TypeScript. Só o desenho é portado.
@@ -29,6 +30,8 @@ Fora do escopo:
 - **D5 Caminho aleatório:** segunda camada, além do `state`.
 - **D6 Escopo por fases:** OpenRouter primeiro. Outros provedores entram um por vez, pelos gates.
 - **D7 Arquitetura do Pi:** a estrutura de camadas do Pi é o alvo, não só o comportamento. Substitui a decisão anterior de "arquitetura própria".
+- **D11 Edição, não substituição:** o que hoje está em `credential_store.py`, `openrouter_login.py` e `main.py` é reaproveitado quando serve (escrita atômica, PKCE, callback, troca). O restante é reescrito para o modelo do Pi.
+- **D12 Login por API key:** qualquer provedor que o aider já reconhece pela variável de ambiente (`OPENAI_API_KEY`, `ANTHROPIC_API_KEY`, `DEEPSEEK_API_KEY`, `GEMINI_API_KEY`, `OPENROUTER_API_KEY` e outros do `models.py`) pode ser configurado por API key. A chave digitada é salva como `api_key` no mesmo armazenamento e tem a mesma precedência (D1).
 - **D8 Nomes e caminhos (a confirmar):** mantemos `~/.aider/auth.json` e `--login [PROVIDER]`, porque o produto é o aider. O Pi usa `~/.pi/agent/auth.json` e `login`. Se você preferir os nomes do Pi, muda-se só a constante.
 - **D9 Entrega ao litellm (adaptação):** o litellm do aider lê chaves de variáveis de ambiente. Por isso `resolve()` escreve a chave resolvida em `os.environ` no início da execução, em vez de passar a chave a cada chamada. Essa é a única diferença estrutural em relação ao Pi, e fica registrada.
 - **D10 Colagem manual só no modo headless:** o Pi corre callback e colagem em paralelo. No aider isso não é seguro, porque a leitura do terminal não pode ser cancelada e roubaria a próxima linha digitada. Localmente, só o callback. Em SSH ou sem display, só a colagem. Desvio consciente.
@@ -60,9 +63,10 @@ Fonte: https://openrouter.ai/docs/use-cases/oauth-pkce, lida em 2026-11-17.
 - `aider/auth.py`: `ProviderAuth`, `OAuthAuth`, `ApiKeyAuth`, interação, registro.
 - Testes: registro do OpenRouter com `oauth` e `apiKey`.
 
-### P2 Armazenamento no formato do Pi (novo módulo, substitui `credential_store.py`)
-- Novo `CredentialStore` com `read`, `list`, `modify`, `delete`. Serialização por provedor.
-- O `credential_store.py` atual é removido, junto com `get`, `set` e `providers`. Não é adaptado.
+### P2 Armazenamento no formato do Pi (edita `credential_store.py`)
+- Reaproveitar a escrita atômica e a permissão `0600`.
+- Trocar a API para `read`, `list`, `modify`, `delete`, com serialização por provedor. `get`, `set` e `providers` viram wrappers ou são removidos, conforme os usos.
+- Formato do Pi: `{"type": "oauth", "access": ...}` e `{"type": "api_key", "key": ...}`.
 - Formato OAuth e API key do Pi (D2).
 - Testes: round trip, `modify` atômico, falha no meio não corrompe, formato.
 
@@ -70,17 +74,18 @@ Fonte: https://openrouter.ai/docs/use-cases/oauth-pkce, lida em 2026-11-17.
 - Regra D1: salvo vence; senão variável de ambiente; senão nada.
 - Testes: salvo com `.env` diferente; sem salvo com variável; nada.
 
-### P4 OpenRouter como `OAuthAuth` (novo módulo, substitui `openrouter_login.py`)
-- `login(interaction)`: local → callback; headless → colagem (D10).
-- `refresh`: credencial permanente, devolve a mesma.
-- `to_auth`: `{"apiKey": access}`.
-- O PKCE, o callback e a troca são reescritos dentro do módulo novo. O `openrouter_login.py` atual é removido, não é reaproveitado como estão as funções.
-- Testes novos, escritos para a interface nova. Os testes atuais só servem como referência de casos.
+### P4 OpenRouter como `OAuthAuth` (edita `openrouter_login.py`)
+- Reaproveitar PKCE, callback com `state`, colagem e troca de código.
+- Expor como objeto: `login(interaction)`, `refresh` (credencial permanente) e `to_auth` (`{"apiKey": access}`).
+- Local → callback. Headless → colagem (D10).
+- Remover `run_login` e as funções que duplicam o objeto.
+- Os testes atuais são adaptados à nova interface, e os casos continuam os mesmos.
 
-### P5 Comando de login (substitui `run_login_command` e a flag atual)
-- `--login` sem argumento: lista provedores com OAuth e pede a escolha.
-- `--login openrouter`: vai direto.
-- Testes: seleção, provedor inválido, falha de login.
+### P5 Comando de login (edita `run_login_command` e a flag `--login`)
+- `--login` sem argumento: lista provedores e pede a escolha.
+- Depois de escolher o provedor, pede o método quando houver mais de um: navegador (OAuth) ou API key.
+- `--login PROVIDER` vai direto para o método padrão do provedor (navegador quando houver OAuth, senão API key), com `--method browser|key` para forçar.
+- Testes: seleção, provedor inválido, método inválido, falha de login, API key salva.
 
 ### P6 Integração no início da execução
 - `resolve()` antes de escolher o modelo; escreve em `os.environ` (D9).
@@ -112,5 +117,5 @@ Fonte: https://openrouter.ai/docs/use-cases/oauth-pkce, lida em 2026-11-17.
 
 ## Estado atual (registro)
 
-- Commit `3cfa81d`: login atual do aider (flag `--login`, callback, colagem, `credential_store.py` antigo). Esse código é descartável: será substituído pelas fases P1 a P6, não ajustado.
-- Não há mais edição do login atual como objetivo. Qualquer alteração nesses arquivos é só para remover ou para não quebrar a suíte até a substituição.
+- Commit `3cfa81d`: login atual do aider (flag `--login`, callback, colagem, `credential_store.py`, `openrouter_login.py`). É a base a ser editada. Parte fica, parte é reescrita, conforme D11.
+- Não há substituição integral. Cada fase diz o que é reaproveitado e o que é reescrito.
