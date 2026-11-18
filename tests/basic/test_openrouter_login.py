@@ -355,3 +355,84 @@ def test_openrouter_oauth_refresh_and_to_auth_follow_pi_contract():
     credential = ol.credential_from_key("sk-or-x")
     assert oauth.refresh(credential) == credential
     assert oauth.to_auth(credential) == {"apiKey": "sk-or-x"}
+
+
+def test_paste_fallback_completes_login_after_grace_without_callback():
+    seen = {}
+
+    def open_browser(url):
+        seen.update(_auth_params(url))  # no callback is ever sent
+
+    def ask_paste(message):
+        return f"{seen['callback_url']}?code=pasted-after-grace&state={seen['state']}"
+
+    payloads = []
+    key = login(
+        open_browser,
+        on_url=lambda url: None,
+        timeout=5,
+        post_json=_ok_post(payloads),
+        ask_paste=ask_paste,
+        grace_seconds=0.2,
+    )
+    assert key == "sk-or-test-key"
+    assert payloads[0]["code"] == "pasted-after-grace"
+
+
+def test_enter_at_fallback_keeps_waiting_for_the_callback():
+    seen = {}
+
+    def open_browser(url):
+        seen.update(_auth_params(url))
+
+        def late_callback():
+            time.sleep(0.5)
+            _get(f"{seen['callback_url']}?code=late&state={seen['state']}")
+
+        _in_thread(late_callback)
+
+    key = login(
+        open_browser,
+        on_url=lambda url: None,
+        timeout=5,
+        post_json=_ok_post([]),
+        ask_paste=lambda message: "",
+        grace_seconds=0.2,
+    )
+    assert key == "sk-or-test-key"
+
+
+def test_no_callback_and_no_paste_times_out_after_fallback():
+    with pytest.raises(LoginError, match="timed out"):
+        login(
+            lambda url: None,
+            on_url=lambda url: None,
+            timeout=0.5,
+            post_json=_ok_post([]),
+            ask_paste=lambda message: "",
+            grace_seconds=0.2,
+        )
+
+
+def test_callback_events_report_outcome_without_secrets():
+    events = []
+
+    def open_browser(url):
+        params = _auth_params(url)
+
+        def deliver():
+            _get(f"{params['callback_url']}?code=forged&state=wrong")
+            _get(f"{params['callback_url']}?code=ok&state={params['state']}")
+
+        _in_thread(deliver)
+
+    login(
+        open_browser,
+        _blocking_paste,
+        on_url=lambda url: None,
+        timeout=5,
+        post_json=_ok_post([]),
+        on_event=events.append,
+    )
+    assert any("state did not match" in message for message in events)
+    assert any("Exchanging" in message for message in events)

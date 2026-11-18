@@ -36,6 +36,7 @@ import os
 import secrets
 import sys
 import threading
+import time
 import urllib.error
 import urllib.parse
 import urllib.request
@@ -45,6 +46,7 @@ from http.server import BaseHTTPRequestHandler, HTTPServer
 AUTHORIZE_URL = "https://openrouter.ai/auth"
 TOKEN_URL = "https://openrouter.ai/api/v1/auth/keys"
 LOGIN_TIMEOUT_SECONDS = 5 * 60
+PASTE_FALLBACK_SECONDS = 60
 EXCHANGE_TIMEOUT_SECONDS = 30
 PROVIDER = "openrouter"
 
@@ -199,7 +201,9 @@ def _page(title, body):
     return _PAGE.format(title=title, body=body).encode("utf-8")
 
 
-def _make_handler(path, state, gate, complete):
+def _make_handler(path, state, gate, complete, on_event=None):
+    emit = on_event or (lambda message: None)
+
     class CallbackHandler(BaseHTTPRequestHandler):
         def log_message(self, format, *args):
             return
@@ -216,26 +220,33 @@ def _make_handler(path, state, gate, complete):
         def do_GET(self):  # noqa: N802 - http.server naming
             parsed = urllib.parse.urlsplit(self.path)
             if parsed.path != path:
+                emit("Callback: request for an unknown path (ignored).")
                 self._send(404, "Not found", "This is not the aider sign-in callback.")
                 return
             params = urllib.parse.parse_qs(parsed.query)
             if params.get("state", [None])[0] != state:
+                emit("Callback: the state did not match this sign-in (ignored).")
                 self._send(400, "Sign-in rejected", "The request did not match this sign-in.")
                 return
             if "error" in params:
+                emit("Callback: OpenRouter denied the sign-in.")
                 gate.deny(LoginError("OpenRouter sign-in was denied or cancelled."))
                 self._send(400, "Sign-in failed", "OpenRouter did not authorize aider.")
                 return
             code = params.get("code", [""])[0]
             if not code:
+                emit("Callback: no authorization code in the request (ignored).")
                 self._send(400, "Sign-in failed", "The callback had no authorization code.")
                 return
+            emit("Callback received. Exchanging the code for a key...")
             try:
                 complete(code)
             except AlreadyClaimed:
+                emit("Callback: this sign-in already completed.")
                 self._send(409, "Already handled", "This sign-in has already completed.")
                 return
             except LoginError as error:
+                emit(f"Callback: key exchange failed. {error}")
                 gate.note(error)
                 self._send(502, "Sign-in failed", "Key exchange failed. Check the terminal.")
                 return
@@ -246,18 +257,24 @@ def _make_handler(path, state, gate, complete):
 
 def login(
     open_browser,
-    read_paste,
+    read_paste=None,
     on_url=print,
     timeout=LOGIN_TIMEOUT_SECONDS,
     host="127.0.0.1",
     post_json=_post_json,
+    on_event=None,
+    ask_paste=None,
+    grace_seconds=PASTE_FALLBACK_SECONDS,
 ):
     """Run the sign-in and return the API key.
 
     open_browser(url): opens the authorization URL. Failures are ignored.
-    read_paste(cancel_event): blocks until the user pastes text or until
-        cancel_event is set, then returns the text or None. The caller must
-        make this cancellable, or the wait will hold the terminal.
+    read_paste(cancel_event): concurrent paste (used by tests and the thread
+        path). It must be cancellable. Pass None to disable it.
+    on_event(message): progress messages, without secrets.
+    ask_paste(message): a blocking prompt used once, after grace_seconds with
+        no callback. Pressing Enter (empty input) keeps waiting for the callback.
+        A pasted redirect URL is checked against state and then exchanged.
     """
     verifier, challenge = generate_pkce()
     state = secrets.token_urlsafe(32)
@@ -275,7 +292,8 @@ def login(
         gate.succeed(key)
         return key
 
-    server = HTTPServer((host, 0), _make_handler(path, state, gate, complete))
+    emit = on_event or (lambda message: None)
+    server = HTTPServer((host, 0), _make_handler(path, state, gate, complete, on_event))
     redirect_uri = f"http://{host}:{server.server_address[1]}{path}"
     server_thread = threading.Thread(target=server.serve_forever, daemon=True)
     server_thread.start()
@@ -312,12 +330,37 @@ def login(
             except LoginError as error:
                 gate.note(error)
 
-        paste_thread = threading.Thread(target=paste_worker, daemon=True)
-        paste_thread.start()
+        if read_paste is not None:
+            paste_thread = threading.Thread(target=paste_worker, daemon=True)
+            paste_thread.start()
 
-        if not gate.wait(timeout):
+        def timed_out():
             detail = f" Last error: {gate.last_error}" if gate.last_error else ""
-            raise LoginError(f"Sign-in timed out. Run the command again to retry.{detail}")
+            return LoginError(f"Sign-in timed out. Run the command again to retry.{detail}")
+
+        started = time.monotonic()
+        if not gate.wait(grace_seconds if ask_paste is not None else timeout):
+            if ask_paste is None:
+                raise timed_out()
+            emit(
+                "No callback from the browser yet. Paste the redirect URL from the browser's"
+                " address bar to finish, or press Enter to keep waiting."
+            )
+            text = ask_paste("Redirect URL: ")
+            if text and text.strip():
+                try:
+                    code, pasted_state = parse_pasted(text)
+                    if pasted_state is not None and pasted_state != state:
+                        raise LoginError("The pasted URL does not match this sign-in.")
+                    complete(code)
+                except AlreadyClaimed:
+                    pass
+                except LoginError as error:
+                    gate.note(error)
+                    emit(f"Pasted URL: {error}")
+            remaining = max(0.0, timeout - (time.monotonic() - started))
+            if not gate.wait(remaining):
+                raise timed_out()
         if gate.denied is not None:
             raise gate.denied
         return gate.key
@@ -375,9 +418,13 @@ class OpenRouterOAuth:
         else:
             key = login(
                 open_browser=open_browser,
-                read_paste=lambda cancel: None,  # local: callback only (D10)
+                read_paste=None,  # no concurrent paste locally (D10)
                 on_url=lambda url: interaction.notify({"type": "auth_url", "url": url}),
                 post_json=post_json,
+                on_event=lambda message: interaction.notify(
+                    {"type": "progress", "message": message}
+                ),
+                ask_paste=lambda message: interaction.prompt(message),
             )
         return credential_from_key(key)
 

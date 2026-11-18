@@ -458,6 +458,8 @@ class TerminalInteraction:
     def notify(self, event):
         if event.get("type") == "auth_url":
             print(f"Open this URL to sign in:\n{event['url']}")
+        elif event.get("type") == "progress":
+            print(event["message"])
 
     def prompt(self, message):
         try:
