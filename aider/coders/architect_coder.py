@@ -6,7 +6,6 @@ from .base_coder import Coder
 class ArchitectCoder(AskCoder):
     edit_format = "architect"
     gpt_prompts = ArchitectPrompts()
-    auto_accept_architect = False
 
     def reply_completed(self):
         content = self.partial_response_content
