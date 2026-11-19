@@ -931,6 +931,7 @@ class Coder:
 
         while message:
             self.reflected_message = None
+            self.shell_commands = []
             list(self.send_message(message))
 
             if not self.reflected_message:
@@ -1608,6 +1609,9 @@ class Coder:
 
         shared_output = self.run_shell_commands()
         if shared_output:
+            if getattr(self.io, "yes_shell_commands", False):
+                self.reflected_message = shared_output
+                return
             self.cur_messages += [
                 dict(role="user", content=shared_output),
                 dict(role="assistant", content="Ok"),
