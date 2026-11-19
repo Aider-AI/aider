@@ -263,6 +263,7 @@ class InputOutput:
         root=".",
         notifications=False,
         notifications_command=None,
+        yes_shell_commands=False,
     ):
         self.placeholder = None
         self.interrupted = False
@@ -306,6 +307,7 @@ class InputOutput:
             self.pretty = False
 
         self.yes = yes
+        self.yes_shell_commands = yes_shell_commands
 
         self.input_history_file = input_history_file
         if self.input_history_file:
@@ -864,7 +866,7 @@ class InputOutput:
             return text.lower() in valid_responses
 
         if self.yes is True:
-            res = "n" if explicit_yes_required else "y"
+            res = ("y" if self.yes_shell_commands else "n") if explicit_yes_required else "y"
         elif self.yes is False:
             res = "n"
         elif group and group.preference:

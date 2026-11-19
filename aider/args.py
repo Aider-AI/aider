@@ -763,6 +763,12 @@ def get_parser(default_config_files, git_root):
         default=None,
     )
     group.add_argument(
+        "--yes-shell-commands",
+        action="store_true",
+        help="Allow automatic execution of suggested shell commands when --yes-always is enabled (for sandboxed CI/automation)",
+        default=False,
+    )
+    group.add_argument(
         "-v",
         "--verbose",
         action="store_true",
