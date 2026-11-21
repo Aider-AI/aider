@@ -882,6 +882,33 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
             val = json.dumps(val, indent=4)
             io.tool_output(f"{attr.name}: {val}")
 
+    # Opt-in batch mode for bulk, independent single-turn tasks via provider
+    # Batch APIs. Nothing here ever bills implicitly: --batch-check and
+    # --batch-run --batch-dry-run only validate/preview, and submission requires
+    # an --batch-expect snapshot matching a prior preview.
+    if args.batch_check or args.batch_run or args.batch_collect:
+        from aider import batch as aider_batch
+
+        try:
+            if args.batch_check:
+                return 0 if aider_batch.check(main_model, io) else 1
+            batch_root = git_root or str(Path.cwd().resolve())
+            if args.batch_collect:
+                aider_batch.collect(batch_root, args.batch_collect, io, wait=args.batch_wait)
+                return 0
+            plan = aider_batch.load_plan(args.batch_run, git_root)
+            if args.batch_dry_run:
+                aider_batch.preview(plan, main_model, io)
+            else:
+                aider_batch.run(
+                    plan, main_model, io, expect=args.batch_expect, yes=args.batch_yes
+                )
+            return 0
+        except aider_batch.BatchError as err:
+            io.tool_error(str(err))
+            analytics.event("exit", reason="batch mode error")
+            return 1
+
     lint_cmds = parse_lint_cmds(args.lint_cmd, io)
     if lint_cmds is None:
         analytics.event("exit", reason="Invalid lint command format")
