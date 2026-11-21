@@ -119,6 +119,23 @@ class TestCoder(unittest.TestCase):
         self.assertIn("file1.txt", content)
         self.assertIn("file2.txt", content)
 
+    def test_get_files_content_without_trailing_newline(self):
+        tempdir = Path(tempfile.mkdtemp())
+
+        editable = tempdir / "editable.py"
+        editable.write_text("print(1)", encoding="utf-8")
+
+        read_only = tempdir / "read_only.py"
+        read_only.write_text("print(2)", encoding="utf-8")
+
+        coder = Coder.create(self.GPT35, None, io=InputOutput(), fnames=[editable])
+        coder.abs_read_only_fnames.add(str(read_only))
+        coder.choose_fence()
+        close_fence = coder.fence[1]
+
+        self.assertIn(f"print(1)\n{close_fence}\n", coder.get_files_content())
+        self.assertIn(f"print(2)\n{close_fence}\n", coder.get_read_only_files_content())
+
     def test_check_for_filename_mentions(self):
         with GitTemporaryDirectory():
             repo = git.Repo()
