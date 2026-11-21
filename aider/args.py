@@ -243,6 +243,53 @@ def get_parser(default_config_files, git_root):
     )
 
     ##########
+    group = parser.add_argument_group("Batch mode")
+    group.add_argument(
+        "--batch-check",
+        action=argparse.BooleanOptionalAction,
+        default=False,
+        help="Validate provider/model selection for batch mode without billing (default: False)",
+    )
+    group.add_argument(
+        "--batch-run",
+        metavar="PLAN_JSON",
+        default=None,
+        help="Run a batch plan file via the provider Batch API",
+    ).complete = shtab.FILE
+    group.add_argument(
+        "--batch-dry-run",
+        action=argparse.BooleanOptionalAction,
+        default=False,
+        help="Preview the batch plan (item count, model, target dirs, token estimate, snapshot"
+        " hash) without uploading anything (default: False)",
+    )
+    group.add_argument(
+        "--batch-expect",
+        metavar="SNAPSHOT",
+        default=None,
+        help="Submit the batch only if the plan, sources and settings still match this"
+        " snapshot hash from a prior --batch-dry-run",
+    )
+    group.add_argument(
+        "--batch-yes",
+        action=argparse.BooleanOptionalAction,
+        default=False,
+        help="Skip the --batch-expect preview gate when submitting a batch (default: False)",
+    )
+    group.add_argument(
+        "--batch-collect",
+        metavar="TASK_ID",
+        default=None,
+        help="Collect results for a submitted batch task id",
+    )
+    group.add_argument(
+        "--batch-wait",
+        action=argparse.BooleanOptionalAction,
+        default=False,
+        help="With --batch-collect, keep polling until the batch finishes (default: False)",
+    )
+
+    ##########
     group = parser.add_argument_group("Repomap settings")
     group.add_argument(
         "--map-tokens",
