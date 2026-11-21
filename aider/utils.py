@@ -86,10 +86,13 @@ def is_image_file(file_name):
     """
     Check if the given file name has an image file extension.
 
+    Extensions are matched case-insensitively, since cameras, scanners and
+    other tools frequently produce names like "DSC_0001.JPG" or "scan.PDF".
+
     :param file_name: The name of the file to check.
     :return: True if the file is an image, False otherwise.
     """
-    file_name = str(file_name)  # Convert file_name to string
+    file_name = str(file_name).lower()  # Convert file_name to string
     return any(file_name.endswith(ext) for ext in IMAGE_EXTENSIONS)
 
 
