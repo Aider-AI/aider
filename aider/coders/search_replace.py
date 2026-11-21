@@ -120,16 +120,23 @@ class RelativeIndenter:
 
             len_indent = len(line_without_end) - len(line_without_end.lstrip())
             indent = line[:len_indent]
-            change = len_indent - len(prev_indent)
-            if change > 0:
-                cur_indent = indent[-change:]
-            elif change < 0:
-                cur_indent = self.marker * -change
-            else:
-                cur_indent = ""
+
+            # Only encode what changed, relative to the previous line's indent:
+            # markers for the whitespace that went away, plus the new whitespace
+            # (if any) that was added. Comparing the actual whitespace, rather
+            # than counting characters, keeps tabs and spaces distinct even when
+            # a file mixes them.
+            common = 0
+            while (
+                common < len(indent)
+                and common < len(prev_indent)
+                and indent[common] == prev_indent[common]
+            ):
+                common += 1
+            cur_indent = self.marker * (len(prev_indent) - common) + indent[common:]
 
             out_line = cur_indent + "\n" + line[len_indent:]
-            # dump(len_indent, change, out_line)
+            # dump(len_indent, cur_indent, out_line)
             # print(out_line)
             output.append(out_line)
             prev_indent = indent
@@ -150,8 +157,11 @@ class RelativeIndenter:
             non_indent = lines[i + 1]
 
             if dent.startswith(self.marker):
-                len_outdent = len(dent)
-                cur_indent = prev_indent[:-len_outdent]
+                # The leading markers record outdented whitespace; whatever
+                # follows them is whitespace to append (see make_relative).
+                len_outdent = len(dent) - len(dent.lstrip(self.marker))
+                keep = max(len(prev_indent) - len_outdent, 0)
+                cur_indent = prev_indent[:keep] + dent[len_outdent:]
             else:
                 cur_indent = prev_indent + dent
 
