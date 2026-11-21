@@ -1,4 +1,5 @@
 import os
+import tempfile
 from unittest.mock import MagicMock, patch
 
 from aider.editor import (
@@ -117,6 +118,30 @@ with open(r"{log_path_escaped}", "w") as f:
         # Clean up
         os.unlink(script_path)
         os.unlink(log_path)
+
+
+def test_pipe_editor_with_space_in_temp_path(tmp_path, monkeypatch):
+    # Windows users with a space in their name get a temp dir like
+    # C:\Users\John Doe\AppData\Local\Temp, so the path must be quoted.
+    import sys
+
+    spacey = tmp_path / "dir with spaces"
+    spacey.mkdir()
+
+    script = spacey / "fake editor.py"
+    script.write_text(
+        "import pathlib\n"
+        "import sys\n"
+        "target = pathlib.Path(sys.argv[1])\n"
+        "target.write_text(target.read_text() + 'EDITED')\n"
+    )
+
+    monkeypatch.setattr(tempfile, "tempdir", str(spacey))
+
+    editor_cmd = f'"{sys.executable}" "{script}"'
+    result = pipe_editor("original content\n", suffix="md", editor=editor_cmd)
+
+    assert result == "original content\nEDITED"
 
 
 def test_pipe_editor():

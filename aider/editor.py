@@ -13,6 +13,7 @@ import platform
 import subprocess
 import tempfile
 
+import oslex
 from rich.console import Console
 
 from aider.dump import dump  # noqa
@@ -129,7 +130,8 @@ def pipe_editor(input_data="", suffix=None, editor=None):
     """
     filepath = write_temp_file(input_data, suffix)
     command_str = discover_editor(editor)
-    command_str += " " + filepath
+    # The path may contain spaces, eg a Windows temp dir under "C:\Users\John Doe".
+    command_str += " " + oslex.quote(filepath)
 
     subprocess.call(command_str, shell=True)
     with open(filepath, "r") as f:
