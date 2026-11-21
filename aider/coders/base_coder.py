@@ -647,6 +647,8 @@ class Coder:
                 prompt += f"\n{self.fence[0]}\n"
 
                 prompt += content
+                if not content.endswith("\n"):
+                    prompt += "\n"
 
                 # lines = content.splitlines(keepends=True)
                 # lines = [f"{i+1:03}:{line}" for i, line in enumerate(lines)]
@@ -666,6 +668,8 @@ class Coder:
                 prompt += relative_fname
                 prompt += f"\n{self.fence[0]}\n"
                 prompt += content
+                if not content.endswith("\n"):
+                    prompt += "\n"
                 prompt += f"{self.fence[1]}\n"
         return prompt
 
