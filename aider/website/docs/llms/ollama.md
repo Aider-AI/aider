@@ -62,6 +62,13 @@ By default, aider sets Ollama's context window
 to be large enough for each request you send plus 8k tokens for the reply.
 This ensures data isn't silently discarded by Ollama.
 
+Automatic context sizes are rounded up to 2048-token blocks. Small prompt
+changes within a block keep the same context size, avoiding Ollama runner
+reloads and allowing reuse of its prompt KV cache. This can allocate up to
+2047 additional context tokens, so allow for the extra memory. Crossing a block
+boundary still changes the context size and may reload the runner.
+An explicitly configured `num_ctx` is passed through unchanged.
+
 If you'd like you can configure a fixed sized context window instead
 with an
 [`.aider.model.settings.yml` file](https://aider.chat/docs/config/adv-model-settings.html#model-settings)
