@@ -182,6 +182,8 @@ class Scraper:
                         content_type = response.header_value("content-type")
                         if content_type:
                             mime_type = content_type.split(";")[0]
+                            if mime_type == "text/plain":
+                                content = response.text()
                 except PlaywrightError as e:
                     self.print_error(f"Error retrieving page content: {str(e)}")
                     content = None
