@@ -375,15 +375,11 @@ class GitRepo:
     def get_diffs(self, fnames=None):
         # We always want diffs of index and working dir
 
-        current_branch_has_commits = False
+        head_has_commit = False
         try:
-            active_branch = self.repo.active_branch
-            try:
-                commits = self.repo.iter_commits(active_branch)
-                current_branch_has_commits = any(commits)
-            except ANY_GIT_ERROR:
-                pass
-        except (TypeError,) + ANY_GIT_ERROR:
+            self.repo.head.commit
+            head_has_commit = True
+        except ANY_GIT_ERROR:
             pass
 
         if not fnames:
@@ -395,7 +391,7 @@ class GitRepo:
                 diffs += f"Added {fname}\n"
 
         try:
-            if current_branch_has_commits:
+            if head_has_commit:
                 args = ["HEAD", "--"] + list(fnames)
                 diffs += self.repo.git.diff(*args, stdout_as_string=False).decode(
                     self.io.encoding, "replace"
