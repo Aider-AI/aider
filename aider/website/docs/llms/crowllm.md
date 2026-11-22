@@ -35,8 +35,9 @@ aider --model openai/deepseek-v4-flash
 
 Any model id from the gateway's public catalog works, for example
 `openai/claude-opus-5-5`, `openai/glm-5.3` or `openai/gpt-6-astra`.
-The catalog is keyless at <https://crowllm.com/v1/models>; ids ending in
-`:free` bill at zero.
+The catalog is keyless at <https://crowllm.com/v1/models>. Most ids ending in
+`:free` are zero-rated; <https://crowllm.com/api/pricing> is the authoritative
+price list.
 
 {: .tip }
 CrowLLM does not require an `OPENAI_API_KEY` that belongs to OpenAI. The key
