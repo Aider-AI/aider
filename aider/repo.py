@@ -278,7 +278,7 @@ class GitRepo:
         if not self.git_commit_verify:
             cmd.append("--no-verify")
         if fnames:
-            fnames = [str(self.abs_root_path(fn)) for fn in fnames]
+            fnames = [f":(literal){self.abs_root_path(fn)}" for fn in fnames]
             for fname in fnames:
                 try:
                     self.repo.git.add(fname)
@@ -393,6 +393,8 @@ class GitRepo:
         for fname in fnames:
             if not self.path_in_repo(fname):
                 diffs += f"Added {fname}\n"
+
+        fnames = [f":(literal){fname}" for fname in fnames]
 
         try:
             if current_branch_has_commits:
