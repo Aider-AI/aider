@@ -22,7 +22,7 @@ from aider.llm import litellm
 from aider.repo import ANY_GIT_ERROR
 from aider.run_cmd import run_cmd
 from aider.scrape import Scraper, install_playwright
-from aider.utils import is_image_file
+from aider.utils import is_image_file, safe_abs_path
 
 from .dump import dump  # noqa: F401
 
@@ -80,6 +80,7 @@ class Commands:
 
         self.help = None
         self.editor = editor
+        self._loading_files = set()
 
         # Store the original read-only filenames provided via args.read
         self.original_read_only_fnames = set(original_read_only_fnames or [])
@@ -1468,6 +1469,11 @@ class Commands:
             self.io.tool_error("Please provide a filename containing commands to load.")
             return
 
+        filename = safe_abs_path(args.strip())
+        if filename in self._loading_files:
+            self.io.tool_error(f"Recursive /load skipped: {args.strip()}")
+            return
+
         try:
             with open(args.strip(), "r", encoding=self.io.encoding, errors="replace") as f:
                 commands = f.readlines()
@@ -1478,18 +1484,22 @@ class Commands:
             self.io.tool_error(f"Error reading file: {e}")
             return
 
-        for cmd in commands:
-            cmd = cmd.strip()
-            if not cmd or cmd.startswith("#"):
-                continue
+        self._loading_files.add(filename)
+        try:
+            for cmd in commands:
+                cmd = cmd.strip()
+                if not cmd or cmd.startswith("#"):
+                    continue
 
-            self.io.tool_output(f"\nExecuting: {cmd}")
-            try:
-                self.run(cmd)
-            except SwitchCoder:
-                self.io.tool_error(
-                    f"Command '{cmd}' is only supported in interactive mode, skipping."
-                )
+                self.io.tool_output(f"\nExecuting: {cmd}")
+                try:
+                    self.run(cmd)
+                except SwitchCoder:
+                    self.io.tool_error(
+                        f"Command '{cmd}' is only supported in interactive mode, skipping."
+                    )
+        finally:
+            self._loading_files.remove(filename)
 
     def completions_raw_save(self, document, complete_event):
         return self.completions_raw_read_only(document, complete_event)
