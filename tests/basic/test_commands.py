@@ -482,6 +482,29 @@ class TestCommands(TestCase):
 
             self.assertEqual(len(coder.abs_fnames), 0)
 
+    def test_cmd_add_from_sibling_directory(self):
+        with ChdirTemporaryDirectory() as tmp_dname:
+            root = Path("root")
+            root.mkdir()
+            os.chdir(str(root))
+
+            io = InputOutput(pretty=False, fancy_input=False, yes=False)
+            from aider.coders import Coder
+
+            coder = Coder.create(self.GPT35, None, io)
+            commands = Commands(io, coder)
+
+            # A sibling directory whose name shares the root's prefix must not
+            # pass the containment check (a plain startswith would allow it).
+            sibling = Path(tmp_dname) / "root-secrets"
+            sibling.mkdir()
+            secret = sibling / "secret.txt"
+            secret.write_text("sensitive")
+
+            commands.cmd_add("../root-secrets/secret.txt")
+
+            self.assertEqual(len(coder.abs_fnames), 0)
+
     def test_cmd_add_from_outside_git(self):
         with ChdirTemporaryDirectory() as tmp_dname:
             root = Path("root")
