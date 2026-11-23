@@ -59,10 +59,13 @@ def write_temp_file(
         kwargs["suffix"] = f".{suffix}"
     fd, filepath = tempfile.mkstemp(**kwargs)
     try:
-        with os.fdopen(fd, "w") as f:
-            f.write(input_data)
+        try:
+            with os.fdopen(fd, "w", closefd=False) as f:
+                f.write(input_data)
+        finally:
+            os.close(fd)
     except Exception:
-        os.close(fd)
+        os.remove(filepath)
         raise
     return filepath
 
