@@ -683,7 +683,7 @@ class Commands:
         self.io.tool_output(f"Diff since {commit_before_message[:7]}...")
 
         if self.coder.pretty:
-            run_cmd(f"git diff {commit_before_message}")
+            run_cmd(f"git diff {commit_before_message}", cwd=self.coder.repo.root)
             return
 
         diff = self.coder.repo.diff_commits(
