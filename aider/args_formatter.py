@@ -52,6 +52,8 @@ class DotEnvFormatter(argparse.HelpFormatter):
             default = ""
         elif isinstance(default, str):
             pass
+        elif isinstance(default, (int, float)) and not isinstance(default, bool):
+            default = str(default)
         elif isinstance(default, list) and not default:
             default = ""
         elif action.default is not None:
@@ -117,6 +119,8 @@ class YamlHelpFormatter(argparse.HelpFormatter):
             default = ""
         elif isinstance(default, str):
             pass
+        elif isinstance(default, (int, float)) and not isinstance(default, bool):
+            default = str(default)
         elif isinstance(default, list) and not default:
             default = ""
         elif action.default is not None:
