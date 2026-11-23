@@ -90,12 +90,12 @@ class Linter:
         if cmd:
             cmd = cmd.strip()
         if not cmd:
-            lang = filename_to_lang(fname)
-            if not lang:
-                return
             if self.all_lint_cmd:
                 cmd = self.all_lint_cmd
             else:
+                lang = filename_to_lang(fname)
+                if not lang:
+                    return
                 cmd = self.languages.get(lang)
 
         if callable(cmd):
@@ -111,7 +111,8 @@ class Linter:
         res = "# Fix any errors below, if possible.\n\n"
         res += lintres.text
         res += "\n"
-        res += tree_context(rel_fname, code, lintres.lines)
+        if filename_to_lang(rel_fname):
+            res += tree_context(rel_fname, code, lintres.lines)
 
         return res
 
