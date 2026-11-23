@@ -1,6 +1,8 @@
 import os
 from unittest.mock import MagicMock, patch
 
+import pytest
+
 from aider.editor import (
     DEFAULT_EDITOR_NIX,
     DEFAULT_EDITOR_OS_X,
@@ -157,3 +159,28 @@ def test_pipe_editor():
         mock_remove.side_effect = PermissionError
         result = pipe_editor(test_content)
         assert result == modified_content
+
+
+def test_write_temp_file_preserves_write_error_and_cleans_up(tmp_path):
+    fdopen = os.fdopen
+
+    def ascii_file(fd, mode, **kwargs):
+        return fdopen(fd, mode, encoding="ascii", **kwargs)
+
+    with patch("aider.editor.os.fdopen", side_effect=ascii_file):
+        with pytest.raises(UnicodeEncodeError):
+            write_temp_file("你好", dir=str(tmp_path))
+    assert list(tmp_path.iterdir()) == []
+
+
+def test_write_temp_file_cleans_up_when_fdopen_fails(tmp_path):
+    import tempfile
+
+    fd, filename = tempfile.mkstemp(dir=tmp_path)
+    with patch("aider.editor.tempfile.mkstemp", return_value=(fd, filename)):
+        with patch("aider.editor.os.fdopen", side_effect=OSError("open failed")):
+            with pytest.raises(OSError, match="open failed"):
+                write_temp_file("hello", dir=str(tmp_path))
+    with pytest.raises(OSError):
+        os.fstat(fd)
+    assert list(tmp_path.iterdir()) == []
