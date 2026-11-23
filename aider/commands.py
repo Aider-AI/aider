@@ -1295,6 +1295,8 @@ class Commands:
                 temp_dir = tempfile.mkdtemp()
                 temp_file_path = os.path.join(temp_dir, basename)
                 image_format = "PNG" if basename.lower().endswith(".png") else "JPEG"
+                if image_format == "JPEG" and image.mode not in ("RGB", "L"):
+                    image = image.convert("RGB")
                 image.save(temp_file_path, image_format)
 
                 abs_file_path = Path(temp_file_path).resolve()
