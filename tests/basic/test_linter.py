@@ -1,6 +1,11 @@
 import os
+import sys
+import tempfile
 import unittest
+from pathlib import Path
 from unittest.mock import MagicMock, patch
+
+import oslex
 
 from aider.dump import dump  # noqa
 from aider.linter import Linter
@@ -18,6 +23,34 @@ class TestLinter(unittest.TestCase):
     def test_set_linter(self):
         self.linter.set_linter("javascript", "eslint")
         self.assertEqual(self.linter.languages["javascript"], "eslint")
+
+    def test_global_linter_runs_for_unrecognized_files(self):
+        for filename in ("script", "source.unknown_extension", "source.py"):
+            for exit_code in (0, 1):
+                with self.subTest(filename=filename, exit_code=exit_code):
+                    with tempfile.TemporaryDirectory() as directory:
+                        root = Path(directory)
+                        source = root / filename
+                        source.write_text("value = 1\n", encoding="utf-8")
+                        checker = root / "checker.py"
+                        checker.write_text(
+                            (
+                                "import pathlib, sys\n"
+                                "pathlib.Path('checked').write_text(sys.argv[1])\n"
+                                "print(sys.argv[1] + ':1: custom diagnostic')\n"
+                                f"sys.exit({exit_code})\n"
+                            ),
+                            encoding="utf-8",
+                        )
+                        linter = Linter(root=str(root))
+                        linter.set_linter(None, f"{oslex.quote(sys.executable)} checker.py")
+                        result = linter.lint(str(source))
+                        self.assertTrue((root / "checked").exists())
+                        self.assertEqual((root / "checked").read_text(), filename)
+                        if exit_code:
+                            self.assertIn("custom diagnostic", result)
+                        else:
+                            self.assertIsNone(result)
 
     def test_get_rel_fname(self):
         import os
