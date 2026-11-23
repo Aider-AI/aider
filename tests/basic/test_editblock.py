@@ -89,6 +89,28 @@ class TestUtils(unittest.TestCase):
         result = eb.strip_quoted_wrapping(input_text)
         self.assertEqual(result, expected_output)
 
+    def test_strip_quoted_wrapping_keeps_content_ending_with_filename(self):
+        # A content line that merely ends with the filename is not a filename wrapper
+        input_text = "See README.md\nsecond line\n"
+        result = eb.strip_quoted_wrapping(input_text, "README.md")
+        self.assertEqual(result, "See README.md\nsecond line\n")
+
+    def test_strip_quoted_wrapping_filename_only_block(self):
+        # A block that is only the filename line leaves nothing behind; don't crash
+        result = eb.strip_quoted_wrapping("README.md\n", "README.md")
+        self.assertEqual(result, "")
+
+    def test_do_replace_search_line_ending_with_filename(self):
+        content = "# See README.md\nline two\nline three\n"
+        result = eb.do_replace(
+            "README.md",
+            content,
+            "# See README.md\nline two\n",
+            "# See the docs\nline two\n",
+            ("```", "```"),
+        )
+        self.assertEqual(result, "# See the docs\nline two\nline three\n")
+
     def test_find_original_update_blocks(self):
         edit = """
 Here's the change:
