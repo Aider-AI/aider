@@ -348,10 +348,13 @@ def strip_quoted_wrapping(res, fname=None, fence=DEFAULT_FENCE):
 
     res = res.splitlines()
 
-    if fname and res[0].strip().endswith(Path(fname).name):
+    # Only drop a line that _is_ the filename. Matching on endswith() dropped real
+    # content lines too, e.g. a block starting with "# See README.md" when editing
+    # README.md, which silently shifted the SEARCH text and corrupted the edit.
+    if fname and Path(res[0].strip()).name == Path(fname).name:
         res = res[1:]
 
-    if res[0].startswith(fence[0]) and res[-1].startswith(fence[1]):
+    if res and res[0].startswith(fence[0]) and res[-1].startswith(fence[1]):
         res = res[1:-1]
 
     res = "\n".join(res)
