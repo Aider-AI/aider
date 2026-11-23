@@ -39,6 +39,24 @@ def test_voice_init_specific_device(mock_sounddevice):
     assert voice.sd == mock_sounddevice
 
 
+def test_voice_init_skips_output_only_device(mock_sounddevice):
+    mock_sounddevice.query_devices.return_value = [
+        {"name": "USB Audio", "max_input_channels": 0},
+        {"name": "USB Audio", "max_input_channels": 1},
+    ]
+    voice = Voice(device_name="USB Audio")
+    assert voice.device_id == 1
+
+
+def test_voice_init_rejects_output_only_match(mock_sounddevice):
+    mock_sounddevice.query_devices.return_value = [
+        {"name": "Speakers", "max_input_channels": 0},
+        {"name": "Microphone", "max_input_channels": 1},
+    ]
+    with pytest.raises(ValueError, match="Available input devices:.*Microphone"):
+        Voice(device_name="Speakers")
+
+
 def test_voice_init_invalid_device(mock_sounddevice):
     with pytest.raises(ValueError) as exc:
         Voice(device_name="nonexistent_device")

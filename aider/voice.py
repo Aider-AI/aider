@@ -52,7 +52,7 @@ class Voice:
                 # Find the device with matching name
                 device_id = None
                 for i, device in enumerate(devices):
-                    if device_name in device["name"]:
+                    if device_name in device["name"] and device["max_input_channels"] > 0:
                         device_id = i
                         break
                 if device_id is None:
