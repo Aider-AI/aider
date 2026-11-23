@@ -17,6 +17,7 @@ import sys
 import threading
 import time
 
+from rich.cells import cell_len, set_cell_size
 from rich.console import Console
 
 
@@ -132,10 +133,10 @@ class Spinner:
         line_to_display = f"{frame_str}{current_text_payload}"
 
         # Truncate the line if it's too long for the console width
-        if len(line_to_display) > max_spinner_width:
-            line_to_display = line_to_display[:max_spinner_width]
+        if cell_len(line_to_display) > max_spinner_width:
+            line_to_display = set_cell_size(line_to_display, max_spinner_width)
 
-        len_line_to_display = len(line_to_display)
+        len_line_to_display = cell_len(line_to_display)
 
         # Calculate padding to clear any remnants from a longer previous line
         padding_to_clear = " " * max(0, self.last_display_len - len_line_to_display)
