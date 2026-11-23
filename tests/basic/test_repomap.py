@@ -4,6 +4,7 @@ import re
 import time
 import unittest
 from pathlib import Path
+from unittest import mock
 
 import git
 
@@ -17,6 +18,48 @@ from aider.utils import GitTemporaryDirectory, IgnorantTemporaryDirectory
 class TestRepoMap(unittest.TestCase):
     def setUp(self):
         self.GPT35 = Model("gpt-3.5-turbo")
+
+    def test_get_tags_raw_preserves_all_capture_nodes(self):
+        from aider import repomap as repomap_module
+
+        class Node:
+            def __init__(self, name, line):
+                self.text = name.encode()
+                self.start_point = (line, 0)
+
+        class IO:
+            def read_text(self, _fname):
+                return "source"
+
+        nodes = [Node("alpha", 1), Node("beta", 2)]
+        captures = {"name.definition.function": nodes}
+        scm = mock.Mock()
+        scm.exists.return_value = True
+        scm.read_text.return_value = "query"
+        parser = mock.Mock()
+        parser.parse.return_value = mock.Mock(root_node=object())
+        repo_map = RepoMap.__new__(RepoMap)
+        repo_map.io = IO()
+        repo_map._run_captures = mock.Mock(return_value=captures)
+        observed = {}
+
+        for using_tsl_pack in (False, True):
+            with mock.patch.multiple(
+                repomap_module,
+                filename_to_lang=mock.Mock(return_value="python"),
+                get_language=mock.Mock(return_value=object()),
+                get_parser=mock.Mock(return_value=parser),
+                get_scm_fname=mock.Mock(return_value=scm),
+                Query=mock.Mock(return_value=object()),
+                USING_TSL_PACK=using_tsl_pack,
+            ):
+                tags = list(repo_map.get_tags_raw("sample.py", "sample.py"))
+                observed[using_tsl_pack] = [
+                    (tag.name, tag.line) for tag in tags if tag.kind == "def"
+                ]
+
+        expected = [("alpha", 1), ("beta", 2)]
+        self.assertEqual(observed, {False: expected, True: expected})
 
     def test_get_repo_map(self):
         # Create a temporary directory with sample files for testing

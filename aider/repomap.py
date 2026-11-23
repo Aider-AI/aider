@@ -306,8 +306,7 @@ class RepoMap:
         for tag, nodes in captures.items():
             for node in nodes:
                 captures_by_tag[tag].append(node)
-            captures_by_tag[tag].append(node)
-            matches.append((node, tag))
+                matches.append((node, tag))
 
         if USING_TSL_PACK:
             all_nodes = [(node, tag) for tag, nodes in captures_by_tag.items() for node in nodes]
