@@ -3,6 +3,7 @@ import os
 import re
 import time
 import unittest
+from unittest.mock import patch
 from pathlib import Path
 
 import git
@@ -17,6 +18,41 @@ from aider.utils import GitTemporaryDirectory, IgnorantTemporaryDirectory
 class TestRepoMap(unittest.TestCase):
     def setUp(self):
         self.GPT35 = Model("gpt-3.5-turbo")
+
+    def test_tag_cache_hit_reads_entry_once(self):
+        with IgnorantTemporaryDirectory() as temp_dir:
+            path = Path(temp_dir) / "forecast.py"
+            path.write_text("def forecast(values):\n    return values[-7:]\n")
+            repo_map = RepoMap(root=temp_dir, io=InputOutput())
+            try:
+                initial = repo_map.get_tags(str(path), path.name)
+                self.assertTrue(initial)
+                with patch.object(
+                    repo_map.TAGS_CACHE, "get", wraps=repo_map.TAGS_CACHE.get
+                ) as read:
+                    with patch.object(repo_map, "get_tags_raw") as parse:
+                        self.assertEqual(repo_map.get_tags(str(path), path.name), initial)
+                self.assertEqual(read.call_count, 1)
+                parse.assert_not_called()
+            finally:
+                repo_map.TAGS_CACHE.close()
+
+    def test_empty_tag_cache_hit_does_not_parse_or_reread(self):
+        with IgnorantTemporaryDirectory() as temp_dir:
+            path = Path(temp_dir) / "data.json"
+            path.write_text("{}")
+            repo_map = RepoMap(root=temp_dir, io=InputOutput())
+            try:
+                self.assertEqual(repo_map.get_tags(str(path), path.name), [])
+                with patch.object(
+                    repo_map.TAGS_CACHE, "get", wraps=repo_map.TAGS_CACHE.get
+                ) as read:
+                    with patch.object(repo_map, "get_tags_raw") as parse:
+                        self.assertEqual(repo_map.get_tags(str(path), path.name), [])
+                self.assertEqual(read.call_count, 1)
+                parse.assert_not_called()
+            finally:
+                repo_map.TAGS_CACHE.close()
 
     def test_get_repo_map(self):
         # Create a temporary directory with sample files for testing

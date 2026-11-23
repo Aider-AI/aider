@@ -244,11 +244,7 @@ class RepoMap:
             val = self.TAGS_CACHE.get(cache_key)
 
         if val is not None and val.get("mtime") == file_mtime:
-            try:
-                return self.TAGS_CACHE[cache_key]["data"]
-            except SQLITE_ERRORS as e:
-                self.tags_cache_error(e)
-                return self.TAGS_CACHE[cache_key]["data"]
+            return val["data"]
 
         # miss!
         data = list(self.get_tags_raw(fname, rel_fname))
