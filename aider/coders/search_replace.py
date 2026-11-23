@@ -147,14 +147,17 @@ class RelativeIndenter:
         prev_indent = ""
         for i in range(0, len(lines), 2):
             dent = lines[i].rstrip("\r\n")
-            non_indent = lines[i + 1]
-
             if dent.startswith(self.marker):
                 len_outdent = len(dent)
                 cur_indent = prev_indent[:-len_outdent]
             else:
                 cur_indent = prev_indent + dent
 
+            if i + 1 == len(lines):
+                output.append(cur_indent)
+                break
+
+            non_indent = lines[i + 1]
             if not non_indent.rstrip("\r\n"):
                 out_line = non_indent  # don't indent a blank line
             else:
