@@ -847,7 +847,7 @@ class Commands:
             abs_file_path = self.coder.abs_root_path(matched_file)
 
             if (
-                not abs_file_path.startswith(self.coder.root)
+                not Path(abs_file_path).is_relative_to(Path(self.coder.root))
                 and not is_image_file(matched_file)
                 and self.coder.auto_commits
             ):
@@ -872,7 +872,7 @@ class Commands:
                 if self.coder.repo:
                     can_edit = self.coder.repo.path_in_repo(matched_file)
                 else:
-                    can_edit = abs_file_path.startswith(self.coder.root)
+                    can_edit = Path(abs_file_path).is_relative_to(Path(self.coder.root))
 
                 if can_edit:
                     self.coder.abs_read_only_fnames.remove(abs_file_path)
