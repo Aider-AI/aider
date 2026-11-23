@@ -31,13 +31,13 @@ class ClipboardWatcher:
                         if len(current.splitlines()) > 1:
                             self.io.placeholder = "\n" + self.io.placeholder + "\n"
 
-                    time.sleep(0.5)
                 except Exception as e:
                     if self.verbose:
                         from aider.dump import dump
 
                         dump(f"Clipboard watcher error: {e}")
-                    continue
+                finally:
+                    self.stop_event.wait(0.5)
 
         self.watcher_thread = threading.Thread(target=watch_clipboard, daemon=True)
         self.watcher_thread.start()
