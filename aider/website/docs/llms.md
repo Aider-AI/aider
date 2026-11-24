@@ -30,6 +30,11 @@ Aider works with a number of **free** API providers:
 - [OpenRouter offers free access to many models](https://openrouter.ai/models/?q=free), with limitations on daily usage.
 - Google's [Gemini 2.5 Pro Exp](/docs/llms/gemini.html) works very well with aider.
 
+## Other API providers
+{: .no_toc }
+
+- [Ace Data Cloud](/docs/llms/acedatacloud.html) uses Aider's OpenAI-compatible configuration.
+
 ## Local models
 {: .no_toc }
 
