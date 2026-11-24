@@ -33,8 +33,7 @@ Aider works with a number of **free** API providers:
 ## Other API providers
 {: .no_toc }
 
-- [Ace Data Cloud](/docs/llms/acedatacloud.html) uses a dedicated API key and the
-  `acedatacloud/<model>` selector. Check account access and pricing before use.
+- [Ace Data Cloud](/docs/llms/acedatacloud.html) uses Aider's OpenAI-compatible configuration.
 
 ## Local models
 {: .no_toc }
