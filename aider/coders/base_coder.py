@@ -1,3 +1,4 @@
+from datetime import datetime, timezone
 #!/usr/bin/env python
 
 import base64
@@ -338,6 +339,7 @@ class Coder:
         file_watcher=None,
         auto_copy_context=False,
         auto_accept_architect=True,
+        events_jsonl_file=None,
     ):
         # Fill in a dummy Analytics if needed, but it is never .enable()'d
         self.analytics = analytics if analytics is not None else Analytics()
@@ -352,6 +354,7 @@ class Coder:
 
         self.auto_copy_context = auto_copy_context
         self.auto_accept_architect = auto_accept_architect
+        self.events_jsonl_file = events_jsonl_file
 
         self.ignore_mentions = ignore_mentions
         if not self.ignore_mentions:
@@ -1991,6 +1994,20 @@ class Coder:
             self.reasoning_tag_name,
         )
 
+    def _emit_event(self, event_type, **fields):
+        if not self.events_jsonl_file:
+            return
+        record = {
+            "type": event_type,
+            "timestamp": datetime.now(timezone.utc).isoformat(),
+            **fields,
+        }
+        path = Path(self.events_jsonl_file)
+        if path.parent and str(path.parent) not in ("", "."):
+            path.parent.mkdir(parents=True, exist_ok=True)
+        with path.open("a", encoding="utf-8") as fh:
+            fh.write(json.dumps(record, ensure_ascii=False) + "\n")
+
     def calculate_and_show_tokens_and_cost(self, messages, completion=None):
         prompt_tokens = 0
         completion_tokens = 0
@@ -2030,6 +2047,19 @@ class Coder:
 
         if not self.main_model.info.get("input_cost_per_token"):
             self.usage_report = tokens_report
+            self._emit_event(
+                "llm_response",
+                model=self.main_model.name,
+                prompt_tokens=int(prompt_tokens or 0),
+                completion_tokens=int(completion_tokens or 0),
+                cache_hit_tokens=int(cache_hit_tokens or 0),
+                cache_write_tokens=int(cache_write_tokens or 0),
+                message_tokens_sent=int(self.message_tokens_sent),
+                message_tokens_received=int(self.message_tokens_received),
+                cost=0.0,
+                message_cost=float(self.message_cost),
+                total_cost=float(self.total_cost),
+            )
             return
 
         try:
@@ -2045,6 +2075,19 @@ class Coder:
 
         self.total_cost += cost
         self.message_cost += cost
+        self._emit_event(
+            "llm_response",
+            model=self.main_model.name,
+            prompt_tokens=int(prompt_tokens or 0),
+            completion_tokens=int(completion_tokens or 0),
+            cache_hit_tokens=int(cache_hit_tokens or 0),
+            cache_write_tokens=int(cache_write_tokens or 0),
+            message_tokens_sent=int(self.message_tokens_sent),
+            message_tokens_received=int(self.message_tokens_received),
+            cost=float(cost),
+            message_cost=float(self.message_cost),
+            total_cost=float(self.total_cost),
+        )
 
         def format_cost(value):
             if value == 0:
@@ -2333,6 +2376,13 @@ class Coder:
             else:
                 self.io.tool_output(f"Applied edit to {path}")
 
+        if edited:
+            self._emit_event(
+                "file_edits",
+                files=sorted(edited),
+                dry_run=bool(self.dry_run),
+            )
+
         return edited
 
     def parse_partial_args(self):
@@ -2473,6 +2523,12 @@ class Coder:
             # Add the command to input history
             self.io.add_to_input_history(f"/run {command.strip()}")
             exit_status, output = run_cmd(command, error_print=self.io.tool_error, cwd=self.root)
+            self._emit_event(
+                "shell_command",
+                command=command,
+                exit_status=exit_status,
+                output_chars=len(output or ""),
+            )
             if output:
                 accumulated_output += f"Output from {command}\n{output}\n"
 

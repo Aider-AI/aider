@@ -298,6 +298,15 @@ def get_parser(default_config_files, git_root):
         default=None,
         help="Log the conversation with the LLM to this file (for example, .aider.llm.history)",
     ).complete = shtab.FILE
+    group.add_argument(
+        "--events-jsonl",
+        metavar="EVENTS_JSONL_FILE",
+        default=None,
+        help=(
+            "Log structured JSONL telemetry events (exact integer token usage, file edits, "
+            "and shell commands) to this file"
+        ),
+    ).complete = shtab.FILE
 
     ##########
     group = parser.add_argument_group("Output settings")

@@ -983,6 +983,7 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
             dry_run=args.dry_run,
             map_tokens=map_tokens,
             verbose=args.verbose,
+            events_jsonl_file=args.events_jsonl,
             stream=args.stream,
             use_git=args.git,
             restore_chat_history=args.restore_chat_history,
