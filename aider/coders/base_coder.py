@@ -176,6 +176,7 @@ class Coder:
                 aider_commit_hashes=from_coder.aider_commit_hashes,
                 commands=from_coder.commands.clone(),
                 total_cost=from_coder.total_cost,
+                total_cost_by_model=from_coder.total_cost_by_model,
                 ignore_mentions=from_coder.ignore_mentions,
                 total_tokens_sent=from_coder.total_tokens_sent,
                 total_tokens_received=from_coder.total_tokens_received,
@@ -324,6 +325,8 @@ class Coder:
         commands=None,
         summarizer=None,
         total_cost=0.0,
+        total_cost_by_model=None,
+        energy_report=None,
         analytics=None,
         map_refresh="auto",
         cache_prompts=False,
@@ -382,6 +385,10 @@ class Coder:
         self.need_commit_before_edits = set()
 
         self.total_cost = total_cost
+        # model name -> cost, so energy is attributed to the model that produced each message
+        self.total_cost_by_model = dict(total_cost_by_model or {})
+        self.message_cost_by_model = {}
+        self.energy_report = energy_report
         self.total_tokens_sent = total_tokens_sent
         self.total_tokens_received = total_tokens_received
         self.message_tokens_sent = 0
@@ -869,6 +876,7 @@ class Coder:
         self.test_outcome = None
         self.shell_commands = []
         self.message_cost = 0
+        self.message_cost_by_model = {}
 
         if self.repo:
             self.commit_before_message.append(self.repo.get_head_commit_sha())
@@ -2045,6 +2053,9 @@ class Coder:
 
         self.total_cost += cost
         self.message_cost += cost
+        name = self.main_model.name
+        for d in (self.total_cost_by_model, self.message_cost_by_model):
+            d[name] = d.get(name, 0.0) + cost
 
         def format_cost(value):
             if value == 0:
@@ -2059,6 +2070,15 @@ class Coder:
             f"Cost: ${format_cost(self.message_cost)} message,"
             f" ${format_cost(self.total_cost)} session."
         )
+
+        if self.energy_report:
+            message_energy = self.energy_report(self.message_cost_by_model)
+            session_energy = self.energy_report(self.total_cost_by_model)
+            if message_energy and session_energy:
+                cost_report = (
+                    f"Cost: ${format_cost(self.message_cost)} message ({message_energy}),"
+                    f" ${format_cost(self.total_cost)} session ({session_energy})."
+                )
 
         if cache_hit_tokens and cache_write_tokens:
             sep = "\n"
@@ -2122,6 +2142,7 @@ class Coder:
         )
 
         self.message_cost = 0.0
+        self.message_cost_by_model = {}
         self.message_tokens_sent = 0
         self.message_tokens_received = 0
 

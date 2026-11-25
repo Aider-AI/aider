@@ -1,3 +1,4 @@
+import functools
 import json
 import os
 import re
@@ -18,7 +19,7 @@ import shtab
 from dotenv import load_dotenv
 from prompt_toolkit.enums import EditingMode
 
-from aider import __version__, models, urls, utils
+from aider import __version__, energy, models, urls, utils
 from aider.analytics import Analytics
 from aider.args import get_parser
 from aider.coders import Coder
@@ -969,6 +970,21 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
     # Track auto-commits configuration
     analytics.event("auto_commits", enabled=bool(args.auto_commits))
 
+    energy_report = None
+    if args.energy_csv:
+        try:
+            energy_rows = energy.load_table(args.energy_csv)
+        except (OSError, ValueError) as e:
+            io.tool_error(f"Cannot load --energy-csv: {e}")
+            return 1
+
+        energy_report = functools.partial(
+            energy.format_total,
+            energy_rows,
+            grid_g_per_kwh=args.energy_grid_g_per_kwh,
+            carbon=not args.energy_only,
+        )
+
     try:
         coder = Coder.create(
             main_model=main_model,
@@ -978,6 +994,7 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
             fnames=fnames,
             read_only_fnames=read_only_fnames,
             show_diffs=args.show_diffs,
+            energy_report=energy_report,
             auto_commits=args.auto_commits,
             dirty_commits=args.dirty_commits,
             dry_run=args.dry_run,
