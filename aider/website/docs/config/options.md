@@ -34,7 +34,8 @@ usage: aider [-h] [--model] [--openai-api-key] [--anthropic-api-key]
              [--weak-model] [--editor-model] [--editor-edit-format]
              [--show-model-warnings | --no-show-model-warnings]
              [--check-model-accepts-settings | --no-check-model-accepts-settings]
-             [--max-chat-history-tokens]
+             [--max-chat-history-tokens] [--energy-csv]
+             [--energy-grid-g-per-kwh] [--energy-only]
              [--cache-prompts | --no-cache-prompts]
              [--cache-keepalive-pings] [--map-tokens]
              [--map-refresh] [--map-multiplier-no-files]
@@ -240,6 +241,21 @@ Aliases:
 ### `--max-chat-history-tokens VALUE`
 Soft limit on tokens for chat history, after which summarization begins. If unspecified, defaults to the model's max_chat_history_tokens.  
 Environment variable: `AIDER_MAX_CHAT_HISTORY_TOKENS`  
+
+## Energy estimate:
+
+### `--energy-csv PATH`
+Path to a CLEER dashboard CSV (CC BY-NC 4.0, not bundled). Appends an energy/carbon estimate to the cost report  
+Environment variable: `AIDER_ENERGY_CSV`  
+
+### `--energy-grid-g-per-kwh VALUE`
+Grid carbon intensity in gCO2e/kWh, overriding the CLEER value  
+Environment variable: `AIDER_ENERGY_GRID_G_PER_KWH`  
+
+### `--energy-only`
+Show energy without the carbon estimate (default: False)  
+Default: False  
+Environment variable: `AIDER_ENERGY_ONLY`  
 
 ## Cache settings:
 

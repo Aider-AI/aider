@@ -228,6 +228,28 @@ def get_parser(default_config_files, git_root):
     )
 
     ##########
+    group = parser.add_argument_group("Energy estimate")
+    group.add_argument(
+        "--energy-csv",
+        metavar="PATH",
+        help=(
+            "Path to a CLEER dashboard CSV (CC BY-NC 4.0, not bundled). Appends an energy/carbon"
+            " estimate to the cost report"
+        ),
+    )
+    group.add_argument(
+        "--energy-grid-g-per-kwh",
+        type=float,
+        help="Grid carbon intensity in gCO2e/kWh, overriding the CLEER value",
+    )
+    group.add_argument(
+        "--energy-only",
+        action="store_true",
+        help="Show energy without the carbon estimate (default: False)",
+        default=False,
+    )
+
+    ##########
     group = parser.add_argument_group("Cache settings")
     group.add_argument(
         "--cache-prompts",
