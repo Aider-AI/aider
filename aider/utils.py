@@ -158,7 +158,7 @@ def split_chat_history_markdown(text, include_tool=False):
             messages.append(dict(role=role, content=lines))
 
     for line in lines:
-        if line.startswith("# "):
+        if line.startswith("# aider chat started at "):
             continue
         if line.startswith("> "):
             append_msg("assistant", assistant)
