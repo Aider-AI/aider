@@ -672,7 +672,7 @@ class Coder:
     def get_cur_message_text(self):
         text = ""
         for msg in self.cur_messages:
-            text += msg["content"] + "\n"
+            text += (msg["content"] or "") + "\n"
         return text
 
     def get_ident_mentions(self, text):
@@ -2368,7 +2368,7 @@ class Coder:
         context = ""
         if history:
             for msg in history:
-                context += "\n" + msg["role"].upper() + ": " + msg["content"] + "\n"
+                context += "\n" + msg["role"].upper() + ": " + (msg["content"] or "") + "\n"
 
         return context
 
