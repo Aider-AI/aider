@@ -783,7 +783,11 @@ def get_parser(default_config_files, git_root):
         "--line-endings",
         choices=["platform", "lf", "crlf"],
         default="platform",
-        help="Line endings to use when writing files (default: platform)",
+        help=(
+            "Line endings to use when writing files. With platform, existing files keep their"
+            " line endings and new files use the platform's. lf or crlf converts every file"
+            " aider writes (default: platform)"
+        ),
     )
     group.add_argument(
         "-c",

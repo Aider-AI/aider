@@ -335,7 +335,7 @@ class TestCommands(TestCase):
 
         # Create a new file foo.bad which will fail to decode as utf-8
         with codecs.open("foo.bad", "w", encoding="iso-8859-15") as f:
-            f.write("ÆØÅ")  # Characters not present in utf-8
+            f.write("\0ÆØÅ")  # Not valid utf-8, and the NUL marks it as binary
 
         commands.cmd_add("foo.bad")
 
@@ -1043,8 +1043,8 @@ class TestCommands(TestCase):
         commands = Commands(io, coder)
 
         fname = "file.txt"
-        encoding = "utf-16"
-        some_content_which_will_error_if_read_with_encoding_utf8 = "ÅÍÎÏ".encode(encoding)
+        encoding = "utf-16-le"  # No BOM, so it can't be detected
+        some_content_which_will_error_if_read_with_encoding_utf8 = "ÅÍÎÏ\0".encode(encoding)
         with open(fname, "wb") as f:
             f.write(some_content_which_will_error_if_read_with_encoding_utf8)
 
