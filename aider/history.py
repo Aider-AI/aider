@@ -102,7 +102,7 @@ class ChatSummary:
             if role not in ("USER", "ASSISTANT"):
                 continue
             content += f"# {role}\n"
-            content += msg["content"]
+            content += msg["content"] or ""
             if not content.endswith("\n"):
                 content += "\n"
 

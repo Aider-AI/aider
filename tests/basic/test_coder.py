@@ -1211,6 +1211,30 @@ This command will print 'Hello, World!' to the console."""
             sanity_check_messages(coder.cur_messages)
             self.assertEqual(coder.cur_messages[-1]["role"], "assistant")
 
+    def test_cur_message_text_with_function_call_reply(self):
+        with GitTemporaryDirectory():
+            io = InputOutput(yes=True)
+            coder = Coder.create(self.GPT35, "diff", io=io)
+            coder.cur_messages = [
+                dict(role="user", content="edit foo.py"),
+                dict(role="assistant", content=None, function_call=dict(name="edit")),
+            ]
+
+            self.assertEqual(coder.get_cur_message_text(), "edit foo.py\n\n")
+
+    def test_context_from_history_with_function_call_reply(self):
+        with GitTemporaryDirectory():
+            io = InputOutput(yes=True)
+            coder = Coder.create(self.GPT35, "diff", io=io)
+            history = [
+                dict(role="user", content="edit foo.py"),
+                dict(role="assistant", content=None, function_call=dict(name="edit")),
+            ]
+
+            self.assertEqual(
+                coder.get_context_from_history(history), "\nUSER: edit foo.py\n\nASSISTANT: \n"
+            )
+
     def test_normalize_language(self):
         coder = Coder.create(self.GPT35, None, io=InputOutput())
 

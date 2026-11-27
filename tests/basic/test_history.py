@@ -60,6 +60,19 @@ class TestChatSummary(TestCase):
             ],
         )
 
+    def test_summarize_all_with_function_call_reply(self):
+        self.mock_model.simple_send_with_retries.return_value = "Summary"
+        messages = [
+            {"role": "user", "content": "edit foo.py"},
+            {"role": "assistant", "content": None, "function_call": {"name": "edit"}},
+        ]
+
+        summary = self.chat_summary.summarize_all(messages)
+
+        sent = self.mock_model.simple_send_with_retries.call_args[0][0]
+        self.assertEqual(sent[1]["content"], "# USER\nedit foo.py\n# ASSISTANT\n")
+        self.assertEqual(summary[0]["role"], "user")
+
     def test_summarize(self):
         N = 100
         messages = [None] * (2 * N)
