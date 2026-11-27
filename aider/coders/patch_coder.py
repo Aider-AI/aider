@@ -204,6 +204,14 @@ def identify_files_needed(text: str) -> List[str]:
     return list(paths)
 
 
+def _file_lines(text: str) -> List[str]:
+    """Split file content on newlines only, leaving form feeds etc inside their line."""
+    lines = text.split("\n")
+    if lines[-1] == "":
+        lines.pop()
+    return lines
+
+
 # --------------------------------------------------------------------------- #
 #  PatchCoder Class Implementation
 # --------------------------------------------------------------------------- #
@@ -414,7 +422,7 @@ class PatchCoder(Coder):
     ) -> Tuple[PatchAction, int, int]:
         """Parses all sections (@@, context, -, +) for a single Update File action."""
         action = PatchAction(type=ActionType.UPDATE, path="")  # Path set by caller
-        orig_lines = file_content.splitlines()  # Use splitlines for consistency
+        orig_lines = _file_lines(file_content)
         current_file_index = 0  # Track position in original file content
         total_fuzz = 0
 
@@ -620,7 +628,7 @@ class PatchCoder(Coder):
 
                     # Ensure parent directory exists for target
                     target_path_obj.parent.mkdir(parents=True, exist_ok=True)
-                    self.io.write_text(target_full_path, new_content)
+                    self.io.write_text(target_full_path, new_content, like=full_path)
 
                     # Remove original file *after* successful write to new location if moved
                     if action.move_path and full_path != target_full_path:
@@ -648,7 +656,7 @@ class PatchCoder(Coder):
             # Should not be called otherwise, but check for safety
             raise DiffError("_apply_update called with non-update action")
 
-        orig_lines = text.splitlines()  # Use splitlines to handle endings consistently
+        orig_lines = _file_lines(text)
         dest_lines: List[str] = []
         current_orig_line_idx = 0  # Tracks index in orig_lines processed so far
 

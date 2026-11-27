@@ -33,6 +33,7 @@ from rich.markdown import Markdown
 from rich.style import Style as RichStyle
 from rich.text import Text
 
+from aider import text_format
 from aider.mdstream import MarkdownStream
 
 from .dump import dump  # noqa: F401
@@ -331,6 +332,7 @@ class InputOutput:
             None if line_endings == "platform" else "\n" if line_endings == "lf" else "\r\n"
         )
         self.dry_run = dry_run
+        self.fallback_encoding_warned = set()
 
         current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         self.append_chat_history(f"\n# aider chat started at {current_time}\n\n")
@@ -455,8 +457,12 @@ class InputOutput:
             return self.read_image(filename)
 
         try:
-            with open(str(filename), "r", encoding=self.encoding) as f:
-                return f.read()
+            with open(str(filename), "rb") as f:
+                data = f.read()
+            content, encoding, _bom = text_format.decode(data, self.encoding)
+            if encoding == text_format.FALLBACK_ENCODING != self.encoding:
+                self.warn_fallback_encoding(filename, silent)
+            return text_format.normalize_newlines(content)
         except FileNotFoundError:
             if not silent:
                 self.tool_error(f"{filename}: file not found error")
@@ -475,14 +481,48 @@ class InputOutput:
                 self.tool_error("Use --encoding to set the unicode encoding.")
             return
 
-    def write_text(self, filename, content, max_retries=5, initial_delay=0.1):
+    def warn_fallback_encoding(self, filename, silent=False):
+        if silent or str(filename) in self.fallback_encoding_warned:
+            return
+        self.fallback_encoding_warned.add(str(filename))
+        self.tool_warning(
+            f"{filename}: not valid {self.encoding}, reading it as"
+            f" {text_format.FALLBACK_ENCODING}."
+        )
+
+    def encode_for_file(self, filename, content):
+        """
+        Encode content to bytes in the format of the existing file, if there is one.
+        """
+        encoding, bom, old_text = self.encoding, b"", ""
+        try:
+            with open(str(filename), "rb") as f:
+                data = f.read()
+            old_text, encoding, bom = text_format.decode(data, self.encoding)
+        except (FileNotFoundError, UnicodeError):
+            pass  # Nothing to preserve
+
+        content = text_format.apply_line_endings(
+            old_text, content, default=self.newline or os.linesep, force=self.newline
+        )
+
+        try:
+            return bom + content.encode(encoding)
+        except UnicodeEncodeError as err:
+            bad = content[err.start : err.end]
+            raise OSError(f"{bad!r} can't be written using the file's {encoding} encoding") from err
+
+    def write_text(self, filename, content, max_retries=5, initial_delay=0.1, like=None):
         """
         Writes content to a file, retrying with progressive backoff if the file is locked.
+
+        An existing file keeps its encoding, BOM and line endings.
 
         :param filename: Path to the file to write.
         :param content: Content to write to the file.
         :param max_retries: Maximum number of retries if a file lock is encountered.
         :param initial_delay: Initial delay (in seconds) before the first retry.
+        :param like: Take the format from this file instead, e.g. when moving a file.
         """
         if self.dry_run:
             return
@@ -490,8 +530,10 @@ class InputOutput:
         delay = initial_delay
         for attempt in range(max_retries):
             try:
-                with open(str(filename), "w", encoding=self.encoding, newline=self.newline) as f:
-                    f.write(content)
+                # Encode before opening, so a failure can't leave the file truncated
+                data = self.encode_for_file(like or filename, content)
+                with open(str(filename), "wb") as f:
+                    f.write(data)
                 return  # Successfully wrote the file
             except PermissionError as err:
                 if attempt < max_retries - 1:

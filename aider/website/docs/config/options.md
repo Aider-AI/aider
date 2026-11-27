@@ -729,7 +729,7 @@ Default: utf-8
 Environment variable: `AIDER_ENCODING`  
 
 ### `--line-endings VALUE`
-Line endings to use when writing files (default: platform)  
+Line endings to use when writing files. With platform, existing files keep their line endings and new files use the platform's. lf or crlf converts every file aider writes (default: platform)  
 Default: platform  
 Environment variable: `AIDER_LINE_ENDINGS`  
 
