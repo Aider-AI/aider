@@ -86,7 +86,9 @@ Keeping the context size unchanged removes one cause of runner reloads; it does
 not guarantee a cache hit. Ollama also needs a matching token prefix and a
 resident model runner. Changed repository content, conversation summarization,
 or model eviction can invalidate some or all of that prefix. Only unchanged
-prefix tokens can be reused; generated answers are not cached by this setting.
+prefix tokens can be reused, including earlier assistant messages. This is KV
+reuse, not a response cache that returns an old answer instead of generating
+a new one.
 
 The expected benefit is reduced model-loading and prompt-processing time on
 subsequent coding or repair requests, not faster token decoding or better code.
