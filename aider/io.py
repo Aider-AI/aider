@@ -4,6 +4,7 @@ import os
 import shutil
 import signal
 import subprocess
+import sys
 import time
 import webbrowser
 from collections import defaultdict
@@ -334,6 +335,13 @@ class InputOutput:
 
         current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         self.append_chat_history(f"\n# aider chat started at {current_time}\n\n")
+
+        # Legacy code pages cannot encode every character; replace instead of crashing
+        if hasattr(sys.stdout, "reconfigure"):
+            try:
+                sys.stdout.reconfigure(errors="replace")
+            except (ValueError, OSError):
+                pass
 
         self.prompt_session = None
         self.is_dumb_terminal = is_dumb_terminal()

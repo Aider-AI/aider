@@ -1,3 +1,4 @@
+import io as io_module
 import os
 import unittest
 from pathlib import Path
@@ -382,6 +383,19 @@ class TestInputOutputMultilineMode(unittest.TestCase):
 
             # The invalid Unicode should be replaced with '?'
             self.assertEqual(converted_message, "Hello ?World")
+
+    def test_output_survives_unencodable_console_charset(self):
+        """A legacy code page such as cp1255 cannot encode U+25BA; output must not raise"""
+        raw = io_module.BytesIO()
+        stdout = io_module.TextIOWrapper(raw, encoding="cp1255", write_through=True)
+        with patch("sys.stdout", stdout):
+            io = InputOutput(pretty=False, fancy_input=False)
+            io.tool_warning("\u25ba warning")
+            io.assistant_output("\u25ba answer", pretty=False)
+            io.console.file.flush()
+
+        self.assertIn(b"warning", raw.getvalue())
+        self.assertIn(b"answer", raw.getvalue())
 
     def test_multiline_mode_restored_after_interrupt(self):
         """Test that multiline mode is restored after KeyboardInterrupt"""
