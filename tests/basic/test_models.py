@@ -433,7 +433,7 @@ class TestModels(unittest.TestCase):
         model.send_completion(messages, functions=None, stream=False)
 
         # Verify num_ctx was calculated and added to call
-        expected_ctx = int(1000 * 1.25) + 8192  # 9442
+        expected_ctx = 10240  # Round the required 9442 tokens up to a 2048-token block.
         mock_completion.assert_called_once_with(
             model=model.name,
             messages=messages,
@@ -442,6 +442,42 @@ class TestModels(unittest.TestCase):
             num_ctx=expected_ctx,
             timeout=600,
         )
+
+    @patch("aider.models.litellm.completion")
+    @patch.object(Model, "token_count")
+    def test_ollama_context_blocks_cover_request_and_reply(self, mock_token_count, mock_completion):
+        messages = [{"role": "user", "content": "Hello"}]
+        for provider in ("ollama", "ollama_chat"):
+            model = Model(f"{provider}/llama3")
+            for tokens, expected in (
+                (0, 8192),
+                (1, 10240),
+                (1638, 10240),
+                (1639, 10240),
+                (1640, 12288),
+            ):
+                with self.subTest(provider=provider, tokens=tokens):
+                    mock_token_count.return_value = tokens
+                    model.send_completion(messages, functions=None, stream=False)
+                    actual = mock_completion.call_args.kwargs["num_ctx"]
+                    required = int(tokens * 1.25) + 8192
+                    self.assertEqual(actual, expected)
+                    self.assertGreaterEqual(actual, required)
+                    self.assertLess(actual - required, 2048)
+
+    @patch("aider.models.litellm.completion")
+    @patch.object(Model, "token_count")
+    def test_ollama_context_reused_for_small_prompt_changes(
+        self, mock_token_count, mock_completion
+    ):
+        model = Model("ollama_chat/llama3")
+        messages = [{"role": "user", "content": "Hello"}]
+        mock_token_count.side_effect = (1500, 1508, 1496, 1516)
+        for _ in range(4):
+            model.send_completion(messages, functions=None, stream=False)
+        contexts = [call.kwargs["num_ctx"] for call in mock_completion.call_args_list]
+        self.assertEqual(contexts, [10240] * 4)
+        self.assertIsNone(model.extra_params)
 
     @patch("aider.models.litellm.completion")
     def test_ollama_uses_existing_num_ctx(self, mock_completion):

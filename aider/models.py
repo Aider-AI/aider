@@ -1011,7 +1011,8 @@ class Model(ModelSettings):
             kwargs.update(self.extra_params)
         if self.is_ollama() and "num_ctx" not in kwargs:
             num_ctx = int(self.token_count(messages) * 1.25) + 8192
-            kwargs["num_ctx"] = num_ctx
+            # Changing num_ctx reloads Ollama's runner and discards its prompt cache.
+            kwargs["num_ctx"] = ((num_ctx + 2047) // 2048) * 2048
         key = json.dumps(kwargs, sort_keys=True).encode()
 
         # dump(kwargs)

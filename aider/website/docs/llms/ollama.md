@@ -62,6 +62,13 @@ By default, aider sets Ollama's context window
 to be large enough for each request you send plus 8k tokens for the reply.
 This ensures data isn't silently discarded by Ollama.
 
+Automatic context sizes are rounded up to 2048-token blocks. Small prompt
+changes within a block keep the same context size, avoiding Ollama runner
+reloads and allowing reuse of its prompt KV cache. This can allocate up to
+2047 additional context tokens, so allow for the extra memory. Crossing a block
+boundary still changes the context size and may reload the runner.
+An explicitly configured `num_ctx` is passed through unchanged.
+
 If you'd like you can configure a fixed sized context window instead
 with an
 [`.aider.model.settings.yml` file](https://aider.chat/docs/config/adv-model-settings.html#model-settings)
@@ -72,4 +79,25 @@ like this:
   extra_params:
     num_ctx: 65536
 ```
+
+## Prompt cache reuse
+
+Keeping the context size unchanged removes one cause of runner reloads; it does
+not guarantee a cache hit. Ollama also needs a matching token prefix and a
+resident model runner. Changed repository content, conversation summarization,
+or model eviction can invalidate some or all of that prefix. Only unchanged
+prefix tokens can be reused, including earlier assistant messages. This is KV
+reuse, not a response cache that returns an old answer instead of generating
+a new one.
+
+The expected benefit is reduced model-loading and prompt-processing time on
+subsequent coding or repair requests, not faster token decoding or better code.
+Measure full generation and repair requests, and execute checks on the final
+code. Report failures separately rather than counting faster incorrect answers
+as a coding speedup. A one-token repeated-prefix benchmark measures cache
+overhead, not end-to-end coding performance.
+
+This context-sizing behavior applies to both CPU and GPU Ollama runners.
+Actual gains and memory costs depend on the model, hardware, prompt changes,
+and runtime settings; CPU measurements do not establish GPU or cloud parity.
 
