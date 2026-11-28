@@ -75,6 +75,11 @@ Mapping out the repo like this provides some key benefits:
 
 ## Optimizing the map
 
+Aider reuses compiled tag queries for each language during a session.
+Source trees and captures are still recomputed whenever tags are reparsed.
+The updated tag-cache namespace rebuilds older cached tags once, so previously
+incomplete or duplicated captures are not retained for unchanged files.
+
 Of course, for large repositories even just the repo map might be too large
 for the LLM's context window.
 Aider solves this problem by sending just the **most relevant**

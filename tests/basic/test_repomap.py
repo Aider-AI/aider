@@ -1,12 +1,18 @@
 import difflib
 import os
 import re
+import tempfile
 import time
 import unittest
 from pathlib import Path
+from unittest import mock
 
 import git
+from diskcache import Cache
+from grep_ast.tsl import get_parser
+from tree_sitter import Query
 
+from aider import repomap as repomap_module
 from aider.dump import dump  # noqa: F401
 from aider.io import InputOutput
 from aider.models import Model
@@ -14,9 +20,123 @@ from aider.repomap import RepoMap
 from aider.utils import GitTemporaryDirectory, IgnorantTemporaryDirectory
 
 
+class TestRepoMapQueries(unittest.TestCase):
+    def setUp(self):
+        self.directory = tempfile.TemporaryDirectory()
+        self.root = Path(self.directory.name)
+        self.repo_map = RepoMap(root=str(self.root), io=InputOutput())
+
+    def tearDown(self):
+        self.repo_map.TAGS_CACHE.close()
+        self.directory.cleanup()
+
+    def test_reuses_query_across_python_files(self):
+        with mock.patch("aider.repomap.Query", wraps=Query) as compile_query:
+            for name in ("temperature", "electricity"):
+                path = self.root / f"{name}.py"
+                path.write_text(f"def {name}(values):\n    return values[-7:]\n")
+                tags = list(self.repo_map.get_tags_raw(str(path), path.name))
+                self.assertIn(name, {t.name for t in tags if t.kind == "def"})
+        self.assertEqual(compile_query.call_count, 1)
+
+    def test_reused_query_captures_changed_source(self):
+        path = self.root / "forecast.py"
+        with mock.patch("aider.repomap.Query", wraps=Query) as compile_query:
+            for name in ("forecast_five", "forecast_seven"):
+                path.write_text(f"def {name}(values):\n    return values[-7:]\n")
+                tags = list(self.repo_map.get_tags_raw(str(path), path.name))
+                self.assertEqual({t.name for t in tags if t.kind == "def"}, {name})
+        self.assertEqual(compile_query.call_count, 1)
+
+    def test_queries_are_separate_for_each_language(self):
+        examples = (
+            ("forecast.py", "def forecast():\n    return 1\n", "forecast"),
+            ("demand.c", "int demand(void) { return 1; }\n", "demand"),
+        )
+        with mock.patch("aider.repomap.Query", wraps=Query) as compile_query:
+            for filename, content, name in examples:
+                path = self.root / filename
+                path.write_text(content)
+                tags = list(self.repo_map.get_tags_raw(str(path), path.name))
+                self.assertIn(name, {t.name for t in tags if t.kind == "def"})
+        self.assertEqual(compile_query.call_count, 2)
+
+    def test_complete_captures_with_empty_group_for_both_backends(self):
+        path = self.root / "forecast.py"
+        names = ["temperature", "supply", "demand"]
+        code = "\n".join(f"def {name}():\n    return 1\n" for name in names)
+        path.write_text(code)
+        tree = get_parser("python").parse(code.encode())
+        nodes = [child.child_by_field_name("name") for child in tree.root_node.named_children]
+        query_path = repomap_module.get_scm_fname("python")
+        captures = {"unused.empty": [], "name.definition.function": nodes}
+        for using_tsl_pack in (False, True):
+            with self.subTest(using_tsl_pack=using_tsl_pack):
+                with (
+                    mock.patch("aider.repomap.USING_TSL_PACK", using_tsl_pack),
+                    mock.patch("aider.repomap.get_scm_fname", return_value=query_path),
+                    mock.patch.object(self.repo_map, "_run_captures", return_value=captures),
+                ):
+                    tags = list(self.repo_map.get_tags_raw(str(path), path.name))
+                self.assertCountEqual([t.name for t in tags if t.kind == "def"], names)
+
+    def test_old_mtime_valid_capture_caches_are_not_reused(self):
+        path = self.root / "forecast.py"
+        path.write_text("def forecast_seven():\n    return 7\n")
+        stale = [repomap_module.Tag(path.name, str(path), 0, "missing_capture", "def")]
+        for version in (3, 4):
+            with Cache(str(self.root / f".aider.tags.cache.v{version}")) as old:
+                old[str(path)] = {"mtime": path.stat().st_mtime, "data": stale}
+        tags = self.repo_map.get_tags(str(path), path.name)
+        self.assertEqual([t.name for t in tags if t.kind == "def"], ["forecast_seven"])
+
+
 class TestRepoMap(unittest.TestCase):
     def setUp(self):
         self.GPT35 = Model("gpt-3.5-turbo")
+
+    def test_get_tags_raw_preserves_all_capture_nodes(self):
+        from aider import repomap as repomap_module
+
+        class Node:
+            def __init__(self, name, line):
+                self.text = name.encode()
+                self.start_point = (line, 0)
+
+        class IO:
+            def read_text(self, _fname):
+                return "source"
+
+        nodes = [Node("alpha", 1), Node("beta", 2)]
+        captures = {"name.definition.function": nodes}
+        scm = mock.Mock()
+        scm.exists.return_value = True
+        scm.read_text.return_value = "query"
+        parser = mock.Mock()
+        parser.parse.return_value = mock.Mock(root_node=object())
+        repo_map = RepoMap.__new__(RepoMap)
+        repo_map.io = IO()
+        repo_map.query_cache = {}
+        repo_map._run_captures = mock.Mock(return_value=captures)
+        observed = {}
+
+        for using_tsl_pack in (False, True):
+            with mock.patch.multiple(
+                repomap_module,
+                filename_to_lang=mock.Mock(return_value="python"),
+                get_language=mock.Mock(return_value=object()),
+                get_parser=mock.Mock(return_value=parser),
+                get_scm_fname=mock.Mock(return_value=scm),
+                Query=mock.Mock(return_value=object()),
+                USING_TSL_PACK=using_tsl_pack,
+            ):
+                tags = list(repo_map.get_tags_raw("sample.py", "sample.py"))
+                observed[using_tsl_pack] = [
+                    (tag.name, tag.line) for tag in tags if tag.kind == "def"
+                ]
+
+        expected = [("alpha", 1), ("beta", 2)]
+        self.assertEqual(observed, {False: expected, True: expected})
 
     def test_get_repo_map(self):
         # Create a temporary directory with sample files for testing

@@ -32,9 +32,9 @@ Tag = namedtuple("Tag", "rel_fname fname line name kind".split())
 SQLITE_ERRORS = (sqlite3.OperationalError, sqlite3.DatabaseError, OSError)
 
 
-CACHE_VERSION = 3
+CACHE_VERSION = 5
 if USING_TSL_PACK:
-    CACHE_VERSION = 4
+    CACHE_VERSION = 6
 
 UPDATING_REPO_MAP_MESSAGE = "Updating repo map"
 
@@ -77,6 +77,7 @@ class RepoMap:
 
         self.tree_cache = {}
         self.tree_context_cache = {}
+        self.query_cache = {}
         self.map_cache = {}
         self.map_processing_time = 0
         self.last_map = None
@@ -291,28 +292,18 @@ class RepoMap:
         query_scm = get_scm_fname(lang)
         if not query_scm.exists():
             return
-        query_scm = query_scm.read_text()
-
         code = self.io.read_text(fname)
         if not code:
             return
         tree = parser.parse(bytes(code, "utf-8"))
 
         # Run the tags queries
-        captures = self._run_captures(Query(language, query_scm), tree.root_node)
-
-        captures_by_tag = defaultdict(list)
-        matches = []
-        for tag, nodes in captures.items():
-            for node in nodes:
-                captures_by_tag[tag].append(node)
-            captures_by_tag[tag].append(node)
-            matches.append((node, tag))
-
-        if USING_TSL_PACK:
-            all_nodes = [(node, tag) for tag, nodes in captures_by_tag.items() for node in nodes]
-        else:
-            all_nodes = matches
+        query = self.query_cache.get(lang)
+        if query is None:
+            query = Query(language, query_scm.read_text())
+            self.query_cache[lang] = query
+        captures = self._run_captures(query, tree.root_node)
+        all_nodes = [(node, tag) for tag, nodes in captures.items() for node in nodes]
 
         saw = set()
         for node, tag in all_nodes:
