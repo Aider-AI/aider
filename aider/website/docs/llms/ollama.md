@@ -80,3 +80,22 @@ like this:
     num_ctx: 65536
 ```
 
+## Prompt cache reuse
+
+Keeping the context size unchanged removes one cause of runner reloads; it does
+not guarantee a cache hit. Ollama also needs a matching token prefix and a
+resident model runner. Changed repository content, conversation summarization,
+or model eviction can invalidate some or all of that prefix. Only unchanged
+prefix tokens can be reused; generated answers are not cached by this setting.
+
+The expected benefit is reduced model-loading and prompt-processing time on
+subsequent coding or repair requests, not faster token decoding or better code.
+Measure full generation and repair requests, and execute checks on the final
+code. Report failures separately rather than counting faster incorrect answers
+as a coding speedup. A one-token repeated-prefix benchmark measures cache
+overhead, not end-to-end coding performance.
+
+This context-sizing behavior applies to both CPU and GPU Ollama runners.
+Actual gains and memory costs depend on the model, hardware, prompt changes,
+and runtime settings; CPU measurements do not establish GPU or cloud parity.
+
